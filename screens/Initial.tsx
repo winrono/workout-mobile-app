@@ -1,8 +1,12 @@
 import React from 'react';
-import { Text, AsyncStorage } from 'react-native';
+import { View, AsyncStorage, ActivityIndicator } from 'react-native';
 function App(props) {
     navigate(props);
-    return (<Text>Загужаюсь :)</Text>);
+    return (
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+            <ActivityIndicator size="large" />
+        </View>
+    );
 }
 async function navigate(props) {
     const cookie = await AsyncStorage.getItem('cookie');

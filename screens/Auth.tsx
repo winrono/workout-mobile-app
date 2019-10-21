@@ -7,17 +7,27 @@ export default class AuthScreen extends Component<any, any> {
     }
     render() {
         return (
-            <View style={{
-                flex: 1,
-                flexDirection: 'column',
-                justifyContent: 'center',
-                alignItems: 'stretch'
-            }}>
-                <TextInput style={styles.input} placeholder="Username" onChangeText={(text) => this.setState({ username: text })} value={this.state.username} />
-                <TextInput style={styles.input} placeholder="Password" onChangeText={(text) => this.setState({ password: text })} value={this.state.password} />
-                <TouchableOpacity
-                    style={styles.submitButton}
-                    onPress={this.onLogin.bind(this)}>
+            <View
+                style={{
+                    flex: 1,
+                    flexDirection: 'column',
+                    justifyContent: 'center',
+                    alignItems: 'stretch'
+                }}
+            >
+                <TextInput
+                    style={styles.input}
+                    placeholder="Username"
+                    onChangeText={text => this.setState({ username: text })}
+                    value={this.state.username}
+                />
+                <TextInput
+                    style={styles.input}
+                    placeholder="Password"
+                    onChangeText={text => this.setState({ password: text })}
+                    value={this.state.password}
+                />
+                <TouchableOpacity style={styles.submitButton} onPress={this.onLogin.bind(this)}>
                     <Text style={styles.submitButtonText}>Login</Text>
                 </TouchableOpacity>
             </View>
@@ -26,6 +36,7 @@ export default class AuthScreen extends Component<any, any> {
     async onLogin() {
         fetch(`http://localhost:55191/user/signin`, {
             method: 'POST',
+            credentials: 'include',
             headers: {
                 Accept: 'application/json',
                 'Content-Type': 'application/json'
@@ -34,11 +45,12 @@ export default class AuthScreen extends Component<any, any> {
                 name: this.state.username,
                 password: this.state.password
             })
-        }).then(async (res) => {
+        }).then(async res => {
+            debugger;
             for (const [name, value] of res.headers) {
-                if (name === "set-cookie") {
+                if (name === 'set-cookie') {
                     await AsyncStorage.setItem('cookie', value);
-                    this.props.navigation.push('Profile');
+                    this.props.navigation.navigate('Profile');
                 }
             }
         });
