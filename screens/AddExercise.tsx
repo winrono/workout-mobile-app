@@ -10,9 +10,9 @@ export default class AddExercise extends React.Component<any, any> {
     render() {
         return (
             <View style={{ flex: 1, justifyContent: 'center' }}>
-                <TextInput style={styles.input} onChangeText={(text) => this.setState({ name: text })} value={this.state.name} />
-                <TextInput keyboardType='numeric' style={styles.input} onChangeText={(text) => this.setState({ repetitionsCount: text })} value={this.state.repetitionsCount} />
-                <TextInput keyboardType='numeric' style={styles.input} onChangeText={(text) => this.setState({ weight: text })} value={this.state.weight} />
+                <TextInput placeholder="Exercise" style={styles.input} onChangeText={(text) => this.setState({ name: text })} value={this.state.name} />
+                <TextInput placeholder="Repetitions count" keyboardType='numeric' style={styles.input} onChangeText={(text) => this.setState({ repetitionsCount: text })} value={this.state.repetitionsCount} />
+                <TextInput placeholder="Weight" keyboardType='numeric' style={styles.input} onChangeText={(text) => this.setState({ weight: text })} value={this.state.weight} />
                 <Button title="Submit" onPress={this.submit.bind(this)}></Button>
             </View>
         );

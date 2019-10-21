@@ -5,7 +5,8 @@ import { createBottomTabNavigator } from 'react-navigation-tabs';
 import LoginScreen from './screens/Login';
 import ProfileScreen from './screens/Profile';
 import InitialScreen from './screens/Initial';
-import AddExercise from './screens/AddExercise';
+import AddExerciseScreen from './screens/AddExercise';
+import DummyScreen from './screens/Dummy';
 import { Ionicons } from '@expo/vector-icons';
 import { Button, AsyncStorage } from 'react-native';
 import * as React from 'react';
@@ -19,14 +20,15 @@ const tabNavigator = createBottomTabNavigator({
         }
     },
     AddExercise: {
-        screen: AddExercise, navigationOptions: {
+        screen: AddExerciseScreen, navigationOptions: {
             tabBarLabel: "Add exercise", tabBarIcon: ({ tintColor }) => (
                 <Ionicons name="md-add" size={30} />
             )
         }
     },
     SignOut: {
-        screen: LoginScreen, navigationOptions: {
+        // dirty hack to navigate to parent navigator's route: simply navigating to 'Login' route instead of redirecting to relevant component
+        screen: DummyScreen, navigationOptions: {
             tabBarLabel: "Log out", tabBarIcon: ({ tintColor }) => (
                 <Ionicons name="md-log-out" size={30} />
             ),
