@@ -11,9 +11,9 @@ function App(props) {
 async function navigate(props) {
     const cookie = await AsyncStorage.getItem('cookie');
     if (cookie) {
-        props.navigation.navigate('Profile');
+        props.navigation.navigate('App');
     } else {
-        props.navigation.navigate('Auth');
+        props.navigation.navigate('Login');
     }
 }
 export default App;
