@@ -3,4 +3,5 @@ export class Exercise {
     repetitionsCount: number;
     weight: number;
     creationTime?: string;
+    exerciseId: string;
 }

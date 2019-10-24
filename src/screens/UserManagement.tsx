@@ -42,7 +42,7 @@ export default class AuthScreen extends Component<any, any> {
     async onLogin() {
         fetch(`http://localhost:55191/user/signin`, {
             method: 'POST',
-            credentials: 'same-origin',
+            credentials: 'include',
             headers: {
                 Accept: 'application/json',
                 'Content-Type': 'application/json'
@@ -55,9 +55,9 @@ export default class AuthScreen extends Component<any, any> {
             for (const [name, value] of res.headers) {
                 if (name === 'set-cookie') {
                     await AsyncStorage.setItem('cookie', value);
-                    this.props.navigation.navigate('Profile');
                 }
             }
+            this.props.navigation.navigate('Profile');
         });
     }
 }

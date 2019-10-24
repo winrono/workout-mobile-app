@@ -12,34 +12,35 @@ import DummyScreen from './src/screens/Dummy';
 import { Ionicons } from '@expo/vector-icons';
 import { Button, AsyncStorage } from 'react-native';
 import * as React from 'react';
+import * as Font from 'expo-font';
 
 const mainAppNavigator = createBottomTabNavigator({
     Profile: {
-        screen: DashboardScreen, navigationOptions: {
-            tabBarLabel: "Dashboard", tabBarIcon: ({ tintColor }) => (
-                <Ionicons name="md-home" size={30} />
-            )
+        screen: DashboardScreen,
+        navigationOptions: {
+            tabBarLabel: 'Dashboard',
+            tabBarIcon: ({ tintColor }) => <Ionicons name="md-home" size={30} />
         }
     },
     AddExercise: {
-        screen: AddExerciseScreen, navigationOptions: {
-            tabBarLabel: "Add exercise", tabBarIcon: ({ tintColor }) => (
-                <Ionicons name="md-add" size={30} />
-            )
+        screen: AddExerciseScreen,
+        navigationOptions: {
+            tabBarLabel: 'Add exercise',
+            tabBarIcon: ({ tintColor }) => <Ionicons name="md-add" size={30} />
         }
     },
     SignOut: {
         // dirty hack to navigate to parent navigator's route: simply navigating to 'Login' route instead of redirecting to relevant component
-        screen: DummyScreen, navigationOptions: {
-            tabBarLabel: "Log out", tabBarIcon: ({ tintColor }) => (
-                <Ionicons name="md-log-out" size={30} />
-            ),
-            tabBarOnPress: (context) => {
+        screen: DummyScreen,
+        navigationOptions: {
+            tabBarLabel: 'Log out',
+            tabBarIcon: ({ tintColor }) => <Ionicons name="md-log-out" size={30} />,
+            tabBarOnPress: context => {
                 AsyncStorage.removeItem('cookie');
                 context.navigation.navigate('UserManagement');
             }
         }
-    },
+    }
 });
 
 const switchNavigator = createSwitchNavigator({
@@ -50,6 +51,27 @@ const switchNavigator = createSwitchNavigator({
     ForgotPassword: ForgotPasswordScreen
 });
 
-const App = createAppContainer(switchNavigator);
+const AppContainer = createAppContainer(switchNavigator);
+
+class App extends React.Component<any, any> {
+    constructor(props) {
+        super(props);
+        this.state = {
+            isReady: false
+        };
+    }
+    render() {
+        return <AppContainer></AppContainer>;
+    }
+
+    async componentDidMount() {
+        await Font.loadAsync({
+            Roboto: require('native-base/Fonts/Roboto.ttf'),
+            Roboto_medium: require('native-base/Fonts/Roboto_medium.ttf'),
+            ...Ionicons.font
+        });
+        this.setState({ isReady: true });
+    }
+}
 
 export default App;
