@@ -2,19 +2,21 @@ import { createAppContainer, createSwitchNavigator } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
 import { createDrawerNavigator } from 'react-navigation-drawer';
 import { createBottomTabNavigator } from 'react-navigation-tabs';
-import LoginScreen from './screens/Login';
-import ProfileScreen from './screens/Profile';
-import InitialScreen from './screens/Initial';
-import AddExerciseScreen from './screens/AddExercise';
-import DummyScreen from './screens/Dummy';
+import UserManagementScreen from './src/screens/UserManagement';
+import DashboardScreen from './src/screens/Dashboard';
+import InitialScreen from './src/screens/Initial';
+import CreateAccountScreen from './src/screens/CreateAccount';
+import ForgotPasswordScreen from './src/screens/ForgotPassword';
+import AddExerciseScreen from './src/screens/AddExercise';
+import DummyScreen from './src/screens/Dummy';
 import { Ionicons } from '@expo/vector-icons';
 import { Button, AsyncStorage } from 'react-native';
 import * as React from 'react';
 
-const tabNavigator = createBottomTabNavigator({
+const mainAppNavigator = createBottomTabNavigator({
     Profile: {
-        screen: ProfileScreen, navigationOptions: {
-            tabBarLabel: "Profile", tabBarIcon: ({ tintColor }) => (
+        screen: DashboardScreen, navigationOptions: {
+            tabBarLabel: "Dashboard", tabBarIcon: ({ tintColor }) => (
                 <Ionicons name="md-home" size={30} />
             )
         }
@@ -34,7 +36,7 @@ const tabNavigator = createBottomTabNavigator({
             ),
             tabBarOnPress: (context) => {
                 AsyncStorage.removeItem('cookie');
-                context.navigation.navigate('Login');
+                context.navigation.navigate('UserManagement');
             }
         }
     },
@@ -42,8 +44,10 @@ const tabNavigator = createBottomTabNavigator({
 
 const switchNavigator = createSwitchNavigator({
     Initial: InitialScreen,
-    App: tabNavigator as any,
-    Login: LoginScreen
+    AuthorizedApp: mainAppNavigator as any,
+    UserManagement: UserManagementScreen,
+    CreateAccount: CreateAccountScreen,
+    ForgotPassword: ForgotPasswordScreen
 });
 
 const App = createAppContainer(switchNavigator);

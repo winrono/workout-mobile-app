@@ -21,16 +21,24 @@ export default class AddExercise extends React.Component<any, any> {
         axios.post('http://localhost:55191/exercise/exercises', {
             name: this.state.name,
             repetitionsCount: this.state.repetitionsCount,
-            weight: this.state.weight
+            weight: this.state.weight,
+            creationTime: this.getCurrentTime()
         }, {
                 headers: {
                     Accept: 'application/json',
-                    'Content-Type': 'application/json',
-                    Cookie: await AsyncStorage.getItem('cookie')
+                    'Content-Type': 'application/json'
                 }
             }).then((res) => {
                 this.props.navigation.navigate('Profile');
             });
+    }
+
+    getCurrentTime() {
+        const now = new Date();
+        var UTC = now.getTime();
+        var localOffset = (-1) * now.getTimezoneOffset() * 60000;
+        var timeStamp = Math.round(new Date(UTC + localOffset).getTime());
+        return new Date(timeStamp);
     }
 }
 

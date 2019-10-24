@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import { Text, View, Button, TextInput, StyleSheet, TouchableOpacity, AsyncStorage } from 'react-native';
+import { TouchableHighlight } from 'react-native-gesture-handler';
+
 export default class AuthScreen extends Component<any, any> {
     constructor(props) {
         super(props);
@@ -30,13 +32,17 @@ export default class AuthScreen extends Component<any, any> {
                 <TouchableOpacity style={styles.submitButton} onPress={this.onLogin.bind(this)}>
                     <Text style={styles.submitButtonText}>Login</Text>
                 </TouchableOpacity>
+                <View style={{ flexDirection: 'row' }}>
+                    <Text onPress={() => {this.props.navigation.navigate('CreateAccount')}} style={styles.accountManagementLink}>Create Account</Text>
+                    <Text onPress={() => {this.props.navigation.navigate('ForgotPassword')}} style={styles.accountManagementLink}>Forgot Password</Text>
+                </View>
             </View>
         );
     }
     async onLogin() {
         fetch(`http://localhost:55191/user/signin`, {
             method: 'POST',
-            credentials: 'include',
+            credentials: 'same-origin',
             headers: {
                 Accept: 'application/json',
                 'Content-Type': 'application/json'
@@ -46,7 +52,6 @@ export default class AuthScreen extends Component<any, any> {
                 password: this.state.password
             })
         }).then(async res => {
-            debugger;
             for (const [name, value] of res.headers) {
                 if (name === 'set-cookie') {
                     await AsyncStorage.setItem('cookie', value);
@@ -79,5 +84,10 @@ const styles = StyleSheet.create({
     submitButtonText: {
         color: 'white',
         textAlign: 'center'
+    },
+    accountManagementLink: {
+        flex: 1,
+        textAlign: 'center',
+        color: '#007AFF'
     }
 });
