@@ -77,6 +77,10 @@ export default class AddExercise extends React.Component<any, { name, repetition
                         onSubmitEditing={(event) => {
                             this.submit();
                         }} />
+                    <AutoSuggest
+                        onChangeText={(text) => console.log('input changing!')}
+                        terms={['Apple', 'Banana', 'Orange', 'Strawberry', 'Lemon', 'Cantaloupe', 'Peach', 'Mandarin', 'Date', 'Kiwi']}
+                    />
                     <TouchableOpacity onPress={this.submit.bind(this)}>
                         <View style={{
                             backgroundColor: 'red', alignItems: 'center',
