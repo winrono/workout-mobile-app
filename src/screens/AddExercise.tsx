@@ -5,92 +5,62 @@ import { lazyInject } from '../ioc/container';
 import { Types } from '../ioc/types';
 import { ExerciseService } from '../data-access/exercise-service';
 import { Form, Container, Content, Item, Label, Header, Button, ListItem, Input } from 'native-base';
-import AutoComplete from "native-base-autocomplete";
-import AutoSuggest from 'react-native-autosuggest';
 
-export default class AddExercise extends React.Component<any, { name, repetitionsCount, weight, suggestions, clicked }> {
+export default class AddExercise extends React.Component<any, { name, repetitionsCount, weight }> {
 
     @lazyInject('exerciseService') private readonly _exerciseService: ExerciseService;
 
     constructor(props) {
         super(props);
-        this.state = { name: '', 'repetitionsCount': '', weight: '', suggestions: ["work", "test", "test", "test", "test", "test", "test", "test", "test", "test", "test", "test", "test", "test", "test", "test", "test", "test", "tee", "boom"], clicked: false };
-    }
-    findSuggestsions(query) {
-        if (query === '') {
-            return [];
-        }
-
-        const { suggestions } = this.state;
-        return suggestions.filter((suggestion: string) => {
-            return suggestion.startsWith(query);
-        });
-
+        this.state = { name: '', repetitionsCount: '', weight: '' };
     }
     render() {
-        const { name } = this.state;
-        let suggestions = this.findSuggestsions(name);
         return (
             <Container style={styles.container}>
                 <Content>
-                    <View>
-                        <AutoComplete
-                            data={suggestions.length == 0 || this.state.clicked ? [] : suggestions}
-                            defaultValue={name}
-                            returnKeyType={"next"}
-                            placeholder="Exercise name"
-                            autoFocus={true}
-                            onChangeText={text => {
-                                this.setState({ clicked: false, name: text });
-                            }}
-                            listStyle={{ maxHeight: 200 }}
-                            renderItem={item => (
-                                <ListItem style={{
-                                    backgroundColor: 'gray'
-                                }} onPress={() => this.setState({ name: item, clicked: true })}>
-                                    <Text>{item}</Text>
-                                </ListItem>
-                            )}
-                            onSubmitEditing={(event) => {
-                                this.setState({ clicked: true })
-                                this._repsInput._root.focus();
-                            }}
-                        />
-                    </View>
-                    <Input
-                        ref={(c) => this._repsInput = c}
-                        returnKeyType={"next"}
-                        keyboardType='numeric'
-                        placeholder="Repetitions count"
-                        value={this.state.repetitionsCount}
-                        onChangeText={(text) => this.setState({ repetitionsCount: text })}
-                        onSubmitEditing={(event) => {
-                            this._weightInput._root.focus();
-                        }} />
-                    <Input
-                        ref={(c) => this._weightInput = c}
-                        returnKeyType={"done"}
-                        keyboardType='numeric'
-                        value={this.state.weight}
-                        placeholder="Weight (kg)"
-                        onChangeText={(text) => this.setState({ weight: text })}
-                        onSubmitEditing={(event) => {
-                            this.submit();
-                        }} />
-                    <AutoSuggest
-                        onChangeText={(text) => console.log('input changing!')}
-                        terms={['Apple', 'Banana', 'Orange', 'Strawberry', 'Lemon', 'Cantaloupe', 'Peach', 'Mandarin', 'Date', 'Kiwi']}
-                    />
-                    <TouchableOpacity onPress={this.submit.bind(this)}>
-                        <View style={{
-                            backgroundColor: 'red', alignItems: 'center',
-                            justifyContent: 'center', borderRadius: 15
-                        }}
-                        >
-                            <Text style={{ color: 'white' }}>Submit</Text>
-                        </View>
-                    </TouchableOpacity>
-                    <View style={{ height: 500, backgroundColor: 'transparent' }} />
+                    <Form>
+                        <Item floatingLabel>
+                            <Label>Exercise name</Label>
+                            <Input
+                                value={this.state.name}
+                                returnKeyType={"next"}
+                                autoFocus={true}
+                                onChangeText={text => {
+                                    this.setState({ name: text });
+                                }}
+                                onSubmitEditing={(event) => {
+                                    this._repsInput._root.focus();
+                                }}
+                            />
+                        </Item>
+                        <Item floatingLabel>
+                            <Label>Repetitions count</Label>
+                            <Input
+                                getRef={(c) => this._repsInput = c}
+                                returnKeyType={"next"}
+                                keyboardType='numeric'
+                                value={this.state.repetitionsCount}
+                                onChangeText={(text) => this.setState({ repetitionsCount: text })}
+                                onSubmitEditing={(event) => {
+                                    this._weightInput._root.focus();
+                                }} />
+                        </Item>
+                        <Item floatingLabel>
+                            <Label>Weight (kg)</Label>
+                            <Input
+                                getRef={(c) => this._weightInput = c}
+                                returnKeyType={"done"}
+                                keyboardType='numeric'
+                                value={this.state.weight}
+                                onChangeText={(text) => this.setState({ weight: text })}
+                                onSubmitEditing={(event) => {
+                                    this.submit();
+                                }} />
+                        </Item>
+                        <Button block style={{ marginTop: 20 }} onPress={this.submit.bind(this)}>
+                            <Text>Submit</Text>
+                        </Button>
+                    </Form>
                 </Content>
             </Container>
         );
@@ -112,17 +82,6 @@ const styles = StyleSheet.create({
         backgroundColor: '#fcfdff',
         flex: 1,
         paddingTop: 25
-    },
-    autocompleteContainer: {
-        flex: 1,
-        left: 0,
-        position: 'absolute',
-        right: 0,
-        top: 0,
-        zIndex: 1
-    },
-    descriptionContainer: {
-        marginTop: 10
     },
     input: {
         margin: 15,
