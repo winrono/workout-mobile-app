@@ -33,7 +33,7 @@ export default class Dashboard extends Component<any, any> {
 
     constructor(props) {
         super(props);
-        this.state = { date: '2019-10-26' };
+        this.state = { date: this.getCalendarDate() };
     }
 
     render() {
@@ -185,6 +185,13 @@ export default class Dashboard extends Component<any, any> {
     }
     getDisplayedDate(dateString) {
         let now = new Date(Date.parse(dateString));
+        const year = now.getFullYear();
+        const day = now.getDate();
+        const month = now.getMonth() + 1;
+        return `${year}-${month}-${day}`;
+    }
+    getCalendarDate() {
+        let now = new Date();
         const year = now.getFullYear();
         const day = now.getDate();
         const month = now.getMonth() + 1;
