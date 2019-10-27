@@ -6,13 +6,15 @@ import { Types } from '../ioc/types';
 import { ExerciseService } from '../data-access/exercise-service';
 import { Form, Container, Content, Item, Label, Header, Button, ListItem, Input } from 'native-base';
 
+const initialState =  { name: '', repetitionsCount: '', weight: '' };
+
 export default class AddExercise extends React.Component<any, { name, repetitionsCount, weight }> {
 
     @lazyInject('exerciseService') private readonly _exerciseService: ExerciseService;
 
     constructor(props) {
         super(props);
-        this.state = { name: '', repetitionsCount: '', weight: '' };
+        this.state = initialState;
     }
     render() {
         return (
@@ -72,6 +74,7 @@ export default class AddExercise extends React.Component<any, { name, repetition
             weight: this.state.weight,
             creationTime: new Date()
         }).then(() => {
+            this.setState(initialState);
             this.props.navigation.navigate('Profile');
         });
     }
