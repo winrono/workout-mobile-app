@@ -25,6 +25,10 @@
     ],
     "ios": {
       "supportsTablet": true
+    },
+    "description": "",
+    "android": {
+      "package": "com.home.winrono"
     }
   }
 }

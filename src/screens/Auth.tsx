@@ -1,8 +1,18 @@
 import React, { Component } from 'react';
-import { Text, View, Button, TextInput, StyleSheet, TouchableOpacity, AsyncStorage } from 'react-native';
+import { Text, View, Button, TextInput, StyleSheet, TouchableOpacity } from 'react-native';
 import { TouchableHighlight } from 'react-native-gesture-handler';
+import { Credentials } from '../models/credentials';
+import { lastUsedCredentials } from '../constants';
+import { lazyInject } from '../ioc/container';
+import { Types } from '../ioc/types';
+import { CredentialsManager } from '../data-access/credentials-manager';
+import { UserService } from '../data-access/user-service';
 
-export default class AuthScreen extends Component<any, any> {
+export default class AuthScreen extends Component<any, { username, password }> {
+
+    @lazyInject('credentialsManager') private readonly _credentialsManager: CredentialsManager;
+    @lazyInject('userService') private readonly _userService: UserService;
+
     constructor(props) {
         super(props);
         this.state = { username: '', password: '' };
@@ -15,8 +25,7 @@ export default class AuthScreen extends Component<any, any> {
                     flexDirection: 'column',
                     justifyContent: 'center',
                     alignItems: 'stretch'
-                }}
-            >
+                }}>
                 <TextInput
                     style={styles.input}
                     placeholder="Username"
@@ -26,6 +35,7 @@ export default class AuthScreen extends Component<any, any> {
                 <TextInput
                     style={styles.input}
                     placeholder="Password"
+                    textContentType={"password"}
                     onChangeText={text => this.setState({ password: text })}
                     value={this.state.password}
                 />
@@ -33,30 +43,19 @@ export default class AuthScreen extends Component<any, any> {
                     <Text style={styles.submitButtonText}>Login</Text>
                 </TouchableOpacity>
                 <View style={{ flexDirection: 'row' }}>
-                    <Text onPress={() => {this.props.navigation.navigate('CreateAccount')}} style={styles.accountManagementLink}>Create Account</Text>
-                    <Text onPress={() => {this.props.navigation.navigate('ForgotPassword')}} style={styles.accountManagementLink}>Forgot Password</Text>
+                    <Text onPress={() => { this.props.navigation.navigate('CreateAccount') }} style={styles.accountManagementLink}>Create Account</Text>
+                    <Text onPress={() => { this.props.navigation.navigate('ForgotPassword') }} style={styles.accountManagementLink}>Forgot Password</Text>
                 </View>
             </View>
         );
     }
     async onLogin() {
-        fetch(`http://localhost:55191/user/signin`, {
-            method: 'POST',
-            credentials: 'include',
-            headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                name: this.state.username,
-                password: this.state.password
-            })
-        }).then(async res => {
-            for (const [name, value] of res.headers) {
-                if (name === 'set-cookie') {
-                    await AsyncStorage.setItem('cookie', value);
-                }
-            }
+        const credentials: Credentials = {
+            name: this.state.username,
+            password: this.state.password
+        };
+        this._userService.signIn(credentials).then(async res => {
+            await this._credentialsManager.setCredentials(credentials);
             this.props.navigation.navigate('Profile');
         });
     }

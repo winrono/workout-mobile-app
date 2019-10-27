@@ -1,11 +1,18 @@
 import React from 'react';
 import { View, TextInput, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { AsyncStorage } from 'react-native';
+import { lastUsedCredentials } from '../constants';
+import { Credentials } from '../models/credentials';
+import { lazyInject } from '../ioc/container';
+import { Types } from '../ioc/types';
+import { CredentialsManager } from '../data-access/credentials-manager';
 
-export default class CreateAccount extends React.Component {
+export default class CreateAccount extends React.Component<{ navigation }, { username, password }> {
+
+    @lazyInject('credentialsManager') private readonly _credentialsManager: CredentialsManager;
+
     constructor(props) {
         super(props);
-        this.state = {};
+        this.state = { username: '', password: '' };
     }
     render() {
         return (<View
@@ -38,6 +45,10 @@ export default class CreateAccount extends React.Component {
         </View>);
     }
     onRegister() {
+        let credentials: Credentials = {
+            name: this.state.username,
+            password: this.state.password
+        }
         fetch(`http://localhost:55191/user/register`, {
             method: 'POST',
             headers: {
@@ -50,12 +61,8 @@ export default class CreateAccount extends React.Component {
                 password: this.state.password
             })
         }).then(async res => {
-            for (const [name, value] of res.headers) {
-                if (name === 'set-cookie') {
-                    await AsyncStorage.setItem('cookie', value);
-                    this.props.navigation.navigate('Profile');
-                }
-            }
+            await this._credentialsManager.setCredentials(credentials);
+            this.props.navigation.navigate('Profile');
         });
     }
 }

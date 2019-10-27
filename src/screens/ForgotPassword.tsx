@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, Button } from 'react-native';
 
 export default class ForgotPassword extends React.Component {
     render() {
@@ -8,6 +8,8 @@ export default class ForgotPassword extends React.Component {
             flexDirection: 'column',
             justifyContent: 'center',
             alignItems: 'stretch'
-        }}><Text style={{ textAlign: 'center' }}>This page isn't yet implemented, be patient :)</Text></View>)
+        }}><Text style={{ textAlign: 'center' }}>This page isn't yet implemented, be patient :)</Text>
+            <Button title="Return" onPress={() => { this.props.navigation.navigate('Profile') }}></Button>
+        </View>)
     }
 }

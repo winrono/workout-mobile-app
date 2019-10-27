@@ -1,39 +1,41 @@
 import React, { Component } from 'react';
 import { Text, View } from 'react-native';
-import { AsyncStorage, ActivityIndicator, ScrollView } from 'react-native';
-import axios, { AxiosResponse } from 'axios';
+import { ActivityIndicator, ScrollView } from 'react-native';
 import { NavigationEvents } from 'react-navigation';
 import {
     Container,
     Content,
-    Header,
     Accordion,
     Card,
-    DeckSwiper,
     Button,
-    Icon,
-    Tabs,
-    Tab,
-    ScrollableTab,
     List,
     ListItem,
     Left,
     Body,
-    Right
+    Right,
+    Icon
 } from 'native-base';
 import DatePicker from 'react-native-datepicker';
 import { Exercise } from '../models/exercise';
 import { DailyWorkout } from '../models/daily-workout';
 import { Set } from '../models/set';
 import { Ionicons } from '@expo/vector-icons';
-import { EvilIcons } from 'react-native-vector-icons';
+import { AntDesign } from 'react-native-vector-icons';
+import { Alert } from 'react-native';
+import { ExerciseService } from '../data-access/exercise-service';
+import { TouchableOpacity } from 'react-native-gesture-handler';
+import { Types } from '../ioc/types';
+import { lazyInject } from '../ioc/container';
 
 export default class Dashboard extends Component<any, any> {
-    _deckSwiper: DeckSwiper;
+
+    @lazyInject('exerciseService') private readonly _exerciseService: ExerciseService;
+
     constructor(props) {
         super(props);
-        this.state = { date: '2019-10-24' };
+        this.state = { date: '2019-10-26' };
     }
+
     render() {
         return (
             <Container style={{ marginTop: 50 }}>
@@ -66,52 +68,51 @@ export default class Dashboard extends Component<any, any> {
                         this.setState({ date: date });
                     }}
                 />
-                {this.state.exercises ? this.renderContent() : <ActivityIndicator size="large" />}
+                {this.state.exercisesLoaded ? this.renderContent() : <ActivityIndicator size="large" />}
             </Container>
         );
     }
     async getExercises() {
-        axios
-            .get('http://localhost:55191/exercise/exercises', {
-                headers: {
-                    Accept: 'application/json',
-                    'Content-Type': 'application/json'
-                },
-                withCredentials: true
-            })
-            .then(async (res: AxiosResponse<Exercise[]>) => {
-                let nonGroupedExercises = res.data.map(ex => {
-                    return {
-                        title: this.getDisplayedDate(ex.creationTime),
-                        entity: ex
-                    };
-                });
-                let dailyWorkouts: DailyWorkout[] = nonGroupedExercises.reduce(
-                    (prev, current) => {
-                        var found = prev.find(obj => {
-                            return obj.title === current.title;
-                        });
-                        if (!found) {
-                            prev.push({ title: current.title, exercises: [current.entity] });
-                        } else {
-                            found.exercises.push(current.entity);
-                        }
-                        return prev;
-                    },
-                    [] as DailyWorkout[]
-                );
-                this.setState({
-                    dailyWorkouts
-                });
-                this.setState({ exercises: res.data });
+        this._exerciseService.getExercises().then((data) => {
+            this.setState({ exercisesLoaded: true });
+            if (!data) {
+                return;
+            }
+            let nonGroupedExercises = data.map(ex => {
+                return {
+                    title: this.getDisplayedDate(ex.creationTime),
+                    entity: ex
+                };
             });
+            let dailyWorkouts: DailyWorkout[] = nonGroupedExercises.reduce(
+                (prev, current) => {
+                    var found = prev.find(obj => {
+                        return obj.title === current.title;
+                    });
+                    if (!found) {
+                        prev.push({ title: current.title, exercises: [current.entity] });
+                    } else {
+                        found.exercises.push(current.entity);
+                    }
+                    return prev;
+                },
+                [] as DailyWorkout[]
+            );
+            this.setState({
+                dailyWorkouts
+            });
+            this.setState({ exercises: data });
+        });
     }
     renderContent() {
+        if (!this.state.dailyWorkouts) {
+            return this._renderNoStatistics();
+        }
         let item: DailyWorkout = this.state.dailyWorkouts.find(dailyWorkout => {
             return dailyWorkout.title == this.state.date;
         });
         if (!item) {
-            return <Text>No workout statistics</Text>;
+            return this._renderNoStatistics();
         }
         let sets: Set[] = item.exercises.reduce(
             (prev, current) => {
@@ -133,6 +134,14 @@ export default class Dashboard extends Component<any, any> {
             </ScrollView>
         );
     }
+    _renderNoStatistics() {
+        return (<View style={{
+            flex: 1,
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'stretch'
+        }}><Text style={{ textAlign: 'center', textAlignVertical: 'center' }}>No workout statistics</Text></View>);
+    }
     _renderAccordionItem(set: Set) {
         return (
             <List>
@@ -140,33 +149,36 @@ export default class Dashboard extends Component<any, any> {
                     <ListItem icon>
                         <Body>
                             <Text>
-                                Weight: {exercise.weight}, Repetitions count is {exercise.repetitionsCount}
+                                {exercise.repetitionsCount} reps with {exercise.weight} kg
                             </Text>
                         </Body>
                         <Right>
-                            <Icon active name="paper" />
-                            <Button
-                                onPress={() => {
-                                    this.deleteExercise(exercise);
-                                }}
-                            >
-                                <EvilIcons size={30} active name="minus" />
-                            </Button>
+                            <TouchableOpacity>
+                                <AntDesign style={{ marginRight: 10 }} size={30} active name="edit" />
+                            </TouchableOpacity>
+                            <TouchableOpacity>
+                                <AntDesign onPress={() => {
+                                    this.deleteExerciseSafely(exercise);
+                                }} size={30} active name="delete" />
+                            </TouchableOpacity>
                         </Right>
                     </ListItem>
                 ))}
             </List>
         );
     }
+    deleteExerciseSafely(exercise: Exercise) {
+        Alert.alert(
+            'Are you sure you want to delete record?',
+            '',
+            [
+                { text: 'Cancel', style: 'cancel', },
+                { text: 'Delete', onPress: () => this.deleteExercise(exercise) },
+            ]
+        );
+    }
     deleteExercise(exercise: Exercise) {
-        axios
-            .delete(`http://localhost:55191/exercise/exercises/${exercise.exerciseId}`, {
-                headers: {
-                    Accept: 'application/json',
-                    'Content-Type': 'application/json'
-                },
-                withCredentials: true
-            })
+        this._exerciseService.deleteExercisebyId(exercise.exerciseId)
             .then(() => {
                 this.getExercises();
             });

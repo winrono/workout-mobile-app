@@ -1,8 +1,9 @@
+import 'reflect-metadata';
 import { createAppContainer, createSwitchNavigator } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
 import { createDrawerNavigator } from 'react-navigation-drawer';
 import { createBottomTabNavigator } from 'react-navigation-tabs';
-import UserManagementScreen from './src/screens/UserManagement';
+import AuthScreen from './src/screens/Auth';
 import DashboardScreen from './src/screens/Dashboard';
 import InitialScreen from './src/screens/Initial';
 import CreateAccountScreen from './src/screens/CreateAccount';
@@ -13,6 +14,14 @@ import { Ionicons } from '@expo/vector-icons';
 import { Button, AsyncStorage } from 'react-native';
 import * as React from 'react';
 import * as Font from 'expo-font';
+import { lastUsedCredentials } from './src/constants';
+import { CredentialsManager } from './src/data-access/credentials-manager';
+import { ContainerConfigurator } from './src/ioc/container-configurator';
+import { ConfigurationProvider } from './src/data-access/configuration-provider';
+import { container, lazyInject } from './src/ioc/container';
+import { UserService } from './src/data-access/user-service';
+
+new ContainerConfigurator(new ConfigurationProvider()).configure(container);
 
 const mainAppNavigator = createBottomTabNavigator({
     Profile: {
@@ -34,11 +43,7 @@ const mainAppNavigator = createBottomTabNavigator({
         screen: DummyScreen,
         navigationOptions: {
             tabBarLabel: 'Log out',
-            tabBarIcon: ({ tintColor }) => <Ionicons name="md-log-out" size={30} />,
-            tabBarOnPress: context => {
-                AsyncStorage.removeItem('cookie');
-                context.navigation.navigate('UserManagement');
-            }
+            tabBarIcon: ({ tintColor }) => <Ionicons name="md-log-out" size={30} />
         }
     }
 });
@@ -46,7 +51,7 @@ const mainAppNavigator = createBottomTabNavigator({
 const switchNavigator = createSwitchNavigator({
     Initial: InitialScreen,
     AuthorizedApp: mainAppNavigator as any,
-    UserManagement: UserManagementScreen,
+    Auth: AuthScreen,
     CreateAccount: CreateAccountScreen,
     ForgotPassword: ForgotPasswordScreen
 });
@@ -54,6 +59,7 @@ const switchNavigator = createSwitchNavigator({
 const AppContainer = createAppContainer(switchNavigator);
 
 class App extends React.Component<any, any> {
+
     constructor(props) {
         super(props);
         this.state = {

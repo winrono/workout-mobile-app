@@ -1,19 +1,30 @@
 import React from 'react';
-import { View, AsyncStorage, ActivityIndicator } from 'react-native';
-function App(props) {
-    navigate(props);
-    return (
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-            <ActivityIndicator size="large" />
-        </View>
-    );
-}
-async function navigate(props) {
-    const cookie = await AsyncStorage.getItem('cookie');
-    if (cookie) {
-        props.navigation.navigate('AuthorizedApp');
-    } else {
-        props.navigation.navigate('UserManagement');
+import { View, ActivityIndicator } from 'react-native';
+import { CredentialsManager } from '../data-access/credentials-manager';
+import { lazyInject } from '../ioc/container';
+import { Types } from '../ioc/types';
+import { injectable } from 'inversify';
+
+@injectable()
+export class App extends React.Component {
+
+    @lazyInject('credentialsManager') private readonly _credentialsManager: CredentialsManager;
+
+    render() {
+        this.navigate();
+        return (
+            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                <ActivityIndicator size="large" />
+            </View>
+        );
+    }
+    async navigate() {
+        const credentials = await this._credentialsManager.getCredentials();
+        if (credentials) {
+            this.props.navigation.navigate('AuthorizedApp');
+        } else {
+            this.props.navigation.navigate('Auth');
+        }
     }
 }
 export default App;
