@@ -21,9 +21,10 @@ import { ConfigurationProvider } from './src/data-access/configuration-provider'
 import { container, lazyInject } from './src/ioc/container';
 import { UserService } from './src/data-access/user-service';
 
-new ContainerConfigurator(new ConfigurationProvider()).configure(container);
+let configurationProvider = new ConfigurationProvider();
+new ContainerConfigurator(configurationProvider).configure(container);
 
-const mainAppNavigator = createBottomTabNavigator({
+let bottomTabNavigatorRoutes = {
     Profile: {
         screen: DashboardScreen,
         navigationOptions: {
@@ -37,8 +38,11 @@ const mainAppNavigator = createBottomTabNavigator({
             tabBarLabel: 'Add exercise',
             tabBarIcon: ({ tintColor }) => <Ionicons name="md-add" size={30} />
         }
-    },
-    SignOut: {
+    }
+};
+
+if (!configurationProvider.isInLocalMode()) {
+    bottomTabNavigatorRoutes['SignOut'] = {
         // dirty hack to navigate to parent navigator's route: simply navigating to 'Login' route instead of redirecting to relevant component
         screen: DummyScreen,
         navigationOptions: {
@@ -46,7 +50,9 @@ const mainAppNavigator = createBottomTabNavigator({
             tabBarIcon: ({ tintColor }) => <Ionicons name="md-log-out" size={30} />
         }
     }
-});
+}
+
+const mainAppNavigator = createBottomTabNavigator(bottomTabNavigatorRoutes);
 
 const switchNavigator = createSwitchNavigator({
     Initial: InitialScreen,
