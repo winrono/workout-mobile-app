@@ -29,6 +29,7 @@ import { lazyInject } from '../ioc/container';
 
 export default class Dashboard extends Component<any, any> {
 
+    _accordion: Accordion;
     @lazyInject('exerciseService') private readonly _exerciseService: ExerciseService;
 
     constructor(props) {
@@ -65,6 +66,9 @@ export default class Dashboard extends Component<any, any> {
                         }
                     }}
                     onDateChange={date => {
+                        if (date != this.state.date){
+                            this._accordion.setSelected(-1);
+                        }
                         this.setState({ date: date });
                     }}
                 />
@@ -130,7 +134,7 @@ export default class Dashboard extends Component<any, any> {
         );
         return (
             <ScrollView>
-                <Accordion dataArray={sets} renderContent={this._renderAccordionItem.bind(this)}></Accordion>
+                <Accordion ref={c => (this._accordion = c)} icon="add" expandedIcon="remove" iconStyle={{ position: 'absolute', right: 10 }} expandedIconStyle={{ position: 'absolute', right: 10 }} dataArray={sets} renderContent={this._renderAccordionItem.bind(this)}></Accordion>
             </ScrollView>
         );
     }
