@@ -7,7 +7,7 @@ import { SetEditor } from '../components/set-editor';
 
 const initialState = { name: '', repetitionsCount: '', weight: '', count: 0 };
 
-export default class AddSet extends React.Component<any, { name, repetitionsCount, weight, count }> {
+export default class AddSet extends React.Component<any, any> {
 
     @lazyInject('exerciseService') private readonly _exerciseService: ExerciseService;
     _repsInput: any;
@@ -15,7 +15,7 @@ export default class AddSet extends React.Component<any, { name, repetitionsCoun
 
     constructor(props) {
         super(props);
-        this.state = initialState;
+        this.state = { count: 0 }
     }
     render() {
         return (
@@ -23,9 +23,14 @@ export default class AddSet extends React.Component<any, { name, repetitionsCoun
                 <Content>
                     <Form>
                         {[...Array(this.state.count)].map((x, i) =>
-                            <SetEditor></SetEditor>
+                            <SetEditor onChange={(set) => {
+                                this.setState(set)
+                            }}></SetEditor>
                         )}
                         <Button block style={{ marginTop: 20 }} onPress={this.test.bind(this)}>
+                            <Text>Add set</Text>
+                        </Button>
+                        <Button block style={{ marginTop: 20 }} onPress={this.submit.bind(this)}>
                             <Text>Add set</Text>
                         </Button>
                     </Form>

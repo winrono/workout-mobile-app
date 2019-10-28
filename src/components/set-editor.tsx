@@ -2,13 +2,10 @@ import React from 'react';
 import { View } from 'react-native';
 import { Item, Input, Label } from 'native-base';
 
-export class SetEditor extends React.Component<any, { name, repetitionsCount, weight }> {
+export class SetEditor extends React.Component<{ name?, repetitionsCount?, weight?, onChange: ({ name, repetitionsCount, weight }) => void }, { name, repetitionsCount, weight }> {
     _weightInput: any;
     _repsInput: any;
-    constructor(props) {
-        super(props);
-        this.state = { name: '', repetitionsCount: '', weight: '' }
-    }
+    state = { name: this.props.name, repetitionsCount: this.props.repetitionsCount, weight: this.props.weight };
     render() {
         return (<View><Item floatingLabel>
             <Label>Name</Label>
@@ -17,7 +14,7 @@ export class SetEditor extends React.Component<any, { name, repetitionsCount, we
                 returnKeyType={'next'}
                 autoFocus={true}
                 onChangeText={text => {
-                    this.setState({ name: text });
+                    this.setState({ name: text }, () => this.props.onChange(this.state));
                 }}
                 onSubmitEditing={() => {
                     this._repsInput._root.focus();
@@ -31,7 +28,9 @@ export class SetEditor extends React.Component<any, { name, repetitionsCount, we
                     returnKeyType={'next'}
                     keyboardType='numeric'
                     value={this.state.repetitionsCount}
-                    onChangeText={(text) => this.setState({ repetitionsCount: text })}
+                    onChangeText={(text) => {
+                        this.setState({ repetitionsCount: text }, () => this.props.onChange(this.state));
+                    }}
                     onSubmitEditing={() => {
                         this._weightInput._root.focus();
                     }} />
@@ -43,7 +42,9 @@ export class SetEditor extends React.Component<any, { name, repetitionsCount, we
                     returnKeyType={'done'}
                     keyboardType='numeric'
                     value={this.state.weight}
-                    onChangeText={(text) => this.setState({ weight: text })} />
+                    onChangeText={(text) => {
+                        this.setState({ weight: text }, () => this.props.onChange(this.state));
+                    }} />
             </Item>
         </View>);
     }

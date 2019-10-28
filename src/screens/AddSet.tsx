@@ -6,7 +6,7 @@ import { Form, Container, Content, Item, Label, Button, Input } from 'native-bas
 
 const initialState = { name: '', repetitionsCount: '', weight: '' };
 
-export default class AddSet extends React.Component<any, { name, repetitionsCount, weight }> {
+export default class AddSet extends React.Component<{name, repetitionsCount, weight}, any> {
 
     @lazyInject('exerciseService') private readonly _exerciseService: ExerciseService;
     _repsInput: any;
