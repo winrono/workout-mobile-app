@@ -1,9 +1,8 @@
-import { AxiosResponse } from "axios";
-import { Exercise } from "../models/exercise";
-import { AddExercise } from "../models/add-exercise";
+import { AddSet } from '../models/add-set';
+import { Set } from '../models/set';
 
 export interface ExerciseService {
-    getExercises(): Promise<Exercise[]>;
-    postExercise(exercise: AddExercise): Promise<any>;
-    deleteExercisebyId(id: string): Promise<void>;
+    getSets(): Promise<Set[]>;
+    postSet(exercise: AddSet): Promise<any>;
+    deleteSetById(id: string): Promise<void>;
 }

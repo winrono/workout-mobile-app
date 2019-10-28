@@ -1,7 +1,5 @@
-import { Credentials } from "../../models/credentials";
-import { AsyncStorage } from 'react-native';
-import { lastUsedCredentials } from "../../constants";
-import { injectable } from "inversify";
+import { Credentials } from '../../models/credentials';
+import { injectable } from 'inversify';
 
 @injectable()
 export class LocalCredentialsManager {

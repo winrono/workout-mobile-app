@@ -1,16 +1,16 @@
 import React from 'react';
-import { View, StyleSheet, TouchableOpacity, Text } from 'react-native';
-import axios from 'axios';
+import { StyleSheet, Text, TextInput } from 'react-native';
 import { lazyInject } from '../ioc/container';
-import { Types } from '../ioc/types';
 import { ExerciseService } from '../data-access/exercise-service';
-import { Form, Container, Content, Item, Label, Header, Button, ListItem, Input } from 'native-base';
+import { Form, Container, Content, Item, Label, Button, Input } from 'native-base';
 
-const initialState =  { name: '', repetitionsCount: '', weight: '' };
+const initialState = { name: '', repetitionsCount: '', weight: '' };
 
 export default class AddExercise extends React.Component<any, { name, repetitionsCount, weight }> {
 
     @lazyInject('exerciseService') private readonly _exerciseService: ExerciseService;
+    _repsInput: any;
+    _weightInput: any;
 
     constructor(props) {
         super(props);
@@ -25,12 +25,12 @@ export default class AddExercise extends React.Component<any, { name, repetition
                             <Label>Exercise name</Label>
                             <Input
                                 value={this.state.name}
-                                returnKeyType={"next"}
+                                returnKeyType={'next'}
                                 autoFocus={true}
                                 onChangeText={text => {
                                     this.setState({ name: text });
                                 }}
-                                onSubmitEditing={(event) => {
+                                onSubmitEditing={() => {
                                     this._repsInput._root.focus();
                                 }}
                             />
@@ -39,11 +39,11 @@ export default class AddExercise extends React.Component<any, { name, repetition
                             <Label>Repetitions count</Label>
                             <Input
                                 getRef={(c) => this._repsInput = c}
-                                returnKeyType={"next"}
+                                returnKeyType={'next'}
                                 keyboardType='numeric'
                                 value={this.state.repetitionsCount}
                                 onChangeText={(text) => this.setState({ repetitionsCount: text })}
-                                onSubmitEditing={(event) => {
+                                onSubmitEditing={() => {
                                     this._weightInput._root.focus();
                                 }} />
                         </Item>
@@ -51,11 +51,11 @@ export default class AddExercise extends React.Component<any, { name, repetition
                             <Label>Weight (kg)</Label>
                             <Input
                                 getRef={(c) => this._weightInput = c}
-                                returnKeyType={"done"}
+                                returnKeyType={'done'}
                                 keyboardType='numeric'
                                 value={this.state.weight}
                                 onChangeText={(text) => this.setState({ weight: text })}
-                                onSubmitEditing={(event) => {
+                                onSubmitEditing={() => {
                                     this.submit();
                                 }} />
                         </Item>
@@ -68,7 +68,7 @@ export default class AddExercise extends React.Component<any, { name, repetition
         );
     }
     async submit() {
-        this._exerciseService.postExercise({
+        this._exerciseService.postSet({
             name: this.state.name,
             repetitionsCount: this.state.repetitionsCount,
             weight: this.state.weight,

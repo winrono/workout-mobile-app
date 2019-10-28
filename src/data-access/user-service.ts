@@ -1,4 +1,4 @@
-import { Credentials } from "../models/credentials";
+import { Credentials } from '../models/credentials';
 
 export interface UserService {
     signIn(credentials: Credentials): Promise<any>;

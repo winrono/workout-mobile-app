@@ -1,6 +1,6 @@
-import { Exercise } from "./exercise";
+import { Set } from './set';
 
 export class DailyWorkout {
     title: string;
-    exercises: Exercise[];
+    sets: Set[];
 }

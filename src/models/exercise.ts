@@ -1,7 +1,6 @@
+import { Set } from './set';
+
 export class Exercise {
-    name: string;
-    repetitionsCount: number;
-    weight: number;
-    creationTime?: Date;
-    exerciseId?: string;
+    title: string;
+    sets: Set[];
 }

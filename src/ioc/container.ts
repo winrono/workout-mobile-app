@@ -1,5 +1,5 @@
 import { Container, interfaces } from 'inversify';
-import getDecorators from "inversify-inject-decorators";
+import getDecorators from 'inversify-inject-decorators';
 
 let container = new Container();
 

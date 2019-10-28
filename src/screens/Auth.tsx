@@ -1,10 +1,7 @@
 import React, { Component } from 'react';
-import { Text, View, Button, TextInput, StyleSheet, TouchableOpacity } from 'react-native';
-import { TouchableHighlight } from 'react-native-gesture-handler';
+import { Text, View, TextInput, StyleSheet, TouchableOpacity } from 'react-native';
 import { Credentials } from '../models/credentials';
-import { lastUsedCredentials } from '../constants';
 import { lazyInject } from '../ioc/container';
-import { Types } from '../ioc/types';
 import { CredentialsManager } from '../data-access/credentials-manager';
 import { UserService } from '../data-access/user-service';
 
@@ -28,14 +25,14 @@ export default class AuthScreen extends Component<any, { username, password }> {
                 }}>
                 <TextInput
                     style={styles.input}
-                    placeholder="Username"
+                    placeholder='Username'
                     onChangeText={text => this.setState({ username: text })}
                     value={this.state.username}
                 />
                 <TextInput
                     style={styles.input}
-                    placeholder="Password"
-                    textContentType={"password"}
+                    placeholder='Password'
+                    textContentType={'password'}
                     onChangeText={text => this.setState({ password: text })}
                     value={this.state.password}
                 />
@@ -54,7 +51,7 @@ export default class AuthScreen extends Component<any, { username, password }> {
             name: this.state.username,
             password: this.state.password
         };
-        this._userService.signIn(credentials).then(async res => {
+        this._userService.signIn(credentials).then(async () => {
             await this._credentialsManager.setCredentials(credentials);
             this.props.navigation.navigate('Profile');
         });

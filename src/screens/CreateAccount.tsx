@@ -1,9 +1,7 @@
 import React from 'react';
 import { View, TextInput, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { lastUsedCredentials } from '../constants';
 import { Credentials } from '../models/credentials';
 import { lazyInject } from '../ioc/container';
-import { Types } from '../ioc/types';
 import { CredentialsManager } from '../data-access/credentials-manager';
 
 export default class CreateAccount extends React.Component<{ navigation }, { username, password }> {
@@ -25,13 +23,13 @@ export default class CreateAccount extends React.Component<{ navigation }, { use
         >
             <TextInput
                 style={styles.input}
-                placeholder="Username"
+                placeholder='Username'
                 onChangeText={text => this.setState({ username: text })}
                 value={this.state.username}
             />
             <TextInput
                 style={styles.input}
-                placeholder="Password"
+                placeholder='Password'
                 onChangeText={text => this.setState({ password: text })}
                 value={this.state.password}
             />
@@ -60,7 +58,7 @@ export default class CreateAccount extends React.Component<{ navigation }, { use
                 name: this.state.username,
                 password: this.state.password
             })
-        }).then(async res => {
+        }).then(async () => {
             await this._credentialsManager.setCredentials(credentials);
             this.props.navigation.navigate('Profile');
         });

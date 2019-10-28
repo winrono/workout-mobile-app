@@ -1,12 +1,13 @@
 import axios, { AxiosResponse } from 'axios';
 import { Exercise } from '../../models/exercise';
-import { AddExercise } from '../../models/add-exercise';
+import { AddSet } from '../../models/add-set';
 import { ExerciseService } from '../exercise-service';
 import { injectable } from 'inversify';
+import { Set } from '../../models/set';
 
 @injectable()
 export class RemoteExerciseService implements ExerciseService {
-    getExercises(): Promise<Exercise[]> {
+    getSets(): Promise<Set[]> {
         return axios
             .get('http://localhost:55191/exercise/exercises', {
                 headers: {
@@ -14,24 +15,24 @@ export class RemoteExerciseService implements ExerciseService {
                     'Content-Type': 'application/json'
                 },
                 withCredentials: true
-            }).then((res: AxiosResponse<Exercise[]>) => {
+            }).then((res: AxiosResponse<Set[]>) => {
                 return res.data;
             });
     }
-    postExercise(exercise: AddExercise): Promise<AxiosResponse> {
+    postSet(exercise: AddSet): Promise<AxiosResponse> {
         return axios.post('http://localhost:55191/exercise/exercises', {
             name: exercise.name,
             repetitionsCount: exercise.repetitionsCount,
             weight: exercise.weight,
             creationTime: exercise.creationTime
         }, {
-                headers: {
-                    Accept: 'application/json',
-                    'Content-Type': 'application/json'
-                }
-            });
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json'
+            }
+        });
     }
-    deleteExercisebyId(id: string): Promise<void> {
+    deleteSetById(id: string): Promise<void> {
         return axios
             .delete(`http://localhost:55191/exercise/exercises/${id}`, {
                 headers: {

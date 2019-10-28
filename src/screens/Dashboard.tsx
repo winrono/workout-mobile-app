@@ -4,27 +4,20 @@ import { ActivityIndicator, ScrollView } from 'react-native';
 import { NavigationEvents } from 'react-navigation';
 import {
     Container,
-    Content,
     Accordion,
-    Card,
-    Button,
     List,
     ListItem,
-    Left,
     Body,
-    Right,
-    Icon
+    Right
 } from 'native-base';
 import DatePicker from 'react-native-datepicker';
 import { Exercise } from '../models/exercise';
 import { DailyWorkout } from '../models/daily-workout';
 import { Set } from '../models/set';
-import { Ionicons } from '@expo/vector-icons';
 import { AntDesign } from 'react-native-vector-icons';
 import { Alert } from 'react-native';
 import { ExerciseService } from '../data-access/exercise-service';
 import { TouchableOpacity } from 'react-native-gesture-handler';
-import { Types } from '../ioc/types';
 import { lazyInject } from '../ioc/container';
 
 export default class Dashboard extends Component<any, any> {
@@ -48,12 +41,12 @@ export default class Dashboard extends Component<any, any> {
                 <DatePicker
                     style={{ width: 200, alignSelf: 'center', marginBottom: 20 }}
                     date={this.state.date}
-                    mode="date"
-                    androidMode="default"
-                    placeholder="select date"
-                    format="YYYY-MM-DD"
-                    confirmBtnText="Confirm"
-                    cancelBtnText="Cancel"
+                    mode='date'
+                    androidMode='default'
+                    placeholder='select date'
+                    format='YYYY-MM-DD'
+                    confirmBtnText='Confirm'
+                    cancelBtnText='Cancel'
                     customStyles={{
                         dateIcon: {
                             position: 'absolute',
@@ -66,18 +59,18 @@ export default class Dashboard extends Component<any, any> {
                         }
                     }}
                     onDateChange={date => {
-                        if (date != this.state.date){
+                        if (this._accordion && date != this.state.date) {
                             this._accordion.setSelected(-1);
                         }
                         this.setState({ date: date });
                     }}
                 />
-                {this.state.exercisesLoaded ? this.renderContent() : <ActivityIndicator size="large" />}
+                {this.state.exercisesLoaded ? this.renderContent() : <ActivityIndicator size='large' />}
             </Container>
         );
     }
     async getExercises() {
-        this._exerciseService.getExercises().then((data) => {
+        this._exerciseService.getSets().then((data) => {
             this.setState({ exercisesLoaded: true });
             if (!data) {
                 return;
@@ -94,9 +87,9 @@ export default class Dashboard extends Component<any, any> {
                         return obj.title === current.title;
                     });
                     if (!found) {
-                        prev.push({ title: current.title, exercises: [current.entity] });
+                        prev.push({ title: current.title, sets: [current.entity] });
                     } else {
-                        found.exercises.push(current.entity);
+                        found.sets.push(current.entity);
                     }
                     return prev;
                 },
@@ -118,23 +111,23 @@ export default class Dashboard extends Component<any, any> {
         if (!item) {
             return this._renderNoStatistics();
         }
-        let sets: Set[] = item.exercises.reduce(
+        let exercises: Exercise[] = item.sets.reduce(
             (prev, current) => {
-                let found = prev.find((set: Set) => {
-                    return set.title == current.name;
+                let found = prev.find((exercise: Exercise) => {
+                    return exercise.title == current.name;
                 });
                 if (!found) {
-                    prev.push({ title: current.name, exercises: [current] });
+                    prev.push({ title: current.name, sets: [current] });
                 } else {
-                    found.exercises.push(current);
+                    found.sets.push(current);
                 }
                 return prev;
             },
-            [] as Set[]
+            [] as Exercise[]
         );
         return (
             <ScrollView>
-                <Accordion ref={c => (this._accordion = c)} icon="add" expandedIcon="remove" iconStyle={{ position: 'absolute', right: 10 }} expandedIconStyle={{ position: 'absolute', right: 10 }} dataArray={sets} renderContent={this._renderAccordionItem.bind(this)}></Accordion>
+                <Accordion ref={c => (this._accordion = c)} icon='add' expandedIcon='remove' iconStyle={{ position: 'absolute', right: 10 }} expandedIconStyle={{ position: 'absolute', right: 10 }} dataArray={exercises} renderContent={this._renderAccordionItem.bind(this)}></Accordion>
             </ScrollView>
         );
     }
@@ -146,24 +139,24 @@ export default class Dashboard extends Component<any, any> {
             alignItems: 'stretch'
         }}><Text style={{ textAlign: 'center', textAlignVertical: 'center' }}>No workout statistics</Text></View>);
     }
-    _renderAccordionItem(set: Set) {
+    _renderAccordionItem(exercise: Exercise) {
         return (
             <List>
-                {set.exercises.map(exercise => (
+                {exercise.sets.map(set => (
                     <ListItem icon>
                         <Body>
                             <Text>
-                                {exercise.repetitionsCount} reps with {exercise.weight} kg
+                                {set.repetitionsCount} reps with {set.weight} kg
                             </Text>
                         </Body>
                         <Right>
                             <TouchableOpacity>
-                                <AntDesign style={{ marginRight: 10 }} size={30} active name="edit" />
+                                <AntDesign style={{ marginRight: 10 }} size={30} active name='edit' />
                             </TouchableOpacity>
                             <TouchableOpacity>
                                 <AntDesign onPress={() => {
-                                    this.deleteExerciseSafely(exercise);
-                                }} size={30} active name="delete" />
+                                    this.deleteSetSafely(set);
+                                }} size={30} active name='delete' />
                             </TouchableOpacity>
                         </Right>
                     </ListItem>
@@ -171,18 +164,18 @@ export default class Dashboard extends Component<any, any> {
             </List>
         );
     }
-    deleteExerciseSafely(exercise: Exercise) {
+    deleteSetSafely(set: Set) {
         Alert.alert(
-            'Are you sure you want to delete record?',
+            'Are you sure you want to delete set?',
             '',
             [
                 { text: 'Cancel', style: 'cancel', },
-                { text: 'Delete', onPress: () => this.deleteExercise(exercise) },
+                { text: 'Delete', onPress: () => this.deleteSet(set) },
             ]
         );
     }
-    deleteExercise(exercise: Exercise) {
-        this._exerciseService.deleteExercisebyId(exercise.exerciseId)
+    deleteSet(set: Set) {
+        this._exerciseService.deleteSetById(set.exerciseId)
             .then(() => {
                 this.getExercises();
             });

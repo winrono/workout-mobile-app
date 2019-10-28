@@ -1,33 +1,34 @@
 import axios, { AxiosResponse } from 'axios';
 import { Exercise } from '../../models/exercise';
-import { AddExercise } from '../../models/add-exercise';
+import { AddSet } from '../../models/add-set';
 import { ExerciseService } from '../exercise-service';
 import { injectable } from 'inversify';
 import { AsyncStorage } from 'react-native';
+import { Set } from '../../models/set';
 
 @injectable()
 export class LocalExerciseService implements ExerciseService {
     private _storageKey: string = 'localExercises';
-    private _exercises: Exercise[] = [];
+    private _sets: Set[] = [];
 
-    getExercises(): Promise<Exercise[]> {
+    getSets(): Promise<Set[]> {
         return AsyncStorage.getItem(this._storageKey).then((data) => {
-            let exercises = JSON.parse(data);
-            if (exercises){
-                this._exercises = exercises;
+            let sets = JSON.parse(data);
+            if (sets) {
+                this._sets = sets;
             }
-            return this._exercises;
+            return this._sets;
         });
     }
-    postExercise(exercise: AddExercise): Promise<any> {
-        this._exercises.push({ ...exercise, exerciseId: new Date().getTime().toString() });
-        return AsyncStorage.setItem(this._storageKey, JSON.stringify(this._exercises));
+    postSet(exercise: AddSet): Promise<any> {
+        this._sets.push({ ...exercise, exerciseId: new Date().getTime().toString() });
+        return AsyncStorage.setItem(this._storageKey, JSON.stringify(this._sets));
     }
-    async deleteExercisebyId(id: string): Promise<void> {
+    async deleteSetById(id: string): Promise<void> {
         debugger;
-        this._exercises = this._exercises.filter((exercise) => {
+        this._sets = this._sets.filter((exercise) => {
             return exercise.exerciseId !== id;
         });
-        await AsyncStorage.setItem(this._storageKey, JSON.stringify(this._exercises));
+        await AsyncStorage.setItem(this._storageKey, JSON.stringify(this._sets));
     }
 }
