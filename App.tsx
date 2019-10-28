@@ -7,6 +7,7 @@ import InitialScreen from './src/screens/Initial';
 import CreateAccountScreen from './src/screens/CreateAccount';
 import ForgotPasswordScreen from './src/screens/ForgotPassword';
 import AddSetScreen from './src/screens/AddSet';
+import AddSuperSetScreen from './src/screens/AddSuperSet';
 import DummyScreen from './src/screens/Dummy';
 import { Ionicons } from '@expo/vector-icons';
 import * as React from 'react';
@@ -30,6 +31,13 @@ let bottomTabNavigatorRoutes = {
         screen: AddSetScreen,
         navigationOptions: {
             tabBarLabel: 'Add set',
+            tabBarIcon: () => <Ionicons name='md-add' size={30} />
+        }
+    },
+    AddSuperSet: {
+        screen: AddSuperSetScreen,
+        navigationOptions: {
+            tabBarLabel: 'Add superset',
             tabBarIcon: () => <Ionicons name='md-add' size={30} />
         }
     }
