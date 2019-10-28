@@ -6,7 +6,7 @@ import { Form, Container, Content, Item, Label, Button, Input } from 'native-bas
 
 const initialState = { name: '', repetitionsCount: '', weight: '' };
 
-export default class AddExercise extends React.Component<any, { name, repetitionsCount, weight }> {
+export default class AddSet extends React.Component<any, { name, repetitionsCount, weight }> {
 
     @lazyInject('exerciseService') private readonly _exerciseService: ExerciseService;
     _repsInput: any;
@@ -22,7 +22,7 @@ export default class AddExercise extends React.Component<any, { name, repetition
                 <Content>
                     <Form>
                         <Item floatingLabel>
-                            <Label>Exercise name</Label>
+                            <Label>Name</Label>
                             <Input
                                 value={this.state.name}
                                 returnKeyType={'next'}
@@ -36,7 +36,7 @@ export default class AddExercise extends React.Component<any, { name, repetition
                             />
                         </Item>
                         <Item floatingLabel>
-                            <Label>Repetitions count</Label>
+                            <Label>Reps</Label>
                             <Input
                                 getRef={(c) => this._repsInput = c}
                                 returnKeyType={'next'}
@@ -48,7 +48,7 @@ export default class AddExercise extends React.Component<any, { name, repetition
                                 }} />
                         </Item>
                         <Item floatingLabel>
-                            <Label>Weight (kg)</Label>
+                            <Label>Weight(kg)</Label>
                             <Input
                                 getRef={(c) => this._weightInput = c}
                                 returnKeyType={'done'}
