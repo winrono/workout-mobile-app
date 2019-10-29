@@ -13,6 +13,8 @@ import { ExerciseService } from '../data-access/exercise-service';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { lazyInject } from '../ioc/container';
 import { SuperSet } from '../models/super-set';
+import { SupersetView } from '../components/superset-view';
+import { SetView } from '../components/set-view';
 
 export default class Dashboard extends Component<any, any> {
     _accordion: Accordion;
@@ -34,12 +36,12 @@ export default class Dashboard extends Component<any, any> {
                 <DatePicker
                     style={{ width: 200, alignSelf: 'center', marginBottom: 20 }}
                     date={this.state.date}
-                    mode="date"
-                    androidMode="default"
-                    placeholder="select date"
-                    format="YYYY-MM-DD"
-                    confirmBtnText="Confirm"
-                    cancelBtnText="Cancel"
+                    mode='date'
+                    androidMode='default'
+                    placeholder='select date'
+                    format='YYYY-MM-DD'
+                    confirmBtnText='Confirm'
+                    cancelBtnText='Cancel'
                     customStyles={{
                         dateIcon: {
                             position: 'absolute',
@@ -58,7 +60,7 @@ export default class Dashboard extends Component<any, any> {
                         this.setState({ date: date });
                     }}
                 />
-                {this.state.ready ? this.renderContent() : <ActivityIndicator size="large" />}
+                {this.state.ready ? this.renderContent() : <ActivityIndicator size='large' />}
             </Container>
         );
     }
@@ -122,8 +124,8 @@ export default class Dashboard extends Component<any, any> {
             <ScrollView>
                 <Accordion
                     ref={c => (this._accordion = c)}
-                    icon="add"
-                    expandedIcon="remove"
+                    icon='add'
+                    expandedIcon='remove'
                     iconStyle={{ position: 'absolute', right: 10 }}
                     expandedIconStyle={{ position: 'absolute', right: 10 }}
                     dataArray={exercises}
@@ -151,51 +153,10 @@ export default class Dashboard extends Component<any, any> {
     }
     _renderSet(set: Set | SuperSet) {
         if ((set as SuperSet).sets) {
-            return this._renderSuperSet(set as SuperSet);
+            return <SupersetView superset={set as SuperSet}></SupersetView>;
         } else {
-            return this._renderSimpleSet(set as Set);
+            return <SetView set={set as Set} onDelete={this.deleteSetSafely.bind(this, set)}></SetView>
         }
-    }
-    _renderSuperSet(set: SuperSet) {
-        return (
-            <ListItem icon>
-                <Body>
-                    <ScrollView>
-                        {set.sets.map(simpleSet => (
-                            <Text>
-                                {simpleSet.repetitionsCount} reps with {simpleSet.weight} kg
-                            </Text>
-                        ))}
-                    </ScrollView>
-                </Body>
-            </ListItem>
-        );
-    }
-    _renderSimpleSet(set: Set) {
-        return (
-            <ListItem icon>
-                <Body>
-                    <Text>
-                        {set.repetitionsCount} reps with {set.weight} kg
-                    </Text>
-                </Body>
-                <Right>
-                    <TouchableOpacity>
-                        <AntDesign style={{ marginRight: 10 }} size={30} active name="edit" />
-                    </TouchableOpacity>
-                    <TouchableOpacity>
-                        <AntDesign
-                            onPress={() => {
-                                this.deleteSetSafely(set as Set);
-                            }}
-                            size={30}
-                            active
-                            name="delete"
-                        />
-                    </TouchableOpacity>
-                </Right>
-            </ListItem>
-        );
     }
     deleteSetSafely(set: Set) {
         Alert.alert('Are you sure you want to delete set?', '', [

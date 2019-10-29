@@ -2,7 +2,7 @@ import React from 'react';
 import { View } from 'react-native';
 import { Item, Input, Label } from 'native-base';
 
-export class SetEditor extends React.Component<{ name?, repetitionsCount?, weight?, onChange: ({ name, repetitionsCount, weight }) => void }, { name, repetitionsCount, weight }> {
+export class SetEditor extends React.Component<{ name?, repetitionsCount?, weight?, autoFocus?, onChange: ({ name, repetitionsCount, weight }) => void }, { name, repetitionsCount, weight }> {
     _weightInput: any;
     _repsInput: any;
     state = { name: this.props.name, repetitionsCount: this.props.repetitionsCount, weight: this.props.weight };
@@ -12,7 +12,7 @@ export class SetEditor extends React.Component<{ name?, repetitionsCount?, weigh
             <Input
                 value={this.state.name}
                 returnKeyType={'next'}
-                autoFocus={true}
+                autoFocus={this.props.autoFocus}
                 onChangeText={text => {
                     this.setState({ name: text }, () => this.props.onChange(this.state));
                 }}
