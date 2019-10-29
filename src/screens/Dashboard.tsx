@@ -2,14 +2,7 @@ import React, { Component } from 'react';
 import { Text, View } from 'react-native';
 import { ActivityIndicator, ScrollView } from 'react-native';
 import { NavigationEvents } from 'react-navigation';
-import {
-    Container,
-    Accordion,
-    List,
-    ListItem,
-    Body,
-    Right
-} from 'native-base';
+import { Container, Accordion, List, ListItem, Body, Right } from 'native-base';
 import DatePicker from 'react-native-datepicker';
 import { Exercise } from '../models/exercise';
 import { DailyWorkout } from '../models/daily-workout';
@@ -19,9 +12,9 @@ import { Alert } from 'react-native';
 import { ExerciseService } from '../data-access/exercise-service';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { lazyInject } from '../ioc/container';
+import { SuperSet } from '../models/super-set';
 
 export default class Dashboard extends Component<any, any> {
-
     _accordion: Accordion;
     @lazyInject('exerciseService') private readonly _exerciseService: ExerciseService;
 
@@ -41,12 +34,12 @@ export default class Dashboard extends Component<any, any> {
                 <DatePicker
                     style={{ width: 200, alignSelf: 'center', marginBottom: 20 }}
                     date={this.state.date}
-                    mode='date'
-                    androidMode='default'
-                    placeholder='select date'
-                    format='YYYY-MM-DD'
-                    confirmBtnText='Confirm'
-                    cancelBtnText='Cancel'
+                    mode="date"
+                    androidMode="default"
+                    placeholder="select date"
+                    format="YYYY-MM-DD"
+                    confirmBtnText="Confirm"
+                    cancelBtnText="Cancel"
                     customStyles={{
                         dateIcon: {
                             position: 'absolute',
@@ -65,13 +58,13 @@ export default class Dashboard extends Component<any, any> {
                         this.setState({ date: date });
                     }}
                 />
-                {this.state.exercisesLoaded ? this.renderContent() : <ActivityIndicator size='large' />}
+                {this.state.ready ? this.renderContent() : <ActivityIndicator size="large" />}
             </Container>
         );
     }
     async getExercises() {
-        this._exerciseService.getSets().then((data) => {
-            this.setState({ exercisesLoaded: true });
+        this._exerciseService.getSets().then(data => {
+            this.setState({ ready: true });
             if (!data) {
                 return;
             }
@@ -127,58 +120,93 @@ export default class Dashboard extends Component<any, any> {
         );
         return (
             <ScrollView>
-                <Accordion ref={c => (this._accordion = c)} icon='add' expandedIcon='remove' iconStyle={{ position: 'absolute', right: 10 }} expandedIconStyle={{ position: 'absolute', right: 10 }} dataArray={exercises} renderContent={this._renderAccordionItem.bind(this)}></Accordion>
+                <Accordion
+                    ref={c => (this._accordion = c)}
+                    icon="add"
+                    expandedIcon="remove"
+                    iconStyle={{ position: 'absolute', right: 10 }}
+                    expandedIconStyle={{ position: 'absolute', right: 10 }}
+                    dataArray={exercises}
+                    renderContent={this._renderAccordionItem.bind(this)}
+                ></Accordion>
             </ScrollView>
         );
     }
     _renderNoStatistics() {
-        return (<View style={{
-            flex: 1,
-            flexDirection: 'column',
-            justifyContent: 'center',
-            alignItems: 'stretch'
-        }}><Text style={{ textAlign: 'center', textAlignVertical: 'center' }}>No workout statistics</Text></View>);
+        return (
+            <View
+                style={{
+                    flex: 1,
+                    flexDirection: 'column',
+                    justifyContent: 'center',
+                    alignItems: 'stretch'
+                }}
+            >
+                <Text style={{ textAlign: 'center', textAlignVertical: 'center' }}>No workout statistics</Text>
+            </View>
+        );
     }
     _renderAccordionItem(exercise: Exercise) {
+        return <List>{exercise.sets.map(set => this._renderSet(set))}</List>;
+    }
+    _renderSet(set: Set | SuperSet) {
+        if ((set as SuperSet).sets) {
+            return this._renderSuperSet(set as SuperSet);
+        } else {
+            return this._renderSimpleSet(set as Set);
+        }
+    }
+    _renderSuperSet(set: SuperSet) {
         return (
-            <List>
-                {exercise.sets.map(set => (
-                    <ListItem icon>
-                        <Body>
+            <ListItem icon>
+                <Body>
+                    <ScrollView>
+                        {set.sets.map(simpleSet => (
                             <Text>
-                                {set.repetitionsCount} reps with {set.weight} kg
+                                {simpleSet.repetitionsCount} reps with {simpleSet.weight} kg
                             </Text>
-                        </Body>
-                        <Right>
-                            <TouchableOpacity>
-                                <AntDesign style={{ marginRight: 10 }} size={30} active name='edit' />
-                            </TouchableOpacity>
-                            <TouchableOpacity>
-                                <AntDesign onPress={() => {
-                                    this.deleteSetSafely(set);
-                                }} size={30} active name='delete' />
-                            </TouchableOpacity>
-                        </Right>
-                    </ListItem>
-                ))}
-            </List>
+                        ))}
+                    </ScrollView>
+                </Body>
+            </ListItem>
+        );
+    }
+    _renderSimpleSet(set: Set) {
+        return (
+            <ListItem icon>
+                <Body>
+                    <Text>
+                        {set.repetitionsCount} reps with {set.weight} kg
+                    </Text>
+                </Body>
+                <Right>
+                    <TouchableOpacity>
+                        <AntDesign style={{ marginRight: 10 }} size={30} active name="edit" />
+                    </TouchableOpacity>
+                    <TouchableOpacity>
+                        <AntDesign
+                            onPress={() => {
+                                this.deleteSetSafely(set as Set);
+                            }}
+                            size={30}
+                            active
+                            name="delete"
+                        />
+                    </TouchableOpacity>
+                </Right>
+            </ListItem>
         );
     }
     deleteSetSafely(set: Set) {
-        Alert.alert(
-            'Are you sure you want to delete set?',
-            '',
-            [
-                { text: 'Cancel', style: 'cancel', },
-                { text: 'Delete', onPress: () => this.deleteSet(set) },
-            ]
-        );
+        Alert.alert('Are you sure you want to delete set?', '', [
+            { text: 'Cancel', style: 'cancel' },
+            { text: 'Delete', onPress: () => this.deleteSet(set) }
+        ]);
     }
     deleteSet(set: Set) {
-        this._exerciseService.deleteSetById(set.exerciseId)
-            .then(() => {
-                this.getExercises();
-            });
+        this._exerciseService.deleteSetById(set.exerciseId).then(() => {
+            this.getExercises();
+        });
     }
     getDisplayedDate(dateString) {
         let now = new Date(Date.parse(dateString));

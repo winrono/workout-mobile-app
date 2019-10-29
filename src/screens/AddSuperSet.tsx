@@ -4,54 +4,68 @@ import { lazyInject } from '../ioc/container';
 import { ExerciseService } from '../data-access/exercise-service';
 import { Form, Container, Content, Item, Label, Button, Input, View } from 'native-base';
 import { SetEditor } from '../components/set-editor';
+import { SuperSet } from '../models/super-set';
+import { Set } from '../models/set';
 
 const initialState = { name: '', repetitionsCount: '', weight: '', count: 0 };
 
-export default class AddSet extends React.Component<any, any> {
-
+export default class AddSet extends React.Component<any, { set: SuperSet }> {
     @lazyInject('exerciseService') private readonly _exerciseService: ExerciseService;
     _repsInput: any;
     _weightInput: any;
 
     constructor(props) {
         super(props);
-        this.state = { count: 0 }
+        this.state = { set: { name: 'Default SuperSet', sets: [new Set()] } };
     }
     render() {
         return (
             <Container style={styles.container}>
                 <Content>
                     <Form>
-                        {[...Array(this.state.count)].map((x, i) =>
-                            <SetEditor onChange={(set) => {
-                                this.setState(set)
-                            }}></SetEditor>
-                        )}
-                        <Button block style={{ marginTop: 20 }} onPress={this.test.bind(this)}>
+                        <Item floatingLabel>
+                            <Label>Set name</Label>
+                            <Input
+                                value={this.state.set.name}
+                                returnKeyType={'next'}
+                                autoFocus={true}
+                                onChangeText={text => {
+                                    this.setState({ set: { ...this.state.set, name: text } });
+                                }}
+                            />
+                        </Item>
+                        {this.state.set.sets.map((set, i) => (
+                            <SetEditor
+                                onChange={editedSet => {
+                                    const sets = [...this.state.set.sets];
+                                    sets[i] = editedSet;
+                                    this.setState(prevState => ({
+                                        set: { ...prevState.set, sets: sets }
+                                    }));
+                                }}
+                            ></SetEditor>
+                        ))}
+                        <Button
+                            block
+                            style={{ marginTop: 20 }}
+                            onPress={() =>
+                                this.setState(prevState => ({
+                                    set: { ...prevState.set, sets: [...prevState.set.sets, new Set()] }
+                                }))
+                            }
+                        >
                             <Text>Add set</Text>
                         </Button>
                         <Button block style={{ marginTop: 20 }} onPress={this.submit.bind(this)}>
-                            <Text>Add set</Text>
+                            <Text>Submit</Text>
                         </Button>
                     </Form>
                 </Content>
             </Container>
         );
     }
-    test() {
-        let newCount = this.state.count + 1;
-        this.setState({ count: newCount });
-    }
     async submit() {
-        this._exerciseService.postSet({
-            name: this.state.name,
-            repetitionsCount: this.state.repetitionsCount,
-            weight: this.state.weight,
-            creationTime: new Date()
-        }).then(() => {
-            this.setState(initialState);
-            this.props.navigation.navigate('Profile');
-        });
+        this._exerciseService.postSuperSet({ ...this.state.set, creationTime: new Date() });
     }
 }
 

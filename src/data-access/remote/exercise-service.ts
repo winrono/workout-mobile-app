@@ -7,6 +7,9 @@ import { Set } from '../../models/set';
 
 @injectable()
 export class RemoteExerciseService implements ExerciseService {
+    postSuperSet(set: import("../../models/super-set").SuperSet): Promise<any> {
+        throw new Error("Method not implemented.");
+    }
     getSets(): Promise<Set[]> {
         return axios
             .get('http://localhost:55191/exercise/exercises', {
