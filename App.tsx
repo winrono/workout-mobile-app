@@ -17,7 +17,7 @@ import { ContainerConfigurator } from './src/ioc/container-configurator';
 import { ConfigurationProvider } from './src/data-access/configuration-provider';
 import { container } from './src/ioc/container';
 import EditSetScreen from './src/screens/edit-set';
-import { Button, Text, View, ActivityIndicator } from 'react-native';
+import { Button, Text, View, ActivityIndicator, StatusBar } from 'react-native';
 
 let configurationProvider = new ConfigurationProvider();
 new ContainerConfigurator(configurationProvider).configure(container);
@@ -91,7 +91,7 @@ class App extends React.Component<any, any> {
     }
     render() {
         if (this.state.isReady) {
-            return <AppContainer></AppContainer>;
+            return <View style={{ flex: 1, marginTop: StatusBar.currentHeight }}><AppContainer></AppContainer></View>;
         } else {
             return <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
                 <ActivityIndicator size='large' />
