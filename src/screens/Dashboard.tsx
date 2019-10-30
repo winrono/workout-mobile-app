@@ -2,19 +2,18 @@ import React, { Component } from 'react';
 import { Text, View } from 'react-native';
 import { ActivityIndicator, ScrollView } from 'react-native';
 import { NavigationEvents } from 'react-navigation';
-import { Container, Accordion, List, ListItem, Body, Right } from 'native-base';
+import { Container, Accordion, List } from 'native-base';
 import DatePicker from 'react-native-datepicker';
 import { Exercise } from '../models/exercise';
 import { DailyWorkout } from '../models/daily-workout';
 import { Set } from '../models/set';
-import { AntDesign } from 'react-native-vector-icons';
 import { Alert } from 'react-native';
 import { ExerciseService } from '../data-access/exercise-service';
-import { TouchableOpacity } from 'react-native-gesture-handler';
 import { lazyInject } from '../ioc/container';
 import { SuperSet } from '../models/super-set';
 import { SupersetView } from '../components/superset-view';
 import { SetView } from '../components/set-view';
+import { Navbar } from '../components/navbar';
 
 export default class Dashboard extends Component<any, any> {
     _accordion: Accordion;
@@ -27,7 +26,8 @@ export default class Dashboard extends Component<any, any> {
 
     render() {
         return (
-            <Container style={{ marginTop: 50 }}>
+            <Container>
+                <Navbar />
                 <NavigationEvents
                     onDidFocus={() => {
                         this.getExercises();
@@ -155,7 +155,7 @@ export default class Dashboard extends Component<any, any> {
         if ((set as SuperSet).sets) {
             return <SupersetView superset={set as SuperSet}></SupersetView>;
         } else {
-            return <SetView set={set as Set} onDelete={this.deleteSetSafely.bind(this, set)}></SetView>
+            return <SetView set={set as Set} onDelete={this.deleteSetSafely.bind(this, set)} onEdit={this.editSet.bind(this, set)}></SetView>
         }
     }
     deleteSetSafely(set: Set) {
@@ -168,6 +168,9 @@ export default class Dashboard extends Component<any, any> {
         this._exerciseService.deleteSetById(set.exerciseId).then(() => {
             this.getExercises();
         });
+    }
+    editSet(set: Set) {
+        this.props.navigation.navigate('EditSet', { set: set });
     }
     getDisplayedDate(dateString) {
         let now = new Date(Date.parse(dateString));

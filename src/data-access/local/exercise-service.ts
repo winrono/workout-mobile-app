@@ -26,7 +26,18 @@ export class LocalExerciseService implements ExerciseService {
         return AsyncStorage.setItem(this._storageKey, JSON.stringify(this._sets));
     }
     postSuperSet(set: SuperSet): Promise<any> {
-        this._sets.push(set);
+        this._sets.push({ ...set, id: new Date().getTime().toString() });
+        return AsyncStorage.setItem(this._storageKey, JSON.stringify(this._sets));
+    }
+    updateSet(set: Set): Promise<any> {
+        const found = this._sets.find((s: Set) => {
+            return s.exerciseId === set.exerciseId;
+        }) as Set;
+        if (found) {
+            found.name = set.name;
+            found.weight = set.weight;
+            found.repetitionsCount = set.repetitionsCount;
+        }
         return AsyncStorage.setItem(this._storageKey, JSON.stringify(this._sets));
     }
 

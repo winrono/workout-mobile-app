@@ -4,4 +4,5 @@ export class SuperSet {
     sets: Set[];
     name: string;
     creationTime?: Date;
+    id?: string;
 }

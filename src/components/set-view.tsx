@@ -14,7 +14,9 @@ export function SetView(props: SetViewProps) {
         </Body>
         <Right>
             <TouchableOpacity>
-                <AntDesign style={{ marginRight: 10 }} size={30} active name='edit' />
+                <AntDesign onPress={() => {
+                    props.onEdit();
+                }} style={{ marginRight: 10 }} size={30} active name='edit' />
             </TouchableOpacity>
             <TouchableOpacity>
                 <AntDesign
@@ -33,4 +35,5 @@ export function SetView(props: SetViewProps) {
 interface SetViewProps {
     set: Set,
     onDelete: () => void;
+    onEdit: () => void;
 }

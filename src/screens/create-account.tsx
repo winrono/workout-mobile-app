@@ -60,7 +60,7 @@ export default class CreateAccount extends React.Component<{ navigation }, { use
             })
         }).then(async () => {
             await this._credentialsManager.setCredentials(credentials);
-            this.props.navigation.navigate('Profile');
+            this.props.navigation.navigate('Dashboard');
         });
     }
 }

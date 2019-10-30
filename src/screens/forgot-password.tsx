@@ -9,7 +9,7 @@ export default class ForgotPassword extends React.Component {
             justifyContent: 'center',
             alignItems: 'stretch'
         }}><Text style={{ textAlign: 'center' }}>This page isn't yet implemented, be patient :)</Text>
-            <Button title="Return" onPress={() => { this.props.navigation.navigate('Profile') }}></Button>
+            <Button title='Return' onPress={() => { this.props.navigation.navigate('Dashboard') }}></Button>
         </View>)
     }
 }

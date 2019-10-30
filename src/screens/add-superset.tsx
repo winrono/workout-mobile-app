@@ -2,12 +2,11 @@ import React from 'react';
 import { StyleSheet, Text, TextInput, KeyboardAvoidingView } from 'react-native';
 import { lazyInject } from '../ioc/container';
 import { ExerciseService } from '../data-access/exercise-service';
-import { Form, Container, Content, Item, Label, Button, Input, View, Icon } from 'native-base';
+import { Form, Container, Content, Item, Label, Button, Input, View, Icon, Header, Left, Right } from 'native-base';
 import { SetEditor } from '../components/set-editor';
 import { SuperSet } from '../models/super-set';
 import { Set } from '../models/set';
-
-const initialState = { name: '', repetitionsCount: '', weight: '', count: 0 };
+import { Navbar } from '../components/navbar';
 
 export default class AddSet extends React.Component<any, { set: SuperSet }> {
     @lazyInject('exerciseService') private readonly _exerciseService: ExerciseService;
@@ -21,6 +20,7 @@ export default class AddSet extends React.Component<any, { set: SuperSet }> {
     render() {
         return (
             <Container style={styles.container}>
+                <Navbar />
                 <Content>
                     <Form>
                         <KeyboardAvoidingView behavior='padding' enabled>
@@ -88,8 +88,7 @@ export default class AddSet extends React.Component<any, { set: SuperSet }> {
 const styles = StyleSheet.create({
     container: {
         backgroundColor: '#fcfdff',
-        flex: 1,
-        paddingTop: 25
+        flex: 1
     },
     actionsCountainer: {
         flex: 1,

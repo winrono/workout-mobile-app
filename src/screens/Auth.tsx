@@ -53,7 +53,7 @@ export default class AuthScreen extends Component<any, { username, password }> {
         };
         this._userService.signIn(credentials).then(async () => {
             await this._credentialsManager.setCredentials(credentials);
-            this.props.navigation.navigate('Profile');
+            this.props.navigation.navigate('Dashboard');
         });
     }
 }

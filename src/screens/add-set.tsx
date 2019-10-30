@@ -3,10 +3,11 @@ import { StyleSheet, Text, TextInput } from 'react-native';
 import { lazyInject } from '../ioc/container';
 import { ExerciseService } from '../data-access/exercise-service';
 import { Form, Container, Content, Item, Label, Button, Input } from 'native-base';
+import { Navbar } from '../components/navbar';
 
 const initialState = { name: '', repetitionsCount: '', weight: '' };
 
-export default class AddSet extends React.Component<{name, repetitionsCount, weight}, any> {
+export default class AddSet extends React.Component<{ name, repetitionsCount, weight }, any> {
 
     @lazyInject('exerciseService') private readonly _exerciseService: ExerciseService;
     _repsInput: any;
@@ -19,6 +20,7 @@ export default class AddSet extends React.Component<{name, repetitionsCount, wei
     render() {
         return (
             <Container style={styles.container}>
+                <Navbar />
                 <Content>
                     <Form>
                         <Item floatingLabel>
@@ -74,8 +76,7 @@ export default class AddSet extends React.Component<{name, repetitionsCount, wei
             weight: this.state.weight,
             creationTime: new Date()
         }).then(() => {
-            this.setState(initialState);
-            this.props.navigation.navigate('Profile');
+            this.props.navigation.navigate('Dashboard');
         });
     }
 }
@@ -83,8 +84,7 @@ export default class AddSet extends React.Component<{name, repetitionsCount, wei
 const styles = StyleSheet.create({
     container: {
         backgroundColor: '#fcfdff',
-        flex: 1,
-        paddingTop: 25
+        flex: 1
     },
     input: {
         margin: 15,
