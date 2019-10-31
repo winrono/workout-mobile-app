@@ -17,7 +17,7 @@ import { ContainerConfigurator } from './src/ioc/container-configurator';
 import { ConfigurationProvider } from './src/data-access/configuration-provider';
 import { container } from './src/ioc/container';
 import EditSetScreen from './src/screens/edit-set';
-import { Button, Text, View, ActivityIndicator, StatusBar } from 'react-native';
+import { Text, View, ActivityIndicator, StatusBar } from 'react-native';
 
 let configurationProvider = new ConfigurationProvider();
 new ContainerConfigurator(configurationProvider).configure(container);
