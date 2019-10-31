@@ -8,7 +8,7 @@ import { SuperSet } from '../models/super-set';
 import { Set } from '../models/set';
 import { Navbar } from '../components/navbar';
 
-export default class AddSuperSet extends React.Component<any, { set: SuperSet }> {
+export default class AddSuperset extends React.Component<any, { set: SuperSet }> {
     @lazyInject('exerciseService') private readonly _exerciseService: ExerciseService;
     _repsInput: any;
     _weightInput: any;
@@ -20,6 +20,7 @@ export default class AddSuperSet extends React.Component<any, { set: SuperSet }>
     render() {
         return (
             <Container style={styles.container}>
+                <Navbar />
                 <Content>
                     <Form>
                         <KeyboardAvoidingView behavior='padding' enabled>

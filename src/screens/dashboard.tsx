@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Text, View } from 'react-native';
 import { ActivityIndicator, ScrollView } from 'react-native';
 import { NavigationEvents } from 'react-navigation';
-import { Container, Accordion, List, Fab, Icon } from 'native-base';
+import { Container, Accordion, List, Fab, Icon, Button } from 'native-base';
 import DatePicker from 'react-native-datepicker';
 import { Exercise } from '../models/exercise';
 import { DailyWorkout } from '../models/daily-workout';
@@ -21,7 +21,7 @@ export default class Dashboard extends Component<any, any> {
 
     constructor(props) {
         super(props);
-        this.state = { date: this.getCalendarDate() };
+        this.state = { date: this.getCalendarDate(), activeFab: false };
     }
 
     render() {
@@ -33,39 +33,50 @@ export default class Dashboard extends Component<any, any> {
                         this.getExercises();
                     }}
                 />
-                <DatePicker
-                    style={{ width: 200, alignSelf: 'center', marginBottom: 20 }}
-                    date={this.state.date}
-                    mode="date"
-                    androidMode="default"
-                    placeholder="select date"
-                    format="YYYY-MM-DD"
-                    confirmBtnText="Confirm"
-                    cancelBtnText="Cancel"
-                    customStyles={{
-                        dateIcon: {
-                            position: 'absolute',
-                            left: 0,
-                            top: 4,
-                            marginLeft: 0
-                        },
-                        dateInput: {
-                            marginLeft: 36
-                        }
-                    }}
-                    onDateChange={date => {
-                        if (this._accordion && date != this.state.date) {
-                            this._accordion.setSelected(-1);
-                        }
-                        this.setState({ date: date });
-                    }}
-                />
-                {this.state.ready ? this.renderContent() : <ActivityIndicator size="large" />}
-            </Container>
+                <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 20 }}>
+                    <Fab
+                        containerStyle={{ position: 'relative', left: 5, top: 0 }}
+                        active={this.state.activeFab}
+                        onPress={() => this.setState({ activeFab: !this.state.activeFab })}
+                        direction='right'>
+                        <Icon name='ios-fitness' />
+                        <Button style={{ backgroundColor: '#34A34F' }} onPress={() => this.props.navigation.navigate('AddSet')} >
+                            <Icon name='ios-add' />
+                        </Button>
+                        <Button style={{ backgroundColor: '#3B5998' }} onPress={() => this.props.navigation.navigate('AddSuperset')}>
+                            <Icon name='ios-list' />
+                        </Button>
+                        <Button style={{ backgroundColor: '#DD5144' }} onPress={() => this.props.navigation.navigate('AddTimeset')}>
+                            <Icon name='ios-alarm' />
+                        </Button>
+
+                    </Fab>
+                    <DatePicker
+                        style={{ width: 150, position: 'absolute', right: 10 }}
+                        date={this.state.date}
+                        mode='date'
+                        androidMode='default'
+                        placeholder='select date'
+                        format='YYYY-MM-DD'
+                        confirmBtnText='Confirm'
+                        cancelBtnText='Cancel'
+                        onDateChange={date => {
+                            if (this._accordion && date != this.state.date) {
+                                this._accordion.setSelected(-1);
+                            }
+                            console.log(this.state.date)
+                            console.log(date);
+                            this.setState({ date: date });
+                        }}
+                    />
+                </View>
+                {this.state.ready ? this.renderContent() : <ActivityIndicator size='large' />}
+            </Container >
         );
     }
     async getExercises() {
         this._exerciseService.getSets().then(data => {
+            console.log('got exercises');
             this.setState({ ready: true });
             if (!data) {
                 return;
@@ -100,9 +111,6 @@ export default class Dashboard extends Component<any, any> {
         return (
             <View style={{ flex: 1 }}>
                 {this.renderPrimaryContent()}
-                <Fab position="bottomRight" onPress={() => this.props.navigation.navigate('AddActivity')}>
-                    <Icon name="add" />
-                </Fab>
             </View>
         );
     }
@@ -141,8 +149,8 @@ export default class Dashboard extends Component<any, any> {
             <ScrollView>
                 <Accordion
                     ref={c => (this._accordion = c)}
-                    icon="add"
-                    expandedIcon="remove"
+                    icon='add'
+                    expandedIcon='remove'
                     iconStyle={{ position: 'absolute', right: 10 }}
                     expandedIconStyle={{ position: 'absolute', right: 10 }}
                     dataArray={exercises}
@@ -162,9 +170,6 @@ export default class Dashboard extends Component<any, any> {
                 }}
             >
                 <Text style={{ textAlign: 'center', textAlignVertical: 'center' }}>No workout statistics</Text>
-                {/* <View style={{ flex: 1, justifyContent: 'flex-end', marginBottom: 36 }}>
-                    <Text style={{textAlign: 'right'}}>Test</Text>
-                </View> */}
             </View>
         );
     }
@@ -203,13 +208,13 @@ export default class Dashboard extends Component<any, any> {
         const year = now.getFullYear();
         const day = now.getDate();
         const month = now.getMonth() + 1;
-        return `${year}-${month}-${day}`;
+        return `${year}-${month < 10 ? '0' + month : month}-${day < 10 ? '0' + day : day}`;
     }
     getCalendarDate() {
         let now = new Date();
         const year = now.getFullYear();
         const day = now.getDate();
         const month = now.getMonth() + 1;
-        return `${year}-${month}-${day}`;
+        return `${year}-${month < 10 ? '0' + month : month}-${day < 10 ? '0' + day : day}`;
     }
 }

@@ -24,15 +24,15 @@ export default class AddActivity extends React.Component<{ name; repetitionsCoun
                 <Content>
                     <Form>
                         <Picker
-                            mode="dropdown"
-                            headerBackButtonText="Back"
+                            mode='dropdown'
+                            headerBackButtonText='Back'
                             selectedValue={this.state.activityType}
-                            placeholder="Select activity type"
+                            placeholder='Select activity type'
                             onValueChange={value => this.setState({ activityType: value })}
                         >
-                            <Picker.Item label="Set" value="Set" />
-                            <Picker.Item label="Superset" value="Superset" />
-                            <Picker.Item label="Time exercise" value="Time" />
+                            <Picker.Item label='Set' value='Set' />
+                            <Picker.Item label='Superset' value='Superset' />
+                            <Picker.Item label='Time exercise' value='Time' />
                         </Picker>
                         {this.renderActivityEditor()}
                     </Form>
@@ -65,7 +65,7 @@ export default class AddActivity extends React.Component<{ name; repetitionsCoun
                             <Input
                                 getRef={c => (this._repsInput = c)}
                                 returnKeyType={'next'}
-                                keyboardType="numeric"
+                                keyboardType='numeric'
                                 value={this.state.repetitionsCount}
                                 onChangeText={text => this.setState({ repetitionsCount: text })}
                                 onSubmitEditing={() => {
@@ -78,7 +78,7 @@ export default class AddActivity extends React.Component<{ name; repetitionsCoun
                             <Input
                                 getRef={c => (this._weightInput = c)}
                                 returnKeyType={'done'}
-                                keyboardType="numeric"
+                                keyboardType='numeric'
                                 value={this.state.weight}
                                 onChangeText={text => this.setState({ weight: text })}
                                 onSubmitEditing={() => {

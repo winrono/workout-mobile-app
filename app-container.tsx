@@ -11,11 +11,12 @@ import DashboardScreen from './src/screens/dashboard';
 import InitialScreen from './src/screens/initial';
 import CreateAccountScreen from './src/screens/create-account';
 import ForgotPasswordScreen from './src/screens/forgot-password';
-import AddActivityScreen from './src/screens/add-activity';
-import AddSuperSetScreen from './src/screens/add-superset';
+import AddSetScreen from './src/screens/add-set';
+import AddSupersetScreen from './src/screens/add-superset';
 import EditSetScreen from './src/screens/edit-set';
 import DummyScreen from './src/screens/dummy';
 import { Text } from 'react-native';
+import AddTimesetScreen from './src/screens/add-timeset';
 
 let configurationProvider = new ConfigurationProvider();
 new ContainerConfigurator(configurationProvider).configure(container);
@@ -23,7 +24,10 @@ new ContainerConfigurator(configurationProvider).configure(container);
 const dashboardStack = createStackNavigator(
     {
         Dashboard: { screen: DashboardScreen },
-        EditSet: { screen: EditSetScreen }
+        EditSet: { screen: EditSetScreen },
+        AddSet: { screen: AddSetScreen },
+        AddSuperset: { screen: AddSupersetScreen },
+        AddTimeset: {screen: AddTimesetScreen}
     },
     {
         headerMode: 'none',
@@ -38,22 +42,8 @@ let drawerNavigatorRouteConfig = {
         screen: dashboardStack,
         navigationOptions: {
             drawerLabel: 'Dashboard',
-            drawerIcon: () => <Ionicons name="md-home" size={30} />,
+            drawerIcon: () => <Ionicons name='md-home' size={30} />,
             headerRight: <Text>Boom</Text>
-        }
-    },
-    AddActivity: {
-        screen: AddActivityScreen,
-        navigationOptions: {
-            drawerLabel: 'Add set',
-            drawerIcon: () => <Ionicons name="md-add" size={30} />
-        }
-    },
-    AddSuperSet: {
-        screen: AddSuperSetScreen,
-        navigationOptions: {
-            drawerLabel: 'Add superset',
-            drawerIcon: () => <Ionicons name="md-add" size={30} />
         }
     }
 };
@@ -65,7 +55,7 @@ if (!configurationProvider.isInLocalMode()) {
         screen: DummyScreen,
         navigationOptions: {
             drawerLabel: 'Log out',
-            tabBarIcon: () => <Ionicons name="md-log-out" size={30} />
+            tabBarIcon: () => <Ionicons name='md-log-out' size={30} />
         }
     };
 }
