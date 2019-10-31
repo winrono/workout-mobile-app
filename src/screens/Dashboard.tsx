@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Text, View } from 'react-native';
 import { ActivityIndicator, ScrollView } from 'react-native';
 import { NavigationEvents } from 'react-navigation';
-import { Container, Accordion, List } from 'native-base';
+import { Container, Accordion, List, Fab, Icon } from 'native-base';
 import DatePicker from 'react-native-datepicker';
 import { Exercise } from '../models/exercise';
 import { DailyWorkout } from '../models/daily-workout';
@@ -36,12 +36,12 @@ export default class Dashboard extends Component<any, any> {
                 <DatePicker
                     style={{ width: 200, alignSelf: 'center', marginBottom: 20 }}
                     date={this.state.date}
-                    mode='date'
-                    androidMode='default'
-                    placeholder='select date'
-                    format='YYYY-MM-DD'
-                    confirmBtnText='Confirm'
-                    cancelBtnText='Cancel'
+                    mode="date"
+                    androidMode="default"
+                    placeholder="select date"
+                    format="YYYY-MM-DD"
+                    confirmBtnText="Confirm"
+                    cancelBtnText="Cancel"
                     customStyles={{
                         dateIcon: {
                             position: 'absolute',
@@ -60,7 +60,7 @@ export default class Dashboard extends Component<any, any> {
                         this.setState({ date: date });
                     }}
                 />
-                {this.state.ready ? this.renderContent() : <ActivityIndicator size='large' />}
+                {this.state.ready ? this.renderContent() : <ActivityIndicator size="large" />}
             </Container>
         );
     }
@@ -97,15 +97,27 @@ export default class Dashboard extends Component<any, any> {
         });
     }
     renderContent() {
+        return (
+            <View style={{ flex: 1 }}>
+                {this.renderPrimaryContent()}
+                <Fab position="bottomRight" onPress={() => this.props.navigation.navigate('AddActivity')}>
+                    <Icon name="add" />
+                </Fab>
+            </View>
+        );
+    }
+
+    renderPrimaryContent() {
         if (!this.state.dailyWorkouts) {
-            return this._renderNoStatistics();
+            return this._getNoStatistics();
         }
         let item: DailyWorkout = this.state.dailyWorkouts.find(dailyWorkout => {
             return dailyWorkout.title == this.state.date;
         });
         if (!item) {
-            return this._renderNoStatistics();
+            return this._getNoStatistics();
         }
+
         let exercises: Exercise[] = item.sets.reduce(
             (prev, current) => {
                 let found = prev.find((exercise: Exercise) => {
@@ -120,12 +132,17 @@ export default class Dashboard extends Component<any, any> {
             },
             [] as Exercise[]
         );
+
+        return this._getStatistics(exercises);
+    }
+
+    _getStatistics(exercises) {
         return (
             <ScrollView>
                 <Accordion
                     ref={c => (this._accordion = c)}
-                    icon='add'
-                    expandedIcon='remove'
+                    icon="add"
+                    expandedIcon="remove"
                     iconStyle={{ position: 'absolute', right: 10 }}
                     expandedIconStyle={{ position: 'absolute', right: 10 }}
                     dataArray={exercises}
@@ -134,7 +151,7 @@ export default class Dashboard extends Component<any, any> {
             </ScrollView>
         );
     }
-    _renderNoStatistics() {
+    _getNoStatistics() {
         return (
             <View
                 style={{
@@ -145,6 +162,9 @@ export default class Dashboard extends Component<any, any> {
                 }}
             >
                 <Text style={{ textAlign: 'center', textAlignVertical: 'center' }}>No workout statistics</Text>
+                {/* <View style={{ flex: 1, justifyContent: 'flex-end', marginBottom: 36 }}>
+                    <Text style={{textAlign: 'right'}}>Test</Text>
+                </View> */}
             </View>
         );
     }
@@ -155,7 +175,13 @@ export default class Dashboard extends Component<any, any> {
         if ((set as SuperSet).sets) {
             return <SupersetView superset={set as SuperSet}></SupersetView>;
         } else {
-            return <SetView set={set as Set} onDelete={this.deleteSetSafely.bind(this, set)} onEdit={this.editSet.bind(this, set)}></SetView>
+            return (
+                <SetView
+                    set={set as Set}
+                    onDelete={this.deleteSetSafely.bind(this, set)}
+                    onEdit={this.editSet.bind(this, set)}
+                ></SetView>
+            );
         }
     }
     deleteSetSafely(set: Set) {

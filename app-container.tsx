@@ -11,7 +11,7 @@ import DashboardScreen from './src/screens/dashboard';
 import InitialScreen from './src/screens/initial';
 import CreateAccountScreen from './src/screens/create-account';
 import ForgotPasswordScreen from './src/screens/forgot-password';
-import AddSetScreen from './src/screens/add-set';
+import AddActivityScreen from './src/screens/add-activity';
 import AddSuperSetScreen from './src/screens/add-superset';
 import EditSetScreen from './src/screens/edit-set';
 import DummyScreen from './src/screens/dummy';
@@ -42,8 +42,8 @@ let drawerNavigatorRouteConfig = {
             headerRight: <Text>Boom</Text>
         }
     },
-    AddSet: {
-        screen: AddSetScreen,
+    AddActivity: {
+        screen: AddActivityScreen,
         navigationOptions: {
             drawerLabel: 'Add set',
             drawerIcon: () => <Ionicons name="md-add" size={30} />
