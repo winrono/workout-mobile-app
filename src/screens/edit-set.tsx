@@ -39,9 +39,8 @@ export default class EditSet extends React.Component<any, Set> {
     }
 
     async onSave() {
-        console.log(this.setState);
-        await this._exerciseService.updateSet(this.state);
-        this.props.navigation.navigate('Dashboard');
+        // await this._exerciseService.updateSet(this.state);
+        this.props.navigation.navigate('AddSet');
     }
 }
 

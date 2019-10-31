@@ -36,12 +36,12 @@ export default class Dashboard extends Component<any, any> {
                 <DatePicker
                     style={{ width: 200, alignSelf: 'center', marginBottom: 20 }}
                     date={this.state.date}
-                    mode="date"
-                    androidMode="default"
-                    placeholder="select date"
-                    format="YYYY-MM-DD"
-                    confirmBtnText="Confirm"
-                    cancelBtnText="Cancel"
+                    mode='date'
+                    androidMode='default'
+                    placeholder='select date'
+                    format='YYYY-MM-DD'
+                    confirmBtnText='Confirm'
+                    cancelBtnText='Cancel'
                     customStyles={{
                         dateIcon: {
                             position: 'absolute',
@@ -60,7 +60,7 @@ export default class Dashboard extends Component<any, any> {
                         this.setState({ date: date });
                     }}
                 />
-                {this.state.ready ? this.renderContent() : <ActivityIndicator size="large" />}
+                {this.state.ready ? this.renderContent() : <ActivityIndicator size='large' />}
             </Container>
         );
     }
@@ -100,8 +100,8 @@ export default class Dashboard extends Component<any, any> {
         return (
             <View style={{ flex: 1 }}>
                 {this.renderPrimaryContent()}
-                <Fab position="bottomRight" onPress={() => this.props.navigation.navigate('AddActivity')}>
-                    <Icon name="add" />
+                <Fab position='bottomRight' onPress={() => this.props.navigation.navigate('AddActivity')}>
+                    <Icon name='add' />
                 </Fab>
             </View>
         );
@@ -141,8 +141,8 @@ export default class Dashboard extends Component<any, any> {
             <ScrollView>
                 <Accordion
                     ref={c => (this._accordion = c)}
-                    icon="add"
-                    expandedIcon="remove"
+                    icon='add'
+                    expandedIcon='remove'
                     iconStyle={{ position: 'absolute', right: 10 }}
                     expandedIconStyle={{ position: 'absolute', right: 10 }}
                     dataArray={exercises}

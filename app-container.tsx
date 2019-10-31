@@ -23,7 +23,7 @@ new ContainerConfigurator(configurationProvider).configure(container);
 const dashboardStack = createStackNavigator(
     {
         Dashboard: { screen: DashboardScreen },
-        EditSet: { screen: EditSetScreen }
+        // EditSet: { screen: EditSetScreen }
     },
     {
         headerMode: 'none',
@@ -38,7 +38,7 @@ let drawerNavigatorRouteConfig = {
         screen: dashboardStack,
         navigationOptions: {
             drawerLabel: 'Dashboard',
-            drawerIcon: () => <Ionicons name="md-home" size={30} />,
+            drawerIcon: () => <Ionicons name='md-home' size={30} />,
             headerRight: <Text>Boom</Text>
         }
     },
@@ -46,14 +46,14 @@ let drawerNavigatorRouteConfig = {
         screen: AddActivityScreen,
         navigationOptions: {
             drawerLabel: 'Add set',
-            drawerIcon: () => <Ionicons name="md-add" size={30} />
+            drawerIcon: () => <Ionicons name='md-add' size={30} />
         }
     },
     AddSuperSet: {
         screen: AddSuperSetScreen,
         navigationOptions: {
             drawerLabel: 'Add superset',
-            drawerIcon: () => <Ionicons name="md-add" size={30} />
+            drawerIcon: () => <Ionicons name='md-add' size={30} />
         }
     }
 };
@@ -65,7 +65,7 @@ if (!configurationProvider.isInLocalMode()) {
         screen: DummyScreen,
         navigationOptions: {
             drawerLabel: 'Log out',
-            tabBarIcon: () => <Ionicons name="md-log-out" size={30} />
+            tabBarIcon: () => <Ionicons name='md-log-out' size={30} />
         }
     };
 }
