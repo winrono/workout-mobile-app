@@ -23,79 +23,54 @@ export default class AddActivity extends React.Component<{ name; repetitionsCoun
                 <Navbar />
                 <Content>
                     <Form>
-                        <Picker
-                            mode='dropdown'
-                            headerBackButtonText='Back'
-                            selectedValue={this.state.activityType}
-                            placeholder='Select activity type'
-                            onValueChange={value => this.setState({ activityType: value })}
-                        >
-                            <Picker.Item label='Set' value='Set' />
-                            <Picker.Item label='Superset' value='Superset' />
-                            <Picker.Item label='Time exercise' value='Time' />
-                        </Picker>
-                        {this.renderActivityEditor()}
+                        <View>
+                            <Item floatingLabel>
+                                <Label>Name</Label>
+                                <Input
+                                    value={this.state.name}
+                                    returnKeyType={'next'}
+                                    onChangeText={text => {
+                                        this.setState({ name: text });
+                                    }}
+                                    onSubmitEditing={() => {
+                                        this._repsInput._root.focus();
+                                    }}
+                                />
+                            </Item>
+                            <Item floatingLabel>
+                                <Label>Reps</Label>
+                                <Input
+                                    getRef={c => (this._repsInput = c)}
+                                    returnKeyType={'next'}
+                                    keyboardType='numeric'
+                                    value={this.state.repetitionsCount}
+                                    onChangeText={text => this.setState({ repetitionsCount: text })}
+                                    onSubmitEditing={() => {
+                                        this._weightInput._root.focus();
+                                    }}
+                                />
+                            </Item>
+                            <Item floatingLabel>
+                                <Label>Weight(kg)</Label>
+                                <Input
+                                    getRef={c => (this._weightInput = c)}
+                                    returnKeyType={'done'}
+                                    keyboardType='numeric'
+                                    value={this.state.weight}
+                                    onChangeText={text => this.setState({ weight: text })}
+                                    onSubmitEditing={() => {
+                                        this.submit();
+                                    }}
+                                />
+                            </Item>
+                            <Button block style={{ marginTop: 20 }} onPress={this.submit.bind(this)}>
+                                <Text>Submit</Text>
+                            </Button>
+                        </View>
                     </Form>
                 </Content>
             </Container>
         );
-    }
-
-    renderActivityEditor() {
-        switch (this.state.activityType) {
-            case 'Set': {
-                return (
-                    <View>
-                        <Item floatingLabel>
-                            <Label>Name</Label>
-                            <Input
-                                value={this.state.name}
-                                returnKeyType={'next'}
-                                autoFocus={true}
-                                onChangeText={text => {
-                                    this.setState({ name: text });
-                                }}
-                                onSubmitEditing={() => {
-                                    this._repsInput._root.focus();
-                                }}
-                            />
-                        </Item>
-                        <Item floatingLabel>
-                            <Label>Reps</Label>
-                            <Input
-                                getRef={c => (this._repsInput = c)}
-                                returnKeyType={'next'}
-                                keyboardType='numeric'
-                                value={this.state.repetitionsCount}
-                                onChangeText={text => this.setState({ repetitionsCount: text })}
-                                onSubmitEditing={() => {
-                                    this._weightInput._root.focus();
-                                }}
-                            />
-                        </Item>
-                        <Item floatingLabel>
-                            <Label>Weight(kg)</Label>
-                            <Input
-                                getRef={c => (this._weightInput = c)}
-                                returnKeyType={'done'}
-                                keyboardType='numeric'
-                                value={this.state.weight}
-                                onChangeText={text => this.setState({ weight: text })}
-                                onSubmitEditing={() => {
-                                    this.submit();
-                                }}
-                            />
-                        </Item>
-                        <Button block style={{ marginTop: 20 }} onPress={this.submit.bind(this)}>
-                            <Text>Submit</Text>
-                        </Button>
-                    </View>
-                );
-            }
-            case 'Superset': {
-                return <AddSuperSet></AddSuperSet>;
-            }
-        }
     }
     async submit() {
         this._exerciseService

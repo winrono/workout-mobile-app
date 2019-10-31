@@ -76,7 +76,6 @@ export default class Dashboard extends Component<any, any> {
     }
     async getExercises() {
         this._exerciseService.getSets().then(data => {
-            console.log('got exercises');
             this.setState({ ready: true });
             if (!data) {
                 return;
