@@ -1,6 +1,6 @@
 export class Set {
     name: string;
-    repetitionsCount: number;
+    repsCount: number;
     weight: number;
     creationTime?: Date;
     exerciseId?: string;

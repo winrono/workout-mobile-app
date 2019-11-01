@@ -3,12 +3,14 @@ import { StyleSheet, Text, TextInput, KeyboardAvoidingView } from 'react-native'
 import { lazyInject } from '../ioc/container';
 import { ExerciseService } from '../data-access/exercise-service';
 import { Form, Container, Content, Item, Label, Button, Input, View, Icon, Header, Left, Right } from 'native-base';
-import { SetEditor } from '../components/set-editor';
+import SetEditor from '../components/set-editor';
 import { SuperSet } from '../models/super-set';
 import { Set } from '../models/set';
 import { Navbar } from '../components/navbar';
+import { connect } from 'react-redux';
+import { setSupersetName, addSetToSuperset, removeSetFromSuperset } from '../actions/set';
 
-export default class AddSuperset extends React.Component<any, { set: SuperSet }> {
+class AddSuperset extends React.Component<{ superset: SuperSet }> {
     @lazyInject('exerciseService') private readonly _exerciseService: ExerciseService;
     _repsInput: any;
     _weightInput: any;
@@ -23,51 +25,39 @@ export default class AddSuperset extends React.Component<any, { set: SuperSet }>
                 <Navbar />
                 <Content>
                     <Form>
-                        <KeyboardAvoidingView behavior='padding' enabled>
+                        <KeyboardAvoidingView behavior="padding" enabled>
                             <Item floatingLabel>
                                 <Label>Superset name</Label>
                                 <Input
-                                    value={this.state.set.name}
+                                    value={this.props.superset.name}
                                     returnKeyType={'next'}
                                     onChangeText={text => {
-                                        this.setState({ set: { ...this.state.set, name: text } });
+                                        this.props.onSupersetNameChange(text);
                                     }}
                                 />
                             </Item>
-                            {this.state.set.sets.map((set, i) => (
-                                <SetEditor
-                                    onChange={editedSet => {
-                                        const sets = [...this.state.set.sets];
-                                        sets[i] = editedSet;
-                                        this.setState(prevState => ({
-                                            set: { ...prevState.set, sets: sets }
-                                        }));
-                                    }}
-                                ></SetEditor>
+                            {this.props.superset.sets.map((set, i) => (
+                                <SetEditor name={set.name} repsCount={set.repsCount} weight={set.weight}></SetEditor>
                             ))}
                             <View style={styles.actionsCountainer}>
-                                <Button rounded danger iconLeft
+                                <Button
+                                    rounded
+                                    danger
+                                    iconLeft
                                     style={[styles.button, { margin: 20 }]}
-                                    onPress={() => {
-                                        const sets = [...this.state.set.sets];
-                                        if (sets.length > 1) {
-                                            sets.pop();
-                                            this.setState(prevState => ({
-                                                set: { ...prevState.set, sets: sets }
-                                            }));
-                                        }
-                                    }}>
-                                    <Icon name='trash' />
+                                    onPress={() => this.props.onSupersetRemoveSet()}
+                                >
+                                    <Icon name="trash" />
                                     <Text>Remove set</Text>
                                 </Button>
-                                <Button rounded primary iconLeft
+                                <Button
+                                    rounded
+                                    primary
+                                    iconLeft
                                     style={[styles.button, { margin: 10 }]}
-                                    onPress={() =>
-                                        this.setState(prevState => ({
-                                            set: { ...prevState.set, sets: [...prevState.set.sets, new Set()] }
-                                        }))
-                                    }>
-                                    <Icon name='add' />
+                                    onPress={() => this.props.onSupersetAddSet()}
+                                >
+                                    <Icon name="add" />
                                     <Text>Add set</Text>
                                 </Button>
                             </View>
@@ -77,11 +67,11 @@ export default class AddSuperset extends React.Component<any, { set: SuperSet }>
                         </KeyboardAvoidingView>
                     </Form>
                 </Content>
-            </Container >
+            </Container>
         );
     }
     async submit() {
-        this._exerciseService.postSuperSet({ ...this.state.set, creationTime: new Date() });
+        this._exerciseService.postSuperSet({ ...this.props.superset, creationTime: new Date() });
     }
 }
 
@@ -100,3 +90,28 @@ const styles = StyleSheet.create({
         flex: 1
     }
 });
+
+function mapStateToProps(state) {
+    return {
+        superset: state.superset
+    };
+}
+
+function mapDispatchToProps(dispatch) {
+    return {
+        onSupersetNameChange: text => {
+            dispatch(setSupersetName(text));
+        },
+        onSupersetAddSet: () => {
+            dispatch(addSetToSuperset());
+        },
+        onSupersetRemoveSet: () => {
+            dispatch(removeSetFromSuperset());
+        }
+    };
+}
+
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(AddSuperset);

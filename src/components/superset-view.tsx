@@ -9,7 +9,7 @@ export function SupersetView(props: SupersetViewProps) {
             <ScrollView>
                 {props.superset.sets.map((simpleSet) => (
                     <Text>
-                        {'\u2022'} {simpleSet.name} {simpleSet.repetitionsCount} reps with {simpleSet.weight} kg
+                        {'\u2022'} {simpleSet.name} {simpleSet.repsCount} reps with {simpleSet.weight} kg
                     </Text>
                 ))}
             </ScrollView>

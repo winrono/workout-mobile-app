@@ -2,71 +2,32 @@ import React from 'react';
 import { StyleSheet, Text, TextInput, View } from 'react-native';
 import { lazyInject } from '../ioc/container';
 import { ExerciseService } from '../data-access/exercise-service';
-import { Form, Container, Content, Item, Label, Button, Input, Picker, Icon } from 'native-base';
+import { Form, Container, Content, Item, Label, Button, Input } from 'native-base';
 import { Navbar } from '../components/navbar';
-import AddSuperSet from './add-superset';
+import { connect } from 'react-redux';
+import { setSetName, setSetRepsCount, setSetWeight } from '../actions/set';
+import SetEditor from '../components/set-editor';
+import { Set } from '../models/set';
 
-const initialState = { name: '', repetitionsCount: '', weight: '', activityType: 'Set' };
-
-export default class AddActivity extends React.Component<{ name; repetitionsCount; weight }, any> {
+class AddSet extends React.Component<{ set: Set }, any> {
     @lazyInject('exerciseService') private readonly _exerciseService: ExerciseService;
     _repsInput: any;
     _weightInput: any;
 
-    constructor(props) {
-        super(props);
-        this.state = initialState;
-    }
     render() {
         return (
             <Container style={styles.container}>
                 <Navbar />
                 <Content>
                     <Form>
-                        <View>
-                            <Item floatingLabel>
-                                <Label>Name</Label>
-                                <Input
-                                    value={this.state.name}
-                                    returnKeyType={'next'}
-                                    onChangeText={text => {
-                                        this.setState({ name: text });
-                                    }}
-                                    onSubmitEditing={() => {
-                                        this._repsInput._root.focus();
-                                    }}
-                                />
-                            </Item>
-                            <Item floatingLabel>
-                                <Label>Reps</Label>
-                                <Input
-                                    getRef={c => (this._repsInput = c)}
-                                    returnKeyType={'next'}
-                                    keyboardType='numeric'
-                                    value={this.state.repetitionsCount}
-                                    onChangeText={text => this.setState({ repetitionsCount: text })}
-                                    onSubmitEditing={() => {
-                                        this._weightInput._root.focus();
-                                    }}
-                                />
-                            </Item>
-                            <Item floatingLabel>
-                                <Label>Weight(kg)</Label>
-                                <Input
-                                    getRef={c => (this._weightInput = c)}
-                                    returnKeyType={'done'}
-                                    keyboardType='numeric'
-                                    value={this.state.weight}
-                                    onChangeText={text => this.setState({ weight: text })}
-                                    onSubmitEditing={() => {
-                                        this.submit();
-                                    }}
-                                />
-                            </Item>
-                            <Button block style={{ marginTop: 20 }} onPress={this.submit.bind(this)}>
-                                <Text>Submit</Text>
-                            </Button>
-                        </View>
+                        <SetEditor
+                            name={this.props.set.name}
+                            weight={this.props.set.weight}
+                            repsCount={this.props.set.repsCount}
+                        ></SetEditor>
+                        <Button block style={{ marginTop: 20 }} onPress={this.submit.bind(this)}>
+                            <Text>Submit</Text>
+                        </Button>
                     </Form>
                 </Content>
             </Container>
@@ -75,9 +36,9 @@ export default class AddActivity extends React.Component<{ name; repetitionsCoun
     async submit() {
         this._exerciseService
             .postSet({
-                name: this.state.name,
-                repetitionsCount: this.state.repetitionsCount,
-                weight: this.state.weight,
+                name: this.props.set.name,
+                repsCount: this.props.set.repsCount,
+                weight: this.props.set.weight,
                 creationTime: new Date()
             })
             .then(() => {
@@ -99,3 +60,14 @@ const styles = StyleSheet.create({
         textAlign: 'center'
     }
 });
+
+function mapStateToProps(state) {
+    console.log(state);
+    return {
+        set: state.set
+    };
+}
+
+export default connect(
+    mapStateToProps
+)(AddSet);

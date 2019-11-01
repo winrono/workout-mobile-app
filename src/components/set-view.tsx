@@ -9,7 +9,7 @@ export function SetView(props: SetViewProps) {
     return (<ListItem icon>
         <Body>
             <Text>
-                {props.set.repetitionsCount} reps with {props.set.weight} kg
+                {props.set.repsCount} reps with {props.set.weight} kg
             </Text>
         </Body>
         <Right>

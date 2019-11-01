@@ -4,6 +4,9 @@ import * as React from 'react';
 import * as Font from 'expo-font';
 import { View, ActivityIndicator, StatusBar } from 'react-native';
 import { AppContainer } from './app-container';
+import { Provider } from 'react-redux';
+import store from './store';
+
 
 class App extends React.Component<any, any> {
     constructor(props) {
@@ -16,13 +19,15 @@ class App extends React.Component<any, any> {
         if (this.state.isReady) {
             return (
                 <View style={{ flex: 1, marginTop: StatusBar.currentHeight }}>
-                    <AppContainer></AppContainer>
+                    <Provider store={store}>
+                        <AppContainer></AppContainer>
+                    </Provider>
                 </View>
             );
         } else {
             return (
                 <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                    <ActivityIndicator size='large' />
+                    <ActivityIndicator size="large" />
                 </View>
             );
         }

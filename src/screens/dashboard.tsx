@@ -14,6 +14,8 @@ import { SuperSet } from '../models/super-set';
 import { SupersetView } from '../components/superset-view';
 import { SetView } from '../components/set-view';
 import { Navbar } from '../components/navbar';
+import { connect } from 'react-redux';
+import { setSet } from '../actions/set';
 
 export default class Dashboard extends Component<any, any> {
     _accordion: Accordion;
@@ -38,40 +40,47 @@ export default class Dashboard extends Component<any, any> {
                         containerStyle={{ position: 'relative', left: 5, top: 0 }}
                         active={this.state.activeFab}
                         onPress={() => this.setState({ activeFab: !this.state.activeFab })}
-                        direction='right'>
-                        <Icon name='ios-fitness' />
-                        <Button style={{ backgroundColor: '#34A34F' }} onPress={() => this.props.navigation.navigate('AddSet')} >
-                            <Icon name='ios-add' />
+                        direction="right"
+                    >
+                        <Icon name="ios-fitness" />
+                        <Button
+                            style={{ backgroundColor: '#34A34F' }}
+                            onPress={() => this.props.navigation.navigate('AddSet')}
+                        >
+                            <Icon name="ios-add" />
                         </Button>
-                        <Button style={{ backgroundColor: '#3B5998' }} onPress={() => this.props.navigation.navigate('AddSuperset')}>
-                            <Icon name='ios-list' />
+                        <Button
+                            style={{ backgroundColor: '#3B5998' }}
+                            onPress={() => this.props.navigation.navigate('AddSuperset')}
+                        >
+                            <Icon name="ios-list" />
                         </Button>
-                        <Button style={{ backgroundColor: '#DD5144' }} onPress={() => this.props.navigation.navigate('AddTimeset')}>
-                            <Icon name='ios-alarm' />
+                        <Button
+                            style={{ backgroundColor: '#DD5144' }}
+                            onPress={() => this.props.navigation.navigate('AddTimeset')}
+                        >
+                            <Icon name="ios-alarm" />
                         </Button>
-
                     </Fab>
                     <DatePicker
                         style={{ width: 150, position: 'absolute', right: 10 }}
                         date={this.state.date}
-                        mode='date'
-                        androidMode='default'
-                        placeholder='select date'
-                        format='YYYY-MM-DD'
-                        confirmBtnText='Confirm'
-                        cancelBtnText='Cancel'
+                        mode="date"
+                        androidMode="default"
+                        placeholder="select date"
+                        format="YYYY-MM-DD"
+                        confirmBtnText="Confirm"
+                        cancelBtnText="Cancel"
                         onDateChange={date => {
                             if (this._accordion && date != this.state.date) {
                                 this._accordion.setSelected(-1);
                             }
-                            console.log(this.state.date)
-                            console.log(date);
                             this.setState({ date: date });
                         }}
                     />
                 </View>
-                {this.state.ready ? this.renderContent() : <ActivityIndicator size='large' />}
-            </Container >
+                {this.state.ready ? this.renderContent() : <ActivityIndicator size="large" />}
+            </Container>
         );
     }
     async getExercises() {
@@ -107,22 +116,18 @@ export default class Dashboard extends Component<any, any> {
         });
     }
     renderContent() {
-        return (
-            <View style={{ flex: 1 }}>
-                {this.renderPrimaryContent()}
-            </View>
-        );
+        return <View style={{ flex: 1 }}>{this.renderPrimaryContent()}</View>;
     }
 
     renderPrimaryContent() {
         if (!this.state.dailyWorkouts) {
-            return this._getNoStatistics();
+            return this.renderNoStatistics();
         }
         let item: DailyWorkout = this.state.dailyWorkouts.find(dailyWorkout => {
             return dailyWorkout.title == this.state.date;
         });
         if (!item) {
-            return this._getNoStatistics();
+            return this.renderNoStatistics();
         }
 
         let exercises: Exercise[] = item.sets.reduce(
@@ -140,16 +145,16 @@ export default class Dashboard extends Component<any, any> {
             [] as Exercise[]
         );
 
-        return this._getStatistics(exercises);
+        return this.renderStatistics(exercises);
     }
 
-    _getStatistics(exercises) {
+    renderStatistics(exercises) {
         return (
             <ScrollView>
                 <Accordion
                     ref={c => (this._accordion = c)}
-                    icon='add'
-                    expandedIcon='remove'
+                    icon="add"
+                    expandedIcon="remove"
                     iconStyle={{ position: 'absolute', right: 10 }}
                     expandedIconStyle={{ position: 'absolute', right: 10 }}
                     dataArray={exercises}
@@ -158,7 +163,7 @@ export default class Dashboard extends Component<any, any> {
             </ScrollView>
         );
     }
-    _getNoStatistics() {
+    renderNoStatistics() {
         return (
             <View
                 style={{

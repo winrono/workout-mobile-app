@@ -1,6 +1,6 @@
 export class AddSet {
     name: string;
-    repetitionsCount: number;
+    repsCount: number;
     weight: number;
     creationTime: Date;
 }

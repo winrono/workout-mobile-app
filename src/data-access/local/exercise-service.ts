@@ -36,7 +36,7 @@ export class LocalExerciseService implements ExerciseService {
         if (found) {
             found.name = set.name;
             found.weight = set.weight;
-            found.repetitionsCount = set.repetitionsCount;
+            found.repsCount = set.repsCount;
         }
         return AsyncStorage.setItem(this._storageKey, JSON.stringify(this._sets));
     }

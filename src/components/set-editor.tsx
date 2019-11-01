@@ -1,51 +1,89 @@
 import React from 'react';
 import { View } from 'react-native';
 import { Item, Input, Label } from 'native-base';
+import { connect } from 'react-redux';
+import { setSetName, setSetRepsCount, setSetWeight } from '../actions/set';
 
-export class SetEditor extends React.Component<{ name?, repetitionsCount?, weight?, autoFocus?, onChange: ({ name, repetitionsCount, weight }) => void }, { name, repetitionsCount, weight }> {
+class SetEditor extends React.Component<
+    { name; repsCount; weight; autoFocus; onSetChange: ({ name, repsCount, weight }) => void },
+    { name; repsCount; weight }
+> {
     _weightInput: any;
     _repsInput: any;
-    state = { name: this.props.name, repetitionsCount: this.props.repetitionsCount, weight: this.props.weight };
+    constructor(props) {
+        super(props);
+        this.state = { name: props.name, repsCount: props.repsCount, weight: props.weight };
+    }
     render() {
-        return (<View><Item floatingLabel>
-            <Label>Name</Label>
-            <Input
-                value={this.state.name}
-                returnKeyType={'next'}
-                autoFocus={this.props.autoFocus}
-                onChangeText={text => {
-                    this.setState({ name: text }, () => this.props.onChange(this.state));
-                }}
-                onSubmitEditing={() => {
-                    this._repsInput._root.focus();
-                }}
-            />
-        </Item>
-            <Item floatingLabel>
-                <Label>Reps</Label>
-                <Input
-                    getRef={(c) => this._repsInput = c}
-                    returnKeyType={'next'}
-                    keyboardType='numeric'
-                    value={this.state.repetitionsCount}
-                    onChangeText={(text) => {
-                        this.setState({ repetitionsCount: text }, () => this.props.onChange(this.state));
-                    }}
-                    onSubmitEditing={() => {
-                        this._weightInput._root.focus();
-                    }} />
-            </Item>
-            <Item floatingLabel>
-                <Label>Weight(kg)</Label>
-                <Input
-                    getRef={(c) => this._weightInput = c}
-                    returnKeyType={'done'}
-                    keyboardType='numeric'
-                    value={this.state.weight}
-                    onChangeText={(text) => {
-                        this.setState({ weight: text }, () => this.props.onChange(this.state));
-                    }} />
-            </Item>
-        </View>);
+        return (
+            <View>
+                <Item floatingLabel>
+                    <Label>Name</Label>
+                    <Input
+                        value={this.state.name}
+                        returnKeyType={'next'}
+                        autoFocus={this.props.autoFocus}
+                        onChangeText={name => {
+                            this.setState({ name }, () => {
+                                this.props.onSetChange(this.state);
+                            });
+                        }}
+                        onSubmitEditing={() => {
+                            this._weightInput._root.focus();
+                        }}
+                    />
+                </Item>
+                <Item floatingLabel>
+                    <Label>Weight(kg)</Label>
+                    <Input
+                        getRef={c => (this._weightInput = c)}
+                        returnKeyType={'next'}
+                        keyboardType="numeric"
+                        value={this.state.weight}
+                        onChangeText={weight => {
+                            this.setState({ weight }, () => {
+                                this.props.onSetChange(this.state);
+                            });
+                        }}
+                        onSubmitEditing={() => {
+                            this._repsInput._root.focus();
+                        }}
+                    />
+                </Item>
+                <Item floatingLabel>
+                    <Label>Reps</Label>
+                    <Input
+                        getRef={c => (this._repsInput = c)}
+                        returnKeyType={'done'}
+                        keyboardType="numeric"
+                        value={this.state.repsCount}
+                        onChangeText={repsCount => {
+                            this.setState({ repsCount }, () => {
+                                this.props.onSetChange(this.state);
+                            });
+                        }}
+                    />
+                </Item>
+            </View>
+        );
     }
 }
+
+function mapDispatchToProps(dispatch) {
+    return {
+        onNameChange: text => {
+            dispatch(setSetName(text));
+        },
+        onWeightChange: text => {
+            dispatch(setSetWeight(text));
+        },
+        onRepsCountChange: text => {
+            dispatch(setSetRepsCount(text));
+        }
+    };
+}
+
+export default connect(
+    undefined,
+    mapDispatchToProps
+)(SetEditor);
