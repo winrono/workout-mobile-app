@@ -3,7 +3,7 @@ import { Text, View } from 'react-native';
 import { ActivityIndicator, ScrollView } from 'react-native';
 import { NavigationEvents } from 'react-navigation';
 import { Container, Accordion, List, Fab, Icon, Button } from 'native-base';
-import DatePicker from 'react-native-datepicker';
+import { Datepicker } from '../components/date-picker';
 import { Exercise } from '../models/exercise';
 import { DailyWorkout } from '../models/daily-workout';
 import { Set } from '../models/set';
@@ -14,9 +14,6 @@ import { SuperSet } from '../models/super-set';
 import { SupersetView } from '../components/superset-view';
 import { SetView } from '../components/set-view';
 import { Navbar } from '../components/navbar';
-import { connect } from 'react-redux';
-import { setSet } from '../actions/set';
-
 export default class Dashboard extends Component<any, any> {
     _accordion: Accordion;
     @lazyInject('exerciseService') private readonly _exerciseService: ExerciseService;
@@ -62,15 +59,9 @@ export default class Dashboard extends Component<any, any> {
                             <Icon name='ios-alarm' />
                         </Button>
                     </Fab>
-                    <DatePicker
-                        style={{ width: 150, position: 'absolute', right: 10 }}
+                    <Datepicker
+                        pickerStyle={{ width: 150, position: 'absolute', right: 10 }}
                         date={this.state.date}
-                        mode='date'
-                        androidMode='default'
-                        placeholder='select date'
-                        format='YYYY-MM-DD'
-                        confirmBtnText='Confirm'
-                        cancelBtnText='Cancel'
                         onDateChange={date => {
                             if (this._accordion && date != this.state.date) {
                                 this._accordion.setSelected(-1);
