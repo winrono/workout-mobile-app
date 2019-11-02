@@ -5,14 +5,19 @@ import { ExerciseService } from '../data-access/exercise-service';
 import { Form, Container, Content, Item, Label, Button, Input } from 'native-base';
 import { Navbar } from '../components/navbar';
 import { connect } from 'react-redux';
-import { setSetName, setSetRepsCount, setSetWeight } from '../actions/set';
+import { setSetName, setSetRepsCount, setSetWeight, setSet } from '../actions/set';
 import SetEditor from '../components/set-editor';
 import { Set } from '../models/set';
 
-class AddSet extends React.Component<{ set: Set }, any> {
+class AddSet extends React.Component<{ set: Set }, { set: Set }> {
     @lazyInject('exerciseService') private readonly _exerciseService: ExerciseService;
     _repsInput: any;
     _weightInput: any;
+
+    constructor(props) {
+        super(props);
+        this.state = { set: props.set };
+    }
 
     render() {
         return (
@@ -21,9 +26,14 @@ class AddSet extends React.Component<{ set: Set }, any> {
                 <Content>
                     <Form>
                         <SetEditor
-                            name={this.props.set.name}
-                            weight={this.props.set.weight}
-                            repsCount={this.props.set.repsCount}
+                            name={this.state.set.name}
+                            weight={this.state.set.weight}
+                            repsCount={this.state.set.repsCount}
+                            onSetChange={set => {
+                                this.setState({
+                                    set: set
+                                });
+                            }}
                         ></SetEditor>
                         <Button block style={{ marginTop: 20 }} onPress={this.submit.bind(this)}>
                             <Text>Submit</Text>
@@ -36,12 +46,11 @@ class AddSet extends React.Component<{ set: Set }, any> {
     async submit() {
         this._exerciseService
             .postSet({
-                name: this.props.set.name,
-                repsCount: this.props.set.repsCount,
-                weight: this.props.set.weight,
+                ...this.state.set,
                 creationTime: new Date()
             })
             .then(() => {
+                this.props.onAddSet(this.state.set);
                 this.props.navigation.navigate('Dashboard');
             });
     }
@@ -62,12 +71,20 @@ const styles = StyleSheet.create({
 });
 
 function mapStateToProps(state) {
-    console.log(state);
     return {
         set: state.set
     };
 }
 
+function mapDispatchToProps(dispatch) {
+    return {
+        onAddSet: set => {
+            dispatch(setSet(set));
+        }
+    };
+}
+
 export default connect(
-    mapStateToProps
+    mapStateToProps,
+    mapDispatchToProps
 )(AddSet);

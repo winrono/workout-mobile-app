@@ -27,7 +27,7 @@ const dashboardStack = createStackNavigator(
         EditSet: { screen: EditSetScreen },
         AddSet: { screen: AddSetScreen },
         AddSuperset: { screen: AddSupersetScreen },
-        AddTimeset: {screen: AddTimesetScreen}
+        AddTimeset: { screen: AddTimesetScreen }
     },
     {
         headerMode: 'none',
@@ -42,7 +42,7 @@ let drawerNavigatorRouteConfig = {
         screen: dashboardStack,
         navigationOptions: {
             drawerLabel: 'Dashboard',
-            drawerIcon: () => <Ionicons name='md-home' size={30} />,
+            drawerIcon: () => <Ionicons name="md-home" size={30} />,
             headerRight: <Text>Boom</Text>
         }
     }
@@ -55,7 +55,7 @@ if (!configurationProvider.isInLocalMode()) {
         screen: DummyScreen,
         navigationOptions: {
             drawerLabel: 'Log out',
-            tabBarIcon: () => <Ionicons name='md-log-out' size={30} />
+            tabBarIcon: () => <Ionicons name="md-log-out" size={30} />
         }
     };
 }

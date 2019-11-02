@@ -8,16 +8,17 @@ import { SuperSet } from '../models/super-set';
 import { Set } from '../models/set';
 import { Navbar } from '../components/navbar';
 import { connect } from 'react-redux';
-import { setSupersetName, addSetToSuperset, removeSetFromSuperset } from '../actions/set';
+import { setSuperset } from '../actions/set';
 
-class AddSuperset extends React.Component<{ superset: SuperSet }> {
+class AddSuperSet extends React.Component<SuperSet, { set: SuperSet }> {
     @lazyInject('exerciseService') private readonly _exerciseService: ExerciseService;
     _repsInput: any;
     _weightInput: any;
 
     constructor(props) {
         super(props);
-        this.state = { set: { name: 'Default', sets: [new Set()] } };
+        console.log(this.props);
+        this.state = { set: { sets: this.props.sets, name: this.props.name } };
     }
     render() {
         return (
@@ -29,15 +30,26 @@ class AddSuperset extends React.Component<{ superset: SuperSet }> {
                             <Item floatingLabel>
                                 <Label>Superset name</Label>
                                 <Input
-                                    value={this.props.superset.name}
+                                    value={this.state.set.name}
                                     returnKeyType={'next'}
                                     onChangeText={text => {
-                                        this.props.onSupersetNameChange(text);
+                                        this.setState({ set: { ...this.state.set, name: text } });
                                     }}
                                 />
                             </Item>
-                            {this.props.superset.sets.map((set, i) => (
-                                <SetEditor name={set.name} repsCount={set.repsCount} weight={set.weight}></SetEditor>
+                            {this.state.set.sets.map((set, i) => (
+                                <SetEditor
+                                    name={set.name}
+                                    weight={set.weight}
+                                    repsCount={set.repsCount}
+                                    onSetChange={editedSet => {
+                                        const sets = [...this.state.set.sets];
+                                        sets[i] = editedSet;
+                                        this.setState(prevState => ({
+                                            set: { ...prevState.set, sets: sets }
+                                        }));
+                                    }}
+                                ></SetEditor>
                             ))}
                             <View style={styles.actionsCountainer}>
                                 <Button
@@ -45,7 +57,15 @@ class AddSuperset extends React.Component<{ superset: SuperSet }> {
                                     danger
                                     iconLeft
                                     style={[styles.button, { margin: 20 }]}
-                                    onPress={() => this.props.onSupersetRemoveSet()}
+                                    onPress={() => {
+                                        const sets = [...this.state.set.sets];
+                                        if (sets.length > 1) {
+                                            sets.pop();
+                                            this.setState(prevState => ({
+                                                set: { ...prevState.set, sets: sets }
+                                            }));
+                                        }
+                                    }}
                                 >
                                     <Icon name="trash" />
                                     <Text>Remove set</Text>
@@ -55,7 +75,11 @@ class AddSuperset extends React.Component<{ superset: SuperSet }> {
                                     primary
                                     iconLeft
                                     style={[styles.button, { margin: 10 }]}
-                                    onPress={() => this.props.onSupersetAddSet()}
+                                    onPress={() =>
+                                        this.setState(prevState => ({
+                                            set: { ...prevState.set, sets: [...prevState.set.sets, new Set()] }
+                                        }))
+                                    }
                                 >
                                     <Icon name="add" />
                                     <Text>Add set</Text>
@@ -71,7 +95,9 @@ class AddSuperset extends React.Component<{ superset: SuperSet }> {
         );
     }
     async submit() {
-        this._exerciseService.postSuperSet({ ...this.props.superset, creationTime: new Date() });
+        await this._exerciseService.postSuperSet({ ...this.state.set, creationTime: new Date() });
+        this.props.onSetSubmit(this.state.set);
+        this.props.navigation.navigate('Dashboard');
     }
 }
 
@@ -92,21 +118,13 @@ const styles = StyleSheet.create({
 });
 
 function mapStateToProps(state) {
-    return {
-        superset: state.superset
-    };
+    return state.superset;
 }
 
 function mapDispatchToProps(dispatch) {
     return {
-        onSupersetNameChange: text => {
-            dispatch(setSupersetName(text));
-        },
-        onSupersetAddSet: () => {
-            dispatch(addSetToSuperset());
-        },
-        onSupersetRemoveSet: () => {
-            dispatch(removeSetFromSuperset());
+        onSetSubmit: set => {
+            dispatch(setSuperset(set));
         }
     };
 }
@@ -114,4 +132,4 @@ function mapDispatchToProps(dispatch) {
 export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(AddSuperset);
+)(AddSuperSet);

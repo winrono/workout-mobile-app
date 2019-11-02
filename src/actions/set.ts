@@ -5,8 +5,7 @@ export const SET_SET_NAME = 'SET_SET_NAME';
 export const SET_SET_WEIGHT = 'SET_SET_WEIGHT';
 export const SET_SET_REPS_COUNT = 'SET_SET_REPS_COUNT';
 export const SET_SUPERSET_NAME = 'SET_SUPERSET_NAME';
-export const ADD_SET_TO_SUPERSET = 'ADD_SET_TO_SUPERSET';
-export const REMOVE_SET_FROM_SUPERSET = 'REMOVE_SET_FROM_SUPERSET';
+export const SET_SUPERSET = 'SET_SUPERSET';
 
 export function setSet(set) {
     return { type: SET_SET, set };
@@ -23,14 +22,6 @@ export function setSetRepsCount(text) {
     return { type: SET_SET_REPS_COUNT, text };
 }
 
-export function setSupersetName(text) {
-    return { type: SET_SUPERSET_NAME, text };
-}
-
-export function addSetToSuperset() {
-    return { type: ADD_SET_TO_SUPERSET };
-}
-
-export function removeSetFromSuperset() {
-    return { type: REMOVE_SET_FROM_SUPERSET };
+export function setSuperset(set) {
+    return { type: SET_SUPERSET, set };
 }

@@ -1,12 +1,4 @@
-import {
-    SET_SET_NAME,
-    SET_SET_WEIGHT,
-    SET_SET_REPS_COUNT,
-    SET_SET,
-    SET_SUPERSET_NAME,
-    ADD_SET_TO_SUPERSET,
-    REMOVE_SET_FROM_SUPERSET
-} from '../actions/set';
+import { SET_SET_NAME, SET_SET_WEIGHT, SET_SET_REPS_COUNT, SET_SET, SET_SUPERSET } from '../actions/set';
 import { Set } from '../models/set';
 import { SuperSet } from '../models/super-set';
 
@@ -51,30 +43,14 @@ export function appReducer(state = initialState, action) {
         case SET_SET:
             return {
                 ...state,
-                set: {...action.set}
+                set: { ...action.set }
             };
-        case SET_SUPERSET_NAME:
+        case SET_SUPERSET:
+            console.log(action.set);
             return {
                 ...state,
                 superset: {
-                    ...state.superset,
-                    name: action.text
-                }
-            };
-        case ADD_SET_TO_SUPERSET:
-            return {
-                ...state,
-                superset: {
-                    ...state.superset,
-                    sets: [...state.superset.sets, new Set()]
-                }
-            };
-        case REMOVE_SET_FROM_SUPERSET:
-            return {
-                ...state,
-                superset: {
-                    ...state.superset,
-                    sets: [...state.superset.sets.slice(0, state.superset.sets.length - 1)]
+                    ...action.set
                 }
             };
     }
