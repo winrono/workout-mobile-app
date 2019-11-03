@@ -10,9 +10,12 @@ import { SuperSet } from '../../models/super-set';
 @injectable()
 export class LocalExerciseService implements ExerciseService {
     private _storageKey: string = 'localExercises';
-    private _sets: (Set | SuperSet)[] = [];
+    private _sets: (Set | SuperSet)[];
 
     getSets(): Promise<(Set | SuperSet)[]> {
+        if (this._sets) {
+            return Promise.resolve(this._sets);
+        }
         return AsyncStorage.getItem(this._storageKey).then(data => {
             let sets: (Set | SuperSet)[] = JSON.parse(data);
             if (sets) {
@@ -20,6 +23,14 @@ export class LocalExerciseService implements ExerciseService {
             }
             return this._sets;
         });
+    }
+    async getSetsByDate(dateTime: string): Promise<(Set | SuperSet)[]> {
+        let targetDate = new Date(dateTime).toDateString();
+        let sets = await this.getSets();
+        sets = sets.filter((set) => {
+            return new Date(set.creationTime).toDateString() === targetDate;
+        });
+        return sets;
     }
     postSet(exercise: AddSet): Promise<any> {
         this._sets.push({ ...exercise, exerciseId: new Date().getTime().toString() });

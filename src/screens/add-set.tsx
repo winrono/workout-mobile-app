@@ -5,7 +5,7 @@ import { ExerciseService } from '../data-access/exercise-service';
 import { Form, Container, Content, Button } from 'native-base';
 import { Navbar } from '../components/navbar';
 import { connect } from 'react-redux';
-import { setSet } from '../actions/set';
+import { setSet } from '../actions/set-set';
 import SetEditor from '../components/set-editor';
 import { Set } from '../models/set';
 
@@ -47,7 +47,7 @@ class AddSet extends React.Component<{ set: Set }, { set: Set }> {
         this._exerciseService
             .postSet({
                 ...this.state.set,
-                creationTime: new Date()
+                creationTime: new Date().toISOString()
             })
             .then(() => {
                 this.props.onAddSet(this.state.set);

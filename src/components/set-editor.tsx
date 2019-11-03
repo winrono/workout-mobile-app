@@ -1,13 +1,11 @@
 import React from 'react';
 import { View } from 'react-native';
 import { Item, Input, Label } from 'native-base';
-import { connect } from 'react-redux';
-import { setSetName, setSetRepsCount, setSetWeight } from '../actions/set';
 
-class SetEditor extends React.Component<
-    { name; repsCount; weight; autoFocus; onSetChange: ({ name, repsCount, weight }) => void },
+export default class SetEditor extends React.Component<
+    { name; repsCount; weight; autoFocus?; onSetChange: ({ name, repsCount, weight }) => void },
     { name; repsCount; weight }
-> {
+    > {
     _weightInput: any;
     _repsInput: any;
     constructor(props) {
@@ -68,22 +66,3 @@ class SetEditor extends React.Component<
         );
     }
 }
-
-function mapDispatchToProps(dispatch) {
-    return {
-        onNameChange: text => {
-            dispatch(setSetName(text));
-        },
-        onWeightChange: text => {
-            dispatch(setSetWeight(text));
-        },
-        onRepsCountChange: text => {
-            dispatch(setSetRepsCount(text));
-        }
-    };
-}
-
-export default connect(
-    undefined,
-    mapDispatchToProps
-)(SetEditor);

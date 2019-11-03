@@ -14,22 +14,25 @@ import { SuperSet } from '../models/super-set';
 import { SupersetView } from '../components/superset-view';
 import { SetView } from '../components/set-view';
 import { Navbar } from '../components/navbar';
+import { getShortDate } from '../utils/date';
+import { NoStatistics } from '../components/no-statistics';
+import { StatisticsView } from '../components/statistics-view';
+
 export default class Dashboard extends Component<any, any> {
-    _accordion: Accordion;
+
     @lazyInject('exerciseService') private readonly _exerciseService: ExerciseService;
 
     constructor(props) {
         super(props);
-        this.state = { date: this.getCalendarDate(), activeFab: false };
+        this.state = { date: new Date() };
     }
-
     render() {
         return (
             <Container>
                 <Navbar />
                 <NavigationEvents
                     onDidFocus={() => {
-                        this.getExercises();
+                        this.getSets();
                     }}
                 />
                 <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 20 }}>
@@ -61,12 +64,11 @@ export default class Dashboard extends Component<any, any> {
                     </Fab>
                     <Datepicker
                         pickerStyle={{ width: 150, position: 'absolute', right: 10 }}
-                        date={this.state.date}
-                        onDateChange={date => {
-                            if (this._accordion && date != this.state.date) {
-                                this._accordion.setSelected(-1);
-                            }
-                            this.setState({ date: date });
+                        date={getShortDate(this.state.date)}
+                        onDateChange={(date: string) => {
+                            this.setState({ date: new Date(date), ready: false }, () => {
+                                this.getSets();
+                            });
                         }}
                     />
                 </View>
@@ -74,54 +76,23 @@ export default class Dashboard extends Component<any, any> {
             </Container>
         );
     }
-    async getExercises() {
-        this._exerciseService.getSets().then(data => {
-            this.setState({ ready: true });
-            if (!data) {
-                return;
+    async getSets() {
+        this._exerciseService.getSetsByDate(this.state.date).then(data => {
+            let dailyWorkout: DailyWorkout;
+            if (data && data.length > 0) {
+                dailyWorkout = { title: getShortDate(data[0].creationTime), sets: data };
             }
-            let nonGroupedExercises = data.map(ex => {
-                return {
-                    title: this.getDisplayedDate(ex.creationTime),
-                    entity: ex
-                };
-            });
-            let dailyWorkouts: DailyWorkout[] = nonGroupedExercises.reduce(
-                (prev, current) => {
-                    var found = prev.find(obj => {
-                        return obj.title === current.title;
-                    });
-                    if (!found) {
-                        prev.push({ title: current.title, sets: [current.entity] });
-                    } else {
-                        found.sets.push(current.entity);
-                    }
-                    return prev;
-                },
-                [] as DailyWorkout[]
-            );
             this.setState({
-                dailyWorkouts
+                dailyWorkout, ready: true
             });
-            this.setState({ exercises: data });
         });
     }
     renderContent() {
-        return <View style={{ flex: 1 }}>{this.renderPrimaryContent()}</View>;
-    }
-
-    renderPrimaryContent() {
-        if (!this.state.dailyWorkouts) {
-            return this.renderNoStatistics();
-        }
-        let item: DailyWorkout = this.state.dailyWorkouts.find(dailyWorkout => {
-            return dailyWorkout.title == this.state.date;
-        });
-        if (!item) {
-            return this.renderNoStatistics();
+        if (!this.state.dailyWorkout) {
+            return <NoStatistics />
         }
 
-        let exercises: Exercise[] = item.sets.reduce(
+        let exercises: Exercise[] = this.state.dailyWorkout.sets.reduce(
             (prev, current) => {
                 let found = prev.find((exercise: Exercise) => {
                     return exercise.title == current.name;
@@ -136,80 +107,9 @@ export default class Dashboard extends Component<any, any> {
             [] as Exercise[]
         );
 
-        return this.renderStatistics(exercises);
-    }
-
-    renderStatistics(exercises) {
-        return (
-            <ScrollView>
-                <Accordion
-                    ref={c => (this._accordion = c)}
-                    icon='add'
-                    expandedIcon='remove'
-                    iconStyle={{ position: 'absolute', right: 10 }}
-                    expandedIconStyle={{ position: 'absolute', right: 10 }}
-                    dataArray={exercises}
-                    renderContent={this._renderAccordionItem.bind(this)}
-                ></Accordion>
-            </ScrollView>
-        );
-    }
-    renderNoStatistics() {
-        return (
-            <View
-                style={{
-                    flex: 1,
-                    flexDirection: 'column',
-                    justifyContent: 'center',
-                    alignItems: 'stretch'
-                }}
-            >
-                <Text style={{ textAlign: 'center', textAlignVertical: 'center' }}>No workout statistics</Text>
-            </View>
-        );
-    }
-    _renderAccordionItem(exercise: Exercise) {
-        return <List>{exercise.sets.map(set => this._renderSet(set))}</List>;
-    }
-    _renderSet(set: Set | SuperSet) {
-        if ((set as SuperSet).sets) {
-            return <SupersetView superset={set as SuperSet}></SupersetView>;
-        } else {
-            return (
-                <SetView
-                    set={set as Set}
-                    onDelete={this.deleteSetSafely.bind(this, set)}
-                    onEdit={this.editSet.bind(this, set)}
-                ></SetView>
-            );
-        }
-    }
-    deleteSetSafely(set: Set) {
-        Alert.alert('Are you sure you want to delete set?', '', [
-            { text: 'Cancel', style: 'cancel' },
-            { text: 'Delete', onPress: () => this.deleteSet(set) }
-        ]);
-    }
-    deleteSet(set: Set) {
-        this._exerciseService.deleteSetById(set.exerciseId).then(() => {
-            this.getExercises();
-        });
-    }
-    editSet(set: Set) {
-        this.props.navigation.navigate('EditSet', { set: set });
-    }
-    getDisplayedDate(dateString) {
-        let now = new Date(Date.parse(dateString));
-        const year = now.getFullYear();
-        const day = now.getDate();
-        const month = now.getMonth() + 1;
-        return `${year}-${month < 10 ? '0' + month : month}-${day < 10 ? '0' + day : day}`;
-    }
-    getCalendarDate() {
-        let now = new Date();
-        const year = now.getFullYear();
-        const day = now.getDate();
-        const month = now.getMonth() + 1;
-        return `${year}-${month < 10 ? '0' + month : month}-${day < 10 ? '0' + day : day}`;
+        return <StatisticsView
+            exercises={exercises}
+            onDeleteSet={() => { this.getSets() }}
+            onEditSet={(set: Set) => this.props.navigation.navigate('EditSet', { set: set })} />
     }
 }

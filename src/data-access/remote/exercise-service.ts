@@ -7,6 +7,12 @@ import { Set } from '../../models/set';
 
 @injectable()
 export class RemoteExerciseService implements ExerciseService {
+    getSetsByDate(date: string): Promise<Set | import("../../models/super-set").SuperSet[]> {
+        throw new Error("Method not implemented.");
+    }
+    updateSet(set: Set): Promise<any> {
+        throw new Error("Method not implemented.");
+    }
     postSuperSet(set: import("../../models/super-set").SuperSet): Promise<any> {
         throw new Error("Method not implemented.");
     }

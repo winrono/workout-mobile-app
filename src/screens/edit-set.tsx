@@ -7,7 +7,7 @@ import { ExerciseService } from '../data-access/exercise-service';
 import { lazyInject } from '../ioc/container';
 import { Navbar } from '../components/navbar';
 import { connect } from 'react-redux';
-import { setSet } from '../actions/set';
+import { setSet } from '../actions/set-set';
 
 class EditSet extends React.Component<any, { set: Set }> {
     @lazyInject('exerciseService') private readonly _exerciseService: ExerciseService;

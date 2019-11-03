@@ -8,7 +8,7 @@ import { SuperSet } from '../models/super-set';
 import { Set } from '../models/set';
 import { Navbar } from '../components/navbar';
 import { connect } from 'react-redux';
-import { setSuperset } from '../actions/set';
+import { setSuperset } from '../actions/set-superset';
 
 class AddSuperSet extends React.Component<SuperSet, { set: SuperSet }> {
     @lazyInject('exerciseService') private readonly _exerciseService: ExerciseService;
