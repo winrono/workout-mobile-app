@@ -38,7 +38,7 @@ class SetEditor extends React.Component<
                     <Input
                         getRef={c => (this._weightInput = c)}
                         returnKeyType={'next'}
-                        keyboardType="numeric"
+                        keyboardType='numeric'
                         value={this.state.weight}
                         onChangeText={weight => {
                             this.setState({ weight }, () => {
@@ -55,7 +55,7 @@ class SetEditor extends React.Component<
                     <Input
                         getRef={c => (this._repsInput = c)}
                         returnKeyType={'done'}
-                        keyboardType="numeric"
+                        keyboardType='numeric'
                         value={this.state.repsCount}
                         onChangeText={repsCount => {
                             this.setState({ repsCount }, () => {

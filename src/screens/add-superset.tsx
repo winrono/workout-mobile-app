@@ -1,8 +1,8 @@
 import React from 'react';
-import { StyleSheet, Text, TextInput, KeyboardAvoidingView } from 'react-native';
+import { StyleSheet, Text, KeyboardAvoidingView } from 'react-native';
 import { lazyInject } from '../ioc/container';
 import { ExerciseService } from '../data-access/exercise-service';
-import { Form, Container, Content, Item, Label, Button, Input, View, Icon, Header, Left, Right } from 'native-base';
+import { Form, Container, Content, Item, Label, Button, Input, View, Icon } from 'native-base';
 import SetEditor from '../components/set-editor';
 import { SuperSet } from '../models/super-set';
 import { Set } from '../models/set';
@@ -17,7 +17,6 @@ class AddSuperSet extends React.Component<SuperSet, { set: SuperSet }> {
 
     constructor(props) {
         super(props);
-        console.log(this.props);
         this.state = { set: { sets: this.props.sets, name: this.props.name } };
     }
     render() {
@@ -26,7 +25,7 @@ class AddSuperSet extends React.Component<SuperSet, { set: SuperSet }> {
                 <Navbar />
                 <Content>
                     <Form>
-                        <KeyboardAvoidingView behavior="padding" enabled>
+                        <KeyboardAvoidingView behavior='padding' enabled>
                             <Item floatingLabel>
                                 <Label>Superset name</Label>
                                 <Input
@@ -67,7 +66,7 @@ class AddSuperSet extends React.Component<SuperSet, { set: SuperSet }> {
                                         }
                                     }}
                                 >
-                                    <Icon name="trash" />
+                                    <Icon name='trash' />
                                     <Text>Remove set</Text>
                                 </Button>
                                 <Button
@@ -81,7 +80,7 @@ class AddSuperSet extends React.Component<SuperSet, { set: SuperSet }> {
                                         }))
                                     }
                                 >
-                                    <Icon name="add" />
+                                    <Icon name='add' />
                                     <Text>Add set</Text>
                                 </Button>
                             </View>

@@ -1,5 +1,3 @@
-import { Set } from '../models/set';
-
 export const SET_SET = 'SET_SET';
 export const SET_SET_NAME = 'SET_SET_NAME';
 export const SET_SET_WEIGHT = 'SET_SET_WEIGHT';

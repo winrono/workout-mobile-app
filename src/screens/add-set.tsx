@@ -1,11 +1,11 @@
 import React from 'react';
-import { StyleSheet, Text, TextInput, View } from 'react-native';
+import { StyleSheet, Text } from 'react-native';
 import { lazyInject } from '../ioc/container';
 import { ExerciseService } from '../data-access/exercise-service';
-import { Form, Container, Content, Item, Label, Button, Input } from 'native-base';
+import { Form, Container, Content, Button } from 'native-base';
 import { Navbar } from '../components/navbar';
 import { connect } from 'react-redux';
-import { setSetName, setSetRepsCount, setSetWeight, setSet } from '../actions/set';
+import { setSet } from '../actions/set';
 import SetEditor from '../components/set-editor';
 import { Set } from '../models/set';
 
