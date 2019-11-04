@@ -9,14 +9,14 @@ import { setSet } from '../actions/set-set';
 import SetEditor from '../components/set-editor';
 import { Set } from '../models/set';
 
-class AddSet extends React.Component<{ set: Set }, { set: Set }> {
+class AddSet extends React.Component<{ set: Set, navigation: any }, { set: Set, date: Date }> {
     @lazyInject('exerciseService') private readonly _exerciseService: ExerciseService;
     _repsInput: any;
     _weightInput: any;
 
     constructor(props) {
         super(props);
-        this.state = { set: props.set };
+        this.state = { set: props.set, date: this.props.navigation.getParam('date', new Date()) };
     }
 
     render() {
@@ -47,7 +47,7 @@ class AddSet extends React.Component<{ set: Set }, { set: Set }> {
         this._exerciseService
             .postSet({
                 ...this.state.set,
-                creationTime: new Date().toISOString()
+                creationTime: this.state.date.toISOString()
             })
             .then(() => {
                 this.props.onAddSet(this.state.set);

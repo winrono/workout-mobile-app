@@ -24,7 +24,7 @@ export class LocalExerciseService implements ExerciseService {
             return this._sets;
         });
     }
-    async getSetsByDate(dateTime: string): Promise<(Set | SuperSet)[]> {
+    async getSetsByDate(dateTime: string | Date): Promise<(Set | SuperSet)[]> {
         let targetDate = new Date(dateTime).toDateString();
         let sets = await this.getSets();
         sets = sets.filter((set) => {

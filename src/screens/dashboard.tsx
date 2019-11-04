@@ -45,7 +45,7 @@ export default class Dashboard extends Component<any, any> {
                         <Icon name='ios-fitness' />
                         <Button
                             style={{ backgroundColor: '#34A34F' }}
-                            onPress={() => this.props.navigation.navigate('AddSet')}
+                            onPress={() => this.props.navigation.navigate('AddSet', { date: this.state.date })}
                         >
                             <Icon name='ios-add' />
                         </Button>
@@ -91,25 +91,29 @@ export default class Dashboard extends Component<any, any> {
         if (!this.state.dailyWorkout) {
             return <NoStatistics />
         }
-
-        let exercises: Exercise[] = this.state.dailyWorkout.sets.reduce(
-            (prev, current) => {
-                let found = prev.find((exercise: Exercise) => {
-                    return exercise.title == current.name;
-                });
-                if (!found) {
-                    prev.push({ title: current.name, sets: [current] });
-                } else {
-                    found.sets.push(current);
-                }
-                return prev;
-            },
-            [] as Exercise[]
-        );
+        let exercises = [{ title: this.state.dailyWorkout.sets[0].name, sets: [this.state.dailyWorkout.sets[0]] }]
+        for (var i = 1; i < this.state.dailyWorkout.sets.length; i++) {
+            let lastEntry = exercises[exercises.length - 1];
+            let currentSet = this.state.dailyWorkout.sets[i];
+            if (lastEntry.title == currentSet.name) {
+                lastEntry.sets.push(currentSet);
+            } else {
+                exercises.push({ title: currentSet.name, sets: [currentSet] });
+            }
+        }
 
         return <StatisticsView
             exercises={exercises}
             onDeleteSet={() => { this.getSets() }}
             onEditSet={(set: Set) => this.props.navigation.navigate('EditSet', { set: set })} />
+    }
+
+    //added for future usage
+    addAfter<T>(array: Array<T>, index: number, newItem: T) {
+        return [
+            ...array.slice(0, index),
+            newItem,
+            ...array.slice(index)
+        ];
     }
 }

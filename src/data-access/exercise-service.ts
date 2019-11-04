@@ -4,7 +4,7 @@ import { SuperSet } from '../models/super-set';
 
 export interface ExerciseService {
     getSets(): Promise<(Set | SuperSet)[]>;
-    getSetsByDate(date: string): Promise<(Set | SuperSet)[]>;
+    getSetsByDate(date: string | Date): Promise<(Set | SuperSet)[]>;
     postSet(exercise: AddSet): Promise<any>;
     updateSet(set: Set): Promise<any>;
     postSuperSet(set: SuperSet): Promise<any>;
