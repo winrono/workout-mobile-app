@@ -1,6 +1,6 @@
 import React from 'react';
-import { ScrollView, Alert } from 'react-native';
-import { Accordion, List } from 'native-base';
+import { ScrollView, Alert, Text, Dimensions, FlatList } from 'react-native';
+import { Accordion, List, Card, CardItem, Body, View } from 'native-base';
 import { Exercise } from '../models/exercise';
 import { SuperSet } from '../models/super-set';
 import { Set } from '../models/set';
@@ -8,6 +8,7 @@ import { SetView } from './set-view';
 import { SupersetView } from './superset-view';
 import { ExerciseService } from '../data-access/exercise-service';
 import { lazyInject } from '../ioc/container';
+var width = Dimensions.get('window').width;
 
 export class StatisticsView extends React.Component<{ exercises: Exercise[], onDeleteSet: () => void; onEditSet: (set: Set) => void }> {
 
@@ -15,14 +16,24 @@ export class StatisticsView extends React.Component<{ exercises: Exercise[], onD
 
     render() {
         return (<ScrollView>
-            <Accordion
-                icon='add'
-                expandedIcon='remove'
-                iconStyle={{ position: 'absolute', right: 10 }}
-                expandedIconStyle={{ position: 'absolute', right: 10 }}
-                dataArray={this.props.exercises}
-                renderContent={this.renderAccordionItem.bind(this)}
-            ></Accordion>
+            {this.props.exercises.map((exercise) => (
+                <View style={{ margin: 10 }}>
+                    <Card style={{
+                        borderRadius: 10,
+                        borderWidth: 1,
+                        overflow: 'hidden'
+                    }}>
+                        <CardItem header bordered style={{ justifyContent: 'center' }}>
+                            <Text>{exercise.title}</Text>
+                        </CardItem>
+                        <View style={{ flex: 1, flexWrap: 'wrap', flexDirection: 'row' }}>
+                            {exercise.sets.map(s => (
+                                this.renderSet(s)
+                            ))}
+                        </View>
+                    </Card>
+                </View>
+            ))}
         </ScrollView>);
     }
     renderAccordionItem(exercise: Exercise) {
