@@ -5,18 +5,18 @@ import { ExerciseService } from '../data-access/exercise-service';
 import { Form, Container, Content, Button } from 'native-base';
 import { Navbar } from '../components/navbar';
 import { connect } from 'react-redux';
-import { setSet } from '../actions/set-set';
+import { AddSet as AddSetAction } from '../actions/add-set';
 import SetEditor from '../components/set-editor';
 import { Set } from '../models/set';
 
-class AddSet extends React.Component<{ set: Set, navigation: any }, { set: Set, date: Date }> {
+class AddSet extends React.Component<{ set: Set, navigation: any }, { set: Set, exerciseId: string }> {
     @lazyInject('exerciseService') private readonly _exerciseService: ExerciseService;
     _repsInput: any;
     _weightInput: any;
 
     constructor(props) {
         super(props);
-        this.state = { set: props.set, date: this.props.navigation.getParam('date', new Date()) };
+        this.state = { set: props.set, exerciseId: this.props.navigation.getParam('exerciseId', null) };
     }
 
     render() {
@@ -26,7 +26,6 @@ class AddSet extends React.Component<{ set: Set, navigation: any }, { set: Set, 
                 <Content>
                     <Form>
                         <SetEditor
-                            name={this.state.set.name}
                             weight={this.state.set.weight}
                             repsCount={this.state.set.repsCount}
                             onSetChange={set => {
@@ -44,15 +43,7 @@ class AddSet extends React.Component<{ set: Set, navigation: any }, { set: Set, 
         );
     }
     async submit() {
-        this._exerciseService
-            .postSet({
-                ...this.state.set,
-                creationTime: this.state.date.toISOString()
-            })
-            .then(() => {
-                this.props.onAddSet(this.state.set);
-                this.props.navigation.navigate('Dashboard');
-            });
+        this.props.onAddSet(this.state.set, this.state.exerciseId);
     }
 }
 
@@ -78,8 +69,8 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
     return {
-        onAddSet: set => {
-            dispatch(setSet(set));
+        onAddSet: (set, exerciseId) => {
+            dispatch(AddSetAction(set, exerciseId));
         }
     };
 }

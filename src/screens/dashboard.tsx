@@ -11,7 +11,7 @@ import { lazyInject } from '../ioc/container';
 import { Navbar } from '../components/navbar';
 import { getShortDate } from '../utils/date';
 import { NoStatistics } from '../components/no-statistics';
-import { StatisticsView } from '../components/statistics-view';
+import StatisticsView from '../components/statistics-view';
 import { initialize } from '../actions/initialize';
 import { connect } from 'react-redux';
 import { setDate } from '../actions/set-date';
@@ -37,7 +37,7 @@ class Dashboard extends Component<
 
     render() {
         return (
-            <Container>
+            <Container style={{ backgroundColor: '#c5c7c3' }}>
                 <Navbar />
                 <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 20 }}>
                     <Fab
@@ -85,7 +85,6 @@ class Dashboard extends Component<
         }
         return <StatisticsView
             exercises={this.props.dailyWorkout.exercises}
-            onDeleteSet={() => { }}
             onEditSet={(set: Set) => this.props.navigation.navigate('EditSet', { set: set })} />
     }
 

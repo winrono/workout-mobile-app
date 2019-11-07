@@ -8,9 +8,13 @@ import { SetView } from './set-view';
 import { SupersetView } from './superset-view';
 import { ExerciseService } from '../data-access/exercise-service';
 import { lazyInject } from '../ioc/container';
-var width = Dimensions.get('window').width;
+import navigationService from '../../navigation-service';
+import { AntDesign } from '@expo/vector-icons';
+import { connect } from 'react-redux';
+import { deleteExercise } from '../actions/delete-exercise';
 
-export class StatisticsView extends React.Component<{ exercises: Exercise[], onDeleteSet: () => void; onEditSet: (set: Set) => void }> {
+
+class StatisticsView extends React.Component<{ exercises: Exercise[], onDeleteExercise: () => void; onEditSet: (set: Set) => void }> {
 
     @lazyInject('exerciseService') private readonly _exerciseService: ExerciseService;
 
@@ -28,9 +32,18 @@ export class StatisticsView extends React.Component<{ exercises: Exercise[], onD
                                 <Text>{exercise.title}</Text>
                             </Left>
                             <Right>
-                                <TouchableOpacity>
-                                    <Icon name='add'></Icon>
-                                </TouchableOpacity>
+                                <View style={{ flexDirection: 'row' }}>
+                                    <TouchableOpacity onPress={() => {
+                                        this.deleteExerciseSafely(exercise);
+                                    }}>
+                                        <AntDesign size={30} name='delete'></AntDesign>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity onPress={() => {
+                                        navigationService.navigate('AddSet', { exerciseId: exercise.id })
+                                    }}>
+                                        <AntDesign size={30} name='plus'></AntDesign>
+                                    </TouchableOpacity>
+                                </View>
                             </Right>
                         </CardItem>
                         <View style={{ flex: 1, flexWrap: 'wrap', flexDirection: 'row' }}>
@@ -51,26 +64,34 @@ export class StatisticsView extends React.Component<{ exercises: Exercise[], onD
             return (
                 <SetView
                     set={set as Set}
-                    onDelete={this.deleteSetSafely.bind(this, set)}
+                    onDelete={() => { }}
                     onEdit={this.editSet.bind(this, set)}
                 ></SetView>
             );
         }
     }
 
-    deleteSetSafely(set: Set) {
-        Alert.alert('Are you sure you want to delete set?', '', [
+    deleteExerciseSafely(exercise: Exercise) {
+        Alert.alert('Are you sure you want to delete exercise?', '', [
             { text: 'Cancel', style: 'cancel' },
-            { text: 'Delete', onPress: () => this.deleteSet(set) }
+            { text: 'Delete', onPress: () => this.deleteExercise(exercise) }
         ]);
     }
 
-    deleteSet(set: Set) {
-        // this._exerciseService.deleteSetById(set.exerciseId).then(() => {
-        //     this.props.onDeleteSet();
-        // });
+    deleteExercise(exercise: Exercise) {
+        this.props.onDeleteExercise(exercise);
     }
     editSet(set: Set) {
         this.props.onEditSet(set);
     }
 };
+
+function mapDispatchToProps(dispatch) {
+    return {
+        onDeleteExercise: (exercise: Exercise) => {
+            dispatch(deleteExercise(exercise));
+        }
+    }
+}
+
+export default connect(undefined, mapDispatchToProps)(StatisticsView);

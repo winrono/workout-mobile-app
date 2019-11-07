@@ -14,6 +14,7 @@ function saveWorkout(workout: DailyWorkout) {
 }
 
 store.subscribe(() => {
+    // TODO: reduce number of storage updates
     let state = store.getState();
     if (state.activeWorkout) {
         saveWorkout(state.activeWorkout);

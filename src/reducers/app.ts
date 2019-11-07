@@ -8,6 +8,8 @@ import { ADD_EXERCISE } from '../actions/add-exercise';
 import navigationService from '../../navigation-service';
 import { getShortDate } from '../utils/date';
 import { SET_ACTIVE_WORKOUT } from '../actions/set-active-workout';
+import { ADD_SET } from '../actions/add-set';
+import { DELETE_EXERCISE } from '../actions/delete-exercise';
 
 const initialState: { set: Set; superset: SuperSet, ready: boolean, workouts: DailyWorkout[], activeWorkout: DailyWorkout } = {
     set: {
@@ -55,7 +57,35 @@ export function appReducer(state = initialState, action) {
             }
             return {
                 ...state,
-                activeWorkout: { ...state.activeWorkout, exercises: [...state.activeWorkout.exercises, action.payload.exercise] }
+                activeWorkout: { ...state.activeWorkout, exercises: [...state.activeWorkout.exercises, { ...action.payload.exercise, id: new Date().getTime().toString() }] }
+            }
+        case ADD_SET:
+            // using navigation here for now as add set will become async at some point
+            navigationService.navigate('Dashboard');
+            let newExercises = [...state.activeWorkout.exercises];
+            id = null;
+            let newExercise = {
+                ...newExercises.find((ex, index) => {
+                    let found = ex.id === action.payload.exerciseId;
+                    if (found) {
+                        id = index;
+                    }
+                    return found;
+                })
+            };
+            newExercise.sets.push(action.payload.set);
+            newExercises[id] = newExercise;
+            return {
+                ...state,
+                activeWorkout: { ...state.activeWorkout, exercises: newExercises }
+            }
+        case DELETE_EXERCISE:
+            let exercises = [...state.activeWorkout.exercises];
+            id = exercises.indexOf(action.payload);
+            exercises.splice(id, 1);
+            return {
+                ...state,
+                activeWorkout: { ...state.activeWorkout, exercises: exercises }
             }
         case SET_ACTIVE_WORKOUT:
             return {
