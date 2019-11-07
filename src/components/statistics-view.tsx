@@ -1,6 +1,6 @@
 import React from 'react';
-import { ScrollView, Alert, Text, Dimensions, FlatList } from 'react-native';
-import { Accordion, List, Card, CardItem, Body, View } from 'native-base';
+import { ScrollView, Alert, Text, Dimensions, FlatList, TouchableOpacity } from 'react-native';
+import { Accordion, List, Card, CardItem, Body, View, Left, Icon, Right } from 'native-base';
 import { Exercise } from '../models/exercise';
 import { SuperSet } from '../models/super-set';
 import { Set } from '../models/set';
@@ -23,8 +23,15 @@ export class StatisticsView extends React.Component<{ exercises: Exercise[], onD
                         borderWidth: 1,
                         overflow: 'hidden'
                     }}>
-                        <CardItem header bordered style={{ justifyContent: 'center' }}>
-                            <Text>{exercise.title}</Text>
+                        <CardItem header bordered>
+                            <Left>
+                                <Text>{exercise.title}</Text>
+                            </Left>
+                            <Right>
+                                <TouchableOpacity>
+                                    <Icon name='add'></Icon>
+                                </TouchableOpacity>
+                            </Right>
                         </CardItem>
                         <View style={{ flex: 1, flexWrap: 'wrap', flexDirection: 'row' }}>
                             {exercise.sets.map(s => (
@@ -35,9 +42,6 @@ export class StatisticsView extends React.Component<{ exercises: Exercise[], onD
                 </View>
             ))}
         </ScrollView>);
-    }
-    renderAccordionItem(exercise: Exercise) {
-        return <List>{exercise.sets.map(set => this.renderSet(set))}</List>;
     }
 
     renderSet(set: Set | SuperSet) {
@@ -62,9 +66,9 @@ export class StatisticsView extends React.Component<{ exercises: Exercise[], onD
     }
 
     deleteSet(set: Set) {
-        this._exerciseService.deleteSetById(set.exerciseId).then(() => {
-            this.props.onDeleteSet();
-        });
+        // this._exerciseService.deleteSetById(set.exerciseId).then(() => {
+        //     this.props.onDeleteSet();
+        // });
     }
     editSet(set: Set) {
         this.props.onEditSet(set);

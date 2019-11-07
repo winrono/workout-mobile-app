@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View } from 'react-native';
+import { View, Text } from 'react-native';
 import { ActivityIndicator } from 'react-native';
 import { NavigationEvents } from 'react-navigation';
 import { Container, Fab, Icon, Button } from 'native-base';
@@ -12,24 +12,33 @@ import { Navbar } from '../components/navbar';
 import { getShortDate } from '../utils/date';
 import { NoStatistics } from '../components/no-statistics';
 import { StatisticsView } from '../components/statistics-view';
+import { initialize } from '../actions/initialize';
+import { connect } from 'react-redux';
+import { setDate } from '../actions/set-date';
 
-export default class Dashboard extends Component<any, any> {
+class Dashboard extends Component<
+    {
+        dailyWorkout: DailyWorkout, ready: boolean, initialize: () => void, setDate: (date: string | Date) => void
+    },
+    {
+        date: Date, activeFab: boolean
+    }> {
 
     @lazyInject('exerciseService') private readonly _exerciseService: ExerciseService;
 
     constructor(props) {
         super(props);
-        this.state = { date: new Date() };
+        this.state = { date: new Date(), activeFab: false };
     }
+
+    componentWillMount() {
+        this.props.initialize();
+    }
+
     render() {
         return (
             <Container>
                 <Navbar />
-                <NavigationEvents
-                    onDidFocus={() => {
-                        this.getSets();
-                    }}
-                />
                 <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 20 }}>
                     <Fab
                         containerStyle={{ position: 'relative', left: 5, top: 0 }}
@@ -40,7 +49,7 @@ export default class Dashboard extends Component<any, any> {
                         <Icon name='ios-fitness' />
                         <Button
                             style={{ backgroundColor: '#34A34F' }}
-                            onPress={() => this.props.navigation.navigate('AddSet', { date: this.state.date })}
+                            onPress={() => this.props.navigation.navigate('AddExercise', { date: this.state.date })}
                         >
                             <Icon name='ios-add' />
                         </Button>
@@ -61,45 +70,22 @@ export default class Dashboard extends Component<any, any> {
                         pickerStyle={{ width: 150, position: 'absolute', right: 10 }}
                         date={getShortDate(this.state.date)}
                         onDateChange={(date: string) => {
-                            this.setState({ date: new Date(date), ready: false }, () => {
-                                this.getSets();
-                            });
+                            this.setState({ date: new Date(date) });
+                            this.props.setDate(date);
                         }}
                     />
                 </View>
-                {this.state.ready ? this.renderContent() : <ActivityIndicator size='large' />}
+                {this.props.ready ? this.renderContent() : <ActivityIndicator size='large' />}
             </Container>
         );
     }
-    async getSets() {
-        this._exerciseService.getSetsByDate(this.state.date).then(data => {
-            let dailyWorkout: DailyWorkout;
-            if (data && data.length > 0) {
-                dailyWorkout = { title: getShortDate(data[0].creationTime), sets: data };
-            }
-            this.setState({
-                dailyWorkout, ready: true
-            });
-        });
-    }
     renderContent() {
-        if (!this.state.dailyWorkout) {
+        if (!this.props.dailyWorkout) {
             return <NoStatistics />
         }
-        let exercises = [{ title: this.state.dailyWorkout.sets[0].name, sets: [this.state.dailyWorkout.sets[0]] }]
-        for (var i = 1; i < this.state.dailyWorkout.sets.length; i++) {
-            let lastEntry = exercises[exercises.length - 1];
-            let currentSet = this.state.dailyWorkout.sets[i];
-            if (lastEntry.title == currentSet.name) {
-                lastEntry.sets.push(currentSet);
-            } else {
-                exercises.push({ title: currentSet.name, sets: [currentSet] });
-            }
-        }
-
         return <StatisticsView
-            exercises={exercises}
-            onDeleteSet={() => { this.getSets() }}
+            exercises={this.props.dailyWorkout.exercises}
+            onDeleteSet={() => { }}
             onEditSet={(set: Set) => this.props.navigation.navigate('EditSet', { set: set })} />
     }
 
@@ -112,3 +98,26 @@ export default class Dashboard extends Component<any, any> {
         ];
     }
 }
+
+function mapStateToProps(state) {
+    return {
+        dailyWorkout: state.activeWorkout,
+        ready: state.ready
+    };
+}
+
+function mapDispatchToProps(dispatch) {
+    return {
+        initialize: () => {
+            dispatch(initialize());
+        },
+        setDate: (date) => {
+            dispatch(setDate(date));
+        }
+    };
+}
+
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(Dashboard);

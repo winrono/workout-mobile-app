@@ -6,6 +6,7 @@ import { View, ActivityIndicator, StatusBar } from 'react-native';
 import { AppContainer } from './app-container';
 import { Provider } from 'react-redux';
 import store from './store';
+import navigationService from './navigation-service';
 
 
 class App extends React.Component<any, any> {
@@ -20,17 +21,23 @@ class App extends React.Component<any, any> {
             return (
                 <View style={{ flex: 1, marginTop: StatusBar.currentHeight }}>
                     <Provider store={store}>
-                        <AppContainer></AppContainer>
+                        <AppContainer ref={nav => {
+                            navigationService.setTopLevelNavigator(nav);
+                        }}></AppContainer>
                     </Provider>
                 </View>
             );
         } else {
-            return (
-                <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                    <ActivityIndicator size='large' />
-                </View>
-            );
+            return this.renderLoadingIndicator()
         }
+    }
+
+    renderLoadingIndicator() {
+        return (
+            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                <ActivityIndicator size='large' />
+            </View>
+        );
     }
 
     async componentDidMount() {
