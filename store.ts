@@ -7,14 +7,17 @@ import { DailyWorkout } from './src/models/daily-workout';
 
 const store = createStore(appReducer, applyMiddleware(thunkMiddleware));
 
-const storageKey: string = 'workouts';
+const storageKeyPrefix: string = 'workout';
 
-function saveWorkouts(workouts: DailyWorkout) {
-    AsyncStorage.setItem(storageKey, JSON.stringify(workouts));
+function saveWorkout(workout: DailyWorkout) {
+    AsyncStorage.setItem(storageKeyPrefix + workout.date, JSON.stringify(workout));
 }
 
 store.subscribe(() => {
-    saveWorkouts(store.getState().workouts);
+    let state = store.getState();
+    if (state.activeWorkout) {
+        saveWorkout(state.activeWorkout);
+    }
 });
 
 export default store;

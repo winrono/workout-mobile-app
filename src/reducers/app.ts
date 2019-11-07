@@ -5,9 +5,9 @@ import { SET_SUPERSET } from '../actions/set-superset';
 import { ON_READY } from '../actions/initialize';
 import { DailyWorkout } from '../models/daily-workout';
 import { ADD_EXERCISE } from '../actions/add-exercise';
-import { Exercise } from '../models/exercise';
-import { SET_DATE } from '../actions/set-date';
 import navigationService from '../../navigation-service';
+import { getShortDate } from '../utils/date';
+import { SET_ACTIVE_WORKOUT } from '../actions/set-active-workout';
 
 const initialState: { set: Set; superset: SuperSet, ready: boolean, workouts: DailyWorkout[], activeWorkout: DailyWorkout } = {
     set: {
@@ -42,56 +42,38 @@ export function appReducer(state = initialState, action) {
                 }
             };
         case ON_READY:
-            id = findWorkoutId(action.payload, new Date());
             return {
                 ...state,
                 ready: true,
-                workouts: action.payload,
-                activeWorkout: typeof id == 'number' ? action.payload[id] : null
+                activeWorkout: action.payload
             }
         case ADD_EXERCISE:
-            id = findWorkoutId(state.workouts, action.payload.date);
-            // using navigation here as add exercise will become async at some point
+            // using navigation here for now as add exercise will become async at some point
             navigationService.navigate('Dashboard');
-            if (typeof id == 'number') {
-                state.workouts.splice(id, 1, { ...state.workouts[id], exercises: [...state.workouts[id].exercises, action.payload.exercise] });
-                return {
-                    ...state,
-                    workouts: [...state.workouts],
-                    activeWorkout: state.workouts[id]
-                }
-            } else {
-                return {
-                    ...state,
-                    workouts: [...state.workouts, { date: action.payload.date, exercises: [action.payload.exercise] }],
-                    activeWorkout: state.workouts[state.workouts.length - 1]
-                }
+            if (!state.activeWorkout) {
+                state.activeWorkout = new DailyWorkout(getShortDate(new Date()))
             }
-        case SET_DATE:
-            id = findWorkoutId(state.workouts, action.payload);
-            if (typeof id == 'number') {
-                return {
-                    ...state,
-                    activeWorkout: state.workouts[id]
-                }
-            } else {
-                return {
-                    ...state,
-                    activeWorkout: null
-                }
+            return {
+                ...state,
+                activeWorkout: { ...state.activeWorkout, exercises: [...state.activeWorkout.exercises, action.payload.exercise] }
+            }
+        case SET_ACTIVE_WORKOUT:
+            return {
+                ...state,
+                activeWorkout: action.payload
             }
     }
     return state;
 }
 
-function findWorkoutId(workouts: DailyWorkout[], date: Date | string): number {
-    let id = null;
-    if (workouts) {
-        workouts.forEach((workout, index) => {
-            if (new Date(workout.date).toDateString() === new Date(date).toDateString()) {
-                id = index;
-            }
-        });
-    }
-    return id;
-}
+// function findWorkoutId(workouts: DailyWorkout[], date: Date | string): number {
+//     let id = null;
+//     if (workouts) {
+//         workouts.forEach((workout, index) => {
+//             if (new Date(workout.date).toDateString() === new Date(date).toDateString()) {
+//                 id = index;
+//             }
+//         });
+//     }
+//     return id;
+// }

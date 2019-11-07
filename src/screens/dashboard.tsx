@@ -21,14 +21,14 @@ class Dashboard extends Component<
         dailyWorkout: DailyWorkout, ready: boolean, initialize: () => void, setDate: (date: string | Date) => void
     },
     {
-        date: Date, activeFab: boolean
+        date: string, activeFab: boolean
     }> {
 
     @lazyInject('exerciseService') private readonly _exerciseService: ExerciseService;
 
     constructor(props) {
         super(props);
-        this.state = { date: new Date(), activeFab: false };
+        this.state = { date: getShortDate(new Date()), activeFab: false };
     }
 
     componentWillMount() {
@@ -70,7 +70,7 @@ class Dashboard extends Component<
                         pickerStyle={{ width: 150, position: 'absolute', right: 10 }}
                         date={getShortDate(this.state.date)}
                         onDateChange={(date: string) => {
-                            this.setState({ date: new Date(date) });
+                            this.setState({ date: date });
                             this.props.setDate(date);
                         }}
                     />
@@ -80,7 +80,7 @@ class Dashboard extends Component<
         );
     }
     renderContent() {
-        if (!this.props.dailyWorkout) {
+        if (!this.props.dailyWorkout || this.props.dailyWorkout.exercises.length === 0) {
             return <NoStatistics />
         }
         return <StatisticsView
