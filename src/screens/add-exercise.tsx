@@ -2,21 +2,23 @@ import React from 'react';
 import { StyleSheet, Text } from 'react-native';
 import { lazyInject } from '../ioc/container';
 import { ExerciseService } from '../data-access/exercise-service';
-import { Form, Container, Content, Button } from 'native-base';
+import { Form, Container, Content, Button, Input } from 'native-base';
 import { Navbar } from '../components/navbar';
 import { connect } from 'react-redux';
-import { AddSet as AddSetAction } from '../actions/add-set';
+import { setSet } from '../actions/set-set';
+import { AddExercise as AddExerciseAction } from '../actions/add-exercise';
 import SetEditor from '../components/set-editor';
 import { Set } from '../models/set';
+import { Exercise } from '../models/exercise';
 
-class AddSet extends React.Component<{ set: Set, navigation: any }, { set: Set, exerciseId: string }> {
+class AddExercise extends React.Component<{ set: Set, navigation: any }, { name: string, date: Date }> {
     @lazyInject('exerciseService') private readonly _exerciseService: ExerciseService;
     _repsInput: any;
     _weightInput: any;
 
     constructor(props) {
         super(props);
-        this.state = { set: props.set, exerciseId: this.props.navigation.getParam('exerciseId', null) };
+        this.state = { name: '', date: this.props.navigation.getParam('date', new Date()) };
     }
 
     render() {
@@ -25,14 +27,14 @@ class AddSet extends React.Component<{ set: Set, navigation: any }, { set: Set, 
                 <Navbar />
                 <Content>
                     <Form>
-                        <SetEditor
-                            set={this.state.set}
-                            onSetChange={set => {
-                                this.setState({
-                                    set: set
-                                });
+                        <Input
+                            value={this.state.name}
+                            returnKeyType={'next'}
+                            autoFocus={true}
+                            onChangeText={name => {
+                                this.setState({ name })
                             }}
-                        ></SetEditor>
+                        />
                         <Button block style={{ marginTop: 20 }} onPress={this.submit.bind(this)}>
                             <Text>Submit</Text>
                         </Button>
@@ -42,7 +44,8 @@ class AddSet extends React.Component<{ set: Set, navigation: any }, { set: Set, 
         );
     }
     async submit() {
-        this.props.onAddSet(this.state.set, this.state.exerciseId);
+        let exercise: Exercise = { title: this.state.name, sets: [] };
+        this.props.onAddExercise(exercise, this.state.date);
     }
 }
 
@@ -60,21 +63,15 @@ const styles = StyleSheet.create({
     }
 });
 
-function mapStateToProps(state) {
-    return {
-        set: state.set
-    };
-}
-
 function mapDispatchToProps(dispatch) {
     return {
-        onAddSet: (set, exerciseId) => {
-            dispatch(AddSetAction(set, exerciseId));
+        onAddExercise: (exercise, date) => {
+            dispatch((AddExerciseAction(exercise, date)));
         }
     };
 }
 
 export default connect(
-    mapStateToProps,
+    undefined,
     mapDispatchToProps
-)(AddSet);
+)(AddExercise);

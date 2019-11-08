@@ -6,57 +6,74 @@ import { injectable } from 'inversify';
 import { AsyncStorage } from 'react-native';
 import { Set } from '../../models/set';
 import { SuperSet } from '../../models/super-set';
+import { DailyWorkout } from '../../models/daily-workout';
 
+// implements ExerciseService
 @injectable()
 export class LocalExerciseService implements ExerciseService {
-    private _storageKey: string = 'localExercises';
-    private _sets: (Set | SuperSet)[];
+    private _storageKey: string = 'workouts';
+    private _workouts: DailyWorkout[] = [];
 
-    getSets(): Promise<(Set | SuperSet)[]> {
-        if (this._sets) {
-            return Promise.resolve(this._sets);
+    getWorkouts(): Promise<DailyWorkout[]> {
+        if (this._workouts.length > 0) {
+            return Promise.resolve(this._workouts);
         }
         return AsyncStorage.getItem(this._storageKey).then(data => {
-            let sets: (Set | SuperSet)[] = JSON.parse(data);
-            if (sets) {
-                this._sets = sets;
+            let workouts: DailyWorkout[] = JSON.parse(data);
+            if (workouts) {
+                this._workouts = workouts;
             }
-            return this._sets;
+            return this._workouts;
         });
     }
-    async getSetsByDate(dateTime: string | Date): Promise<(Set | SuperSet)[]> {
-        let targetDate = new Date(dateTime).toDateString();
-        let sets = await this.getSets();
-        sets = sets.filter((set) => {
-            return new Date(set.creationTime).toDateString() === targetDate;
-        });
-        return sets;
-    }
-    postSet(exercise: AddSet): Promise<any> {
-        this._sets.push({ ...exercise, exerciseId: new Date().getTime().toString() });
-        return AsyncStorage.setItem(this._storageKey, JSON.stringify(this._sets));
-    }
-    postSuperSet(set: SuperSet): Promise<any> {
-        this._sets.push({ ...set, id: new Date().getTime().toString() });
-        return AsyncStorage.setItem(this._storageKey, JSON.stringify(this._sets));
-    }
-    updateSet(set: Set): Promise<any> {
-        const found = this._sets.find((s: Set) => {
-            return s.exerciseId === set.exerciseId;
-        }) as Set;
-        if (found) {
-            found.name = set.name;
-            found.weight = set.weight;
-            found.repsCount = set.repsCount;
-        }
-        return AsyncStorage.setItem(this._storageKey, JSON.stringify(this._sets));
+    async getWorkoutByDate(date: string | Date): Promise<DailyWorkout> {
+        await this.getWorkouts();
+        return this.findWorkoutByDate(date);
     }
 
-    async deleteSetById(id: string): Promise<void> {
-        debugger;
-        this._sets = this._sets.filter(set => {
-            return (set as Set).exerciseId !== id;
+    addExercise(name: string, date: Date): Promise<any> {
+        let workout = this.findWorkoutByDate(date, true);
+        let exercise: Exercise = { title: name, sets: [] };
+        workout.exercises.push(exercise);
+        return AsyncStorage.setItem(this._storageKey, JSON.stringify(this._workouts));
+    }
+
+    // postSet(set: Set, date: Date): Promise<any> {
+    //     let workout = this.getOrCreateWorkoutByDate(date);
+    //     this._sets.push({ ...exercise, exerciseId: new Date().getTime().toString() });
+    //     return AsyncStorage.setItem(this._storageKey, JSON.stringify(this._sets));
+    // }
+    // postSuperSet(set: SuperSet): Promise<any> {
+    //     this._sets.push({ ...set, id: new Date().getTime().toString() });
+    //     return AsyncStorage.setItem(this._storageKey, JSON.stringify(this._sets));
+    // }
+    // updateSet(set: Set): Promise<any> {
+    //     const found = this._sets.find((s: Set) => {
+    //         return s.exerciseId === set.exerciseId;
+    //     }) as Set;
+    //     if (found) {
+    //         found.name = set.name;
+    //         found.weight = set.weight;
+    //         found.repsCount = set.repsCount;
+    //     }
+    //     return AsyncStorage.setItem(this._storageKey, JSON.stringify(this._sets));
+    // }
+
+    // async deleteSetById(id: string): Promise<void> {
+    //     this._sets = this._sets.filter(set => {
+    //         return (set as Set).exerciseId !== id;
+    //     });
+    //     await AsyncStorage.setItem(this._storageKey, JSON.stringify(this._sets));
+    // }
+
+    private findWorkoutByDate(date: Date | string, createIfNotExists?: boolean): DailyWorkout {
+        let workout = this._workouts.find((workout) => {
+            return new Date(workout.date).toDateString() === new Date(date).toDateString();
         });
-        await AsyncStorage.setItem(this._storageKey, JSON.stringify(this._sets));
+        if (!workout && createIfNotExists) {
+            workout = { date: new Date(date).toISOString(), exercises: [] };
+            this._workouts.push(workout);
+        }
+        return workout;
     }
 }
