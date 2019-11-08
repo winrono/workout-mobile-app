@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, Modal, Alert, TouchableHighlight } from 'react-native';
 import { ActivityIndicator } from 'react-native';
 import { NavigationEvents } from 'react-navigation';
 import { Container, Fab, Icon, Button } from 'native-base';
@@ -85,7 +85,7 @@ class Dashboard extends Component<
         }
         return <StatisticsView
             exercises={this.props.dailyWorkout.exercises}
-            onEditSet={(set: Set) => this.props.navigation.navigate('EditSet', { set: set })} />
+        />
     }
 
     //added for future usage

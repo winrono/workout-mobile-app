@@ -13,7 +13,6 @@ import CreateAccountScreen from './src/screens/create-account';
 import ForgotPasswordScreen from './src/screens/forgot-password';
 import AddSetScreen from './src/screens/add-set';
 import AddSupersetScreen from './src/screens/add-superset';
-import EditSetScreen from './src/screens/edit-set';
 import DummyScreen from './src/screens/dummy';
 import { Text } from 'react-native';
 import AddTimesetScreen from './src/screens/add-timeset';
@@ -25,9 +24,8 @@ new ContainerConfigurator(configurationProvider).configure(container);
 const dashboardStack = createStackNavigator(
     {
         Dashboard: { screen: DashboardScreen },
-        EditSet: { screen: EditSetScreen },
         AddSet: { screen: AddSetScreen },
-        AddExercise: {screen: AddExerciseScreen},
+        AddExercise: { screen: AddExerciseScreen },
         AddSuperset: { screen: AddSupersetScreen },
         AddTimeset: { screen: AddTimesetScreen }
     },

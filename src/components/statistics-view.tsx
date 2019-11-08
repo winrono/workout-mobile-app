@@ -1,5 +1,5 @@
 import React from 'react';
-import { ScrollView, Alert, Text, Dimensions, FlatList, TouchableOpacity } from 'react-native';
+import { ScrollView, Alert, Text, Dimensions, FlatList, TouchableOpacity, Modal, TouchableHighlight } from 'react-native';
 import { Accordion, List, Card, CardItem, Body, View, Left, Icon, Right } from 'native-base';
 import { Exercise } from '../models/exercise';
 import { SuperSet } from '../models/super-set';
@@ -12,16 +12,34 @@ import navigationService from '../../navigation-service';
 import { AntDesign } from '@expo/vector-icons';
 import { connect } from 'react-redux';
 import { deleteExercise } from '../actions/delete-exercise';
+import EditSet from './edit-set';
 
 
-class StatisticsView extends React.Component<{ exercises: Exercise[], onDeleteExercise: () => void; onEditSet: (set: Set) => void }> {
+class StatisticsView extends React.Component<{ exercises: Exercise[], onDeleteExercise: (exercise: Exercise) => void }> {
 
-    @lazyInject('exerciseService') private readonly _exerciseService: ExerciseService;
-
+    state = { modalVisible: false, editedSet: null }
     render() {
         return (<ScrollView>
             {this.props.exercises.map((exercise) => (
                 <View style={{ margin: 10 }}>
+                    <Modal
+                        animationType='none'
+                        transparent={true}
+                        visible={this.state.modalVisible}
+                        onRequestClose={() => {
+                        }}>
+                        <View style={{
+                            flex: 1,
+                            flexDirection: 'column',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            backgroundColor: '#00000080'
+                        }}>
+                            <View style={{ width: 300, height: 300, backgroundColor: '#fff' }}>
+                                <EditSet onEditCompleted={() => { this.setState({ modalVisible: false }) }} set={this.state.editedSet}></EditSet>
+                            </View>
+                        </View>
+                    </Modal>
                     <Card style={{
                         borderRadius: 10,
                         borderWidth: 1,
@@ -82,7 +100,7 @@ class StatisticsView extends React.Component<{ exercises: Exercise[], onDeleteEx
         this.props.onDeleteExercise(exercise);
     }
     editSet(set: Set) {
-        this.props.onEditSet(set);
+        this.setState({ modalVisible: true, editedSet: set });
     }
 };
 

@@ -10,6 +10,10 @@ import { getShortDate } from '../utils/date';
 import { SET_ACTIVE_WORKOUT } from '../actions/set-active-workout';
 import { ADD_SET } from '../actions/add-set';
 import { DELETE_EXERCISE } from '../actions/delete-exercise';
+import { EDIT_SET } from '../actions/edit-set';
+import { Exercise } from '../models/exercise';
+import * as _ from 'lodash';
+import { DELETE_SET } from '../actions/delete-set';
 
 const initialState: { set: Set; superset: SuperSet, ready: boolean, workouts: DailyWorkout[], activeWorkout: DailyWorkout } = {
     set: {
@@ -29,6 +33,10 @@ const initialState: { set: Set; superset: SuperSet, ready: boolean, workouts: Da
 export function appReducer(state = initialState, action) {
 
     let id: number;
+    let exercises: Exercise[];
+    let newState: { set: Set; superset: SuperSet, ready: boolean, workouts: DailyWorkout[], activeWorkout: DailyWorkout };
+    let setPosition: number;
+    let exercisePosition: number;
 
     switch (action.type) {
         case SET_SET:
@@ -74,20 +82,30 @@ export function appReducer(state = initialState, action) {
                 })
             };
             newExercise.sets.push({ ...action.payload.set, id: new Date().getTime().toString() });
-            console.log(newExercise.sets[newExercise.sets.length - 1]);
             newExercises[id] = newExercise;
             return {
                 ...state,
                 activeWorkout: { ...state.activeWorkout, exercises: newExercises }
             }
         case DELETE_EXERCISE:
-            let exercises = [...state.activeWorkout.exercises];
+            exercises = [...state.activeWorkout.exercises];
             id = exercises.indexOf(action.payload);
             exercises.splice(id, 1);
             return {
                 ...state,
                 activeWorkout: { ...state.activeWorkout, exercises: exercises }
             }
+        case EDIT_SET:
+            newState = _.cloneDeep(state);
+            exercises = newState.activeWorkout.exercises;
+            ({ setPosition, exercisePosition } = findSetPositionById(newState, action.payload.id));
+            newState.activeWorkout.exercises[exercisePosition].sets[setPosition] = action.payload;
+            return newState;
+        case DELETE_SET:
+            newState = _.cloneDeep(state);
+            ({ setPosition, exercisePosition } = findSetPositionById(newState, action.payload.id));
+            newState.activeWorkout.exercises[exercisePosition].sets.splice(setPosition, 1);
+            return newState;
         case SET_ACTIVE_WORKOUT:
             return {
                 ...state,
@@ -97,14 +115,21 @@ export function appReducer(state = initialState, action) {
     return state;
 }
 
-// function findWorkoutId(workouts: DailyWorkout[], date: Date | string): number {
-//     let id = null;
-//     if (workouts) {
-//         workouts.forEach((workout, index) => {
-//             if (new Date(workout.date).toDateString() === new Date(date).toDateString()) {
-//                 id = index;
-//             }
-//         });
-//     }
-//     return id;
-// }
+function findSetPositionById(state: any, id: string): { setPosition: number, exercisePosition: number } {
+    let exercises = state.activeWorkout.exercises;
+    let setPosition: number;
+    let exercisePosition: number;
+    for (let i = 0; i < exercises.length; i++) {
+        for (let j = 0; j < exercises[i].sets.length; j++) {
+            if (exercises[i].sets[j].id === id) {
+                setPosition = j;
+                exercisePosition = i;
+                break;
+            }
+        }
+        if (setPosition != null) {
+            break;
+        }
+    }
+    return { setPosition, exercisePosition };
+}
