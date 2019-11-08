@@ -42,7 +42,7 @@ import { Set } from '../models/set';
 export function SetView(props: SetViewProps) {
     return (
         <CardItem cardBody={true} style={{ flexBasis: '20%' }}>
-            <Body style={{padding: 5}}>
+            <Body style={{ padding: 5 }}>
                 <TouchableOpacity onPress={() => props.onEdit()}>
                     <Text>
                         {props.set.weight} kg

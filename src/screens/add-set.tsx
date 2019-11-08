@@ -26,8 +26,7 @@ class AddSet extends React.Component<{ set: Set, navigation: any }, { set: Set, 
                 <Content>
                     <Form>
                         <SetEditor
-                            weight={this.state.set.weight}
-                            repsCount={this.state.set.repsCount}
+                            set={this.state.set}
                             onSetChange={set => {
                                 this.setState({
                                     set: set

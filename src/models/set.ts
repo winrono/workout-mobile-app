@@ -1,6 +1,5 @@
 export class Set {
-    repsCount: number;
-    weight: number;
-    creationTime?: string;
-    exerciseId?: string;
+    repsCount: string;
+    weight: string;
+    id: string;
 }

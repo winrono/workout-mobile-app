@@ -13,7 +13,7 @@ import { DELETE_EXERCISE } from '../actions/delete-exercise';
 
 const initialState: { set: Set; superset: SuperSet, ready: boolean, workouts: DailyWorkout[], activeWorkout: DailyWorkout } = {
     set: {
-        name: '',
+        id: null,
         weight: undefined,
         repsCount: undefined
     },
@@ -73,7 +73,8 @@ export function appReducer(state = initialState, action) {
                     return found;
                 })
             };
-            newExercise.sets.push(action.payload.set);
+            newExercise.sets.push({ ...action.payload.set, id: new Date().getTime().toString() });
+            console.log(newExercise.sets[newExercise.sets.length - 1]);
             newExercises[id] = newExercise;
             return {
                 ...state,

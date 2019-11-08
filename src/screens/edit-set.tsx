@@ -23,9 +23,7 @@ class EditSet extends React.Component<any, { set: Set }> {
                     <Navbar />
                     <Form>
                         <SetEditor
-                            name={this.state.set.name}
-                            weight={this.state.set.weight}
-                            repsCount={this.state.set.repsCount}
+                            set={this.state.set}
                             onSetChange={set => {
                                 this.setState({
                                     set: {
