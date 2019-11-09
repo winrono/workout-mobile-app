@@ -4,7 +4,7 @@ import { Item, Input, Label } from 'native-base';
 import { Set } from '../models/set';
 
 export default class SetEditor extends React.Component<
-    { set: Set, autoFocus?; onSetChange: (set: Set) => void },
+    { set: Set, onEditDone: () => void, onSetChange: (set: Set) => void },
     { set: Set }
     > {
     _weightInput: any;
@@ -23,6 +23,7 @@ export default class SetEditor extends React.Component<
                         returnKeyType={'next'}
                         keyboardType='numeric'
                         value={this.state.set.weight}
+                        autoFocus={true}
                         onChangeText={weight => {
                             this.setState({ set: { ...this.state.set, weight: weight } }, () => {
                                 this.props.onSetChange(this.state.set);
@@ -44,6 +45,9 @@ export default class SetEditor extends React.Component<
                             this.setState({ set: { ...this.state.set, repsCount: repsCount } }, () => {
                                 this.props.onSetChange(this.state.set);
                             });
+                        }}
+                        onSubmitEditing={() => {
+                            this.props.onEditDone();
                         }}
                     />
                 </Item>

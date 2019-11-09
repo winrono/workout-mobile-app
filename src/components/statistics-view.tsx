@@ -58,7 +58,13 @@ class StatisticsView extends React.Component<{ exercises: Exercise[], onDeleteEx
                                             <AntDesign size={30} name='delete'></AntDesign>
                                         </TouchableOpacity>
                                         <TouchableOpacity onPress={() => {
-                                            navigationService.navigate('AddSet', { exerciseId: exercise.id })
+                                            let prevSetData = { repsCount: '', weight: '' }
+                                            let lastSet = exercise.sets[exercise.sets.length - 1] as Set;
+                                            if (lastSet) {
+                                                prevSetData.repsCount = lastSet.repsCount;
+                                                prevSetData.weight = lastSet.weight;
+                                            }
+                                            navigationService.navigate('AddSet', { ...prevSetData, exerciseId: exercise.id })
                                         }}>
                                             <AntDesign size={30} name='plus'></AntDesign>
                                         </TouchableOpacity>

@@ -2,7 +2,7 @@ import React from 'react';
 import { StyleSheet, Text } from 'react-native';
 import { lazyInject } from '../ioc/container';
 import { ExerciseService } from '../data-access/exercise-service';
-import { Form, Container, Content, Button, Input } from 'native-base';
+import { Form, Container, Content, Button, Input, Item, Label } from 'native-base';
 import { Navbar } from '../components/navbar';
 import { connect } from 'react-redux';
 import { setSet } from '../actions/set-set';
@@ -27,14 +27,18 @@ class AddExercise extends React.Component<{ set: Set, navigation: any }, { name:
                 <Navbar />
                 <Content>
                     <Form>
-                        <Input
-                            value={this.state.name}
-                            returnKeyType={'next'}
-                            autoFocus={true}
-                            onChangeText={name => {
-                                this.setState({ name })
-                            }}
-                        />
+                        <Item floatingLabel>
+                            <Label>Exercise name</Label>
+                            <Input
+                                value={this.state.name}
+                                returnKeyType={'done'}
+                                autoFocus={true}
+                                onChangeText={name => {
+                                    this.setState({ name })
+                                }}
+                                onSubmitEditing={this.submit.bind(this)}
+                            />
+                        </Item>
                         <Button block style={{ marginTop: 20 }} onPress={this.submit.bind(this)}>
                             <Text>Submit</Text>
                         </Button>

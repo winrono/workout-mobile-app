@@ -38,6 +38,7 @@ class EditSet extends React.Component<{ onEditCompleted: () => void, onSaveSet: 
                                     }
                                 });
                             }}
+                            onEditDone={this.onSave.bind(this)}
                         ></SetEditor>
                     </View>
                     <View style={styles.footer}>
