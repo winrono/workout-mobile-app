@@ -1,5 +1,14 @@
 import React from 'react';
-import { ScrollView, Alert, Text, Dimensions, FlatList, TouchableOpacity, Modal, TouchableHighlight } from 'react-native';
+import {
+    ScrollView,
+    Alert,
+    Text,
+    Dimensions,
+    FlatList,
+    TouchableOpacity,
+    Modal,
+    TouchableHighlight
+} from 'react-native';
 import { Accordion, List, Card, CardItem, Body, View, Left, Icon, Right } from 'native-base';
 import { Exercise } from '../models/exercise';
 import { SuperSet } from '../models/super-set';
@@ -13,86 +22,141 @@ import { AntDesign } from '@expo/vector-icons';
 import { connect } from 'react-redux';
 import { deleteExercise } from '../actions/delete-exercise';
 import EditSet from './edit-set';
+import { CompoundExercise } from '../models/compound-exercise';
 
-
-class StatisticsView extends React.Component<{ exercises: Exercise[], onDeleteExercise: (exercise: Exercise) => void }> {
-
-    state = { modalVisible: false, editedSet: null }
+class StatisticsView extends React.Component<{
+    exercises: (Exercise | CompoundExercise)[];
+    onDeleteExercise: (exercise: Exercise) => void;
+}> {
+    state = { modalVisible: false, editedSet: null };
     render() {
-        return (<View style={{ flex: 1 }}>
-            <Modal
-                animationType='none'
-                transparent={true}
-                visible={this.state.modalVisible}
-                onRequestClose={() => {
-                }}>
-                <View style={{
-                    flex: 1,
-                    flexDirection: 'column',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    backgroundColor: '#00000080'
-                }}>
-                    <View style={{ width: 300, height: 300, backgroundColor: '#fff' }}>
-                        <EditSet onEditCompleted={() => { this.setState({ modalVisible: false }) }} set={this.state.editedSet}></EditSet>
+        return (
+            <View style={{ flex: 1 }}>
+                <Modal
+                    animationType="none"
+                    transparent={true}
+                    visible={this.state.modalVisible}
+                    onRequestClose={() => {}}
+                >
+                    <View
+                        style={{
+                            flex: 1,
+                            flexDirection: 'column',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            backgroundColor: '#00000080'
+                        }}
+                    >
+                        <View style={{ width: 300, height: 300, backgroundColor: '#fff' }}>
+                            <EditSet
+                                onEditCompleted={() => {
+                                    this.setState({ modalVisible: false });
+                                }}
+                                set={this.state.editedSet}
+                            ></EditSet>
+                        </View>
                     </View>
-                </View>
-            </Modal>
-            <ScrollView>
-                {this.props.exercises.map((exercise) => (
-                    <View style={{ margin: 10 }}>
-                        <Card style={{
+                </Modal>
+                <ScrollView>{this.props.exercises.map(exercise => this.renderActivity(exercise))}</ScrollView>
+            </View>
+        );
+    }
+
+    private renderActivity(exercise: Exercise | CompoundExercise) {
+        if ((exercise as Exercise).sets) {
+            return (
+                <View style={{ margin: 10 }}>
+                    <Card
+                        style={{
                             borderRadius: 10,
                             borderWidth: 1,
                             overflow: 'hidden'
-                        }}>
-                            <CardItem header bordered>
-                                <Left>
-                                    <Text>{exercise.title}</Text>
-                                </Left>
-                                <Right>
-                                    <View style={{ flexDirection: 'row' }}>
-                                        <TouchableOpacity onPress={() => {
-                                            this.deleteExerciseSafely(exercise);
-                                        }}>
-                                            <AntDesign size={30} name='delete'></AntDesign>
-                                        </TouchableOpacity>
-                                        <TouchableOpacity onPress={() => {
-                                            let prevSetData = { repsCount: '', weight: '' }
-                                            let lastSet = exercise.sets[exercise.sets.length - 1] as Set;
-                                            if (lastSet) {
-                                                prevSetData.repsCount = lastSet.repsCount;
-                                                prevSetData.weight = lastSet.weight;
-                                            }
-                                            navigationService.navigate('AddSet', { ...prevSetData, exerciseId: exercise.id })
-                                        }}>
-                                            <AntDesign size={30} name='plus'></AntDesign>
-                                        </TouchableOpacity>
-                                    </View>
-                                </Right>
-                            </CardItem>
-                            <View style={{ flex: 1, flexWrap: 'wrap', flexDirection: 'row' }}>
-                                {exercise.sets.map(s => (
-                                    this.renderSet(s)
-                                ))}
-                            </View>
-                        </Card>
-                    </View>
-                ))}
-            </ScrollView></View>);
+                        }}
+                    >
+                        {this.renderExercise(exercise as Exercise)}
+                    </Card>
+                </View>
+            );
+        } else {
+            return (
+                <View style={{ margin: 10 }}>
+                    <Card
+                        style={{
+                            borderRadius: 10,
+                            borderWidth: 1,
+                            overflow: 'hidden'
+                        }}
+                    >
+                        {(exercise as CompoundExercise).exercises.map(e => {
+                            return this.renderExercise(e, exercise.id);
+                        })}
+                    </Card>
+                </View>
+            );
+        }
+    }
+
+    private renderExercise(exercise: Exercise, compoundId?: string) {
+        return (
+            <View>
+                <CardItem header bordered>
+                    <Left>
+                        <Text>{exercise.title}</Text>
+                    </Left>
+                    <Right>
+                        <View style={{ flexDirection: 'row' }}>
+                            <TouchableOpacity
+                                onPress={() => {
+                                    this.deleteExerciseSafely(exercise);
+                                }}
+                            >
+                                <AntDesign size={30} name="delete"></AntDesign>
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                onPress={() => {
+                                    let prevSetData = this.getLastSetData(exercise);
+                                    navigationService.navigate('AddSet', {
+                                        ...prevSetData,
+                                        exerciseId: exercise.id
+                                    });
+                                }}
+                            >
+                                <AntDesign size={30} name="plus"></AntDesign>
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                onPress={() => {
+                                    navigationService.navigate('AddCompoundExercise', {
+                                        exerciseId: compoundId || exercise.id
+                                    });
+                                }}
+                            >
+                                <AntDesign size={30} name="warning"></AntDesign>
+                            </TouchableOpacity>
+                        </View>
+                    </Right>
+                </CardItem>
+                <View style={{ flex: 1, flexWrap: 'wrap', flexDirection: 'row' }}>
+                    {exercise.sets.map(s => this.renderSet(s))}
+                </View>
+            </View>
+        );
+    }
+
+    private getLastSetData(exercise: Exercise): { repsCount: string; weight: string } {
+        let setData = { repsCount: '', weight: '' };
+        let lastSet = exercise.sets[exercise.sets.length - 1] as Set;
+        if (lastSet) {
+            setData.repsCount = lastSet.repsCount;
+            setData.weight = lastSet.weight;
+        }
+        return setData;
     }
 
     renderSet(set: Set | SuperSet) {
         if ((set as SuperSet).sets) {
             return <SupersetView superset={set as SuperSet}></SupersetView>;
         } else {
-            return (
-                <SetView
-                    set={set as Set}
-                    onDelete={() => { }}
-                    onEdit={this.editSet.bind(this, set)}
-                ></SetView>
-            );
+            return <SetView set={set as Set} onDelete={() => {}} onEdit={this.editSet.bind(this, set)}></SetView>;
         }
     }
 
@@ -109,14 +173,17 @@ class StatisticsView extends React.Component<{ exercises: Exercise[], onDeleteEx
     editSet(set: Set) {
         this.setState({ modalVisible: true, editedSet: set });
     }
-};
+}
 
 function mapDispatchToProps(dispatch) {
     return {
         onDeleteExercise: (exercise: Exercise) => {
             dispatch(deleteExercise(exercise));
         }
-    }
+    };
 }
 
-export default connect(undefined, mapDispatchToProps)(StatisticsView);
+export default connect(
+    undefined,
+    mapDispatchToProps
+)(StatisticsView);

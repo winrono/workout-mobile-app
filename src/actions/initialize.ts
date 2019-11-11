@@ -8,6 +8,7 @@ export function initialize() {
     return function (dispatch) {
         const storageKey = storageKeyPrefix + getShortDate(new Date());
         return AsyncStorage.getItem(storageKey).then(data => {
+            // AsyncStorage.clear();
             let workout: DailyWorkout = JSON.parse(data);
             dispatch(onReady(workout));
         });

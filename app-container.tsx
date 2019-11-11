@@ -12,11 +12,11 @@ import InitialScreen from './src/screens/initial';
 import CreateAccountScreen from './src/screens/create-account';
 import ForgotPasswordScreen from './src/screens/forgot-password';
 import AddSetScreen from './src/screens/add-set';
-import AddSupersetScreen from './src/screens/add-superset';
 import DummyScreen from './src/screens/dummy';
 import { Text } from 'react-native';
 import AddTimesetScreen from './src/screens/add-timeset';
 import AddExerciseScreen from './src/screens/add-exercise';
+import AddCompoundExerciseScreen from './src/screens/add-compound-exercise';
 
 let configurationProvider = new ConfigurationProvider();
 new ContainerConfigurator(configurationProvider).configure(container);
@@ -26,7 +26,7 @@ const dashboardStack = createStackNavigator(
         Dashboard: { screen: DashboardScreen },
         AddSet: { screen: AddSetScreen },
         AddExercise: { screen: AddExerciseScreen },
-        AddSuperset: { screen: AddSupersetScreen },
+        AddCompoundExercise: {screen: AddCompoundExerciseScreen},
         AddTimeset: { screen: AddTimesetScreen }
     },
     {
@@ -42,7 +42,7 @@ let drawerNavigatorRouteConfig = {
         screen: dashboardStack,
         navigationOptions: {
             drawerLabel: 'Dashboard',
-            drawerIcon: () => <Ionicons name='md-home' size={30} />,
+            drawerIcon: () => <Ionicons name="md-home" size={30} />,
             headerRight: <Text>Boom</Text>
         }
     }
@@ -55,7 +55,7 @@ if (!configurationProvider.isInLocalMode()) {
         screen: DummyScreen,
         navigationOptions: {
             drawerLabel: 'Log out',
-            tabBarIcon: () => <Ionicons name='md-log-out' size={30} />
+            tabBarIcon: () => <Ionicons name="md-log-out" size={30} />
         }
     };
 }

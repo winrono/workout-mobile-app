@@ -1,6 +1,5 @@
-import { Set } from './set';
-import { SuperSet } from './super-set';
 import { Exercise } from './exercise';
+import { CompoundExercise } from './compound-exercise';
 
 export class DailyWorkout {
     constructor(date: string) {
@@ -8,5 +7,5 @@ export class DailyWorkout {
         this.exercises = [];
     }
     date: string;
-    exercises: Exercise[];
+    exercises: (Exercise | CompoundExercise)[];
 }

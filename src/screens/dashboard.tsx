@@ -1,13 +1,9 @@
 import React, { Component } from 'react';
-import { View, Text, Modal, Alert, TouchableHighlight } from 'react-native';
+import { View } from 'react-native';
 import { ActivityIndicator } from 'react-native';
-import { NavigationEvents } from 'react-navigation';
 import { Container, Fab, Icon, Button } from 'native-base';
 import { Datepicker } from '../components/date-picker';
 import { DailyWorkout } from '../models/daily-workout';
-import { Set } from '../models/set';
-import { ExerciseService } from '../data-access/exercise-service';
-import { lazyInject } from '../ioc/container';
 import { Navbar } from '../components/navbar';
 import { getShortDate } from '../utils/date';
 import { NoStatistics } from '../components/no-statistics';
@@ -18,6 +14,7 @@ import { setDate } from '../actions/set-date';
 
 class Dashboard extends Component<
     {
+        navigation: any;
         dailyWorkout: DailyWorkout;
         ready: boolean;
         initialize: () => void;
@@ -28,8 +25,6 @@ class Dashboard extends Component<
         activeFab: boolean;
     }
 > {
-    @lazyInject('exerciseService') private readonly _exerciseService: ExerciseService;
-
     constructor(props) {
         super(props);
         this.state = { date: getShortDate(new Date()), activeFab: false };
@@ -59,12 +54,6 @@ class Dashboard extends Component<
                         </Button>
                         <Button
                             style={{ backgroundColor: '#3B5998' }}
-                            onPress={() => this.props.navigation.navigate('AddSuperset')}
-                        >
-                            <Icon name="ios-list" />
-                        </Button>
-                        <Button
-                            style={{ backgroundColor: '#DD5144' }}
                             onPress={() => this.props.navigation.navigate('AddTimeset')}
                         >
                             <Icon name="ios-alarm" />
