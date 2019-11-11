@@ -17,11 +17,12 @@ import { SupersetView } from './superset-view';
 import { ExerciseService } from '../data-access/exercise-service';
 import { lazyInject } from '../ioc/container';
 import navigationService from '../../navigation-service';
-import { AntDesign } from '@expo/vector-icons';
+import { AntDesign, MaterialIcons } from '@expo/vector-icons';
 import { connect } from 'react-redux';
 import { deleteExercise } from '../actions/delete-exercise';
 import EditSet from './edit-set';
 import { CompoundExercise } from '../models/compound-exercise';
+import { Menu, MenuTrigger, MenuOptions, MenuOption } from 'react-native-popup-menu';
 
 class StatisticsView extends React.Component<{
     exercises: (CompoundExercise)[];
@@ -32,7 +33,7 @@ class StatisticsView extends React.Component<{
         return (
             <View style={{ flex: 1 }}>
                 <Modal
-                    animationType="none"
+                    animationType='none'
                     transparent={true}
                     visible={this.state.modalVisible}
                     onRequestClose={() => { }}
@@ -88,33 +89,28 @@ class StatisticsView extends React.Component<{
                     </Left>
                     <Right>
                         <View style={{ flexDirection: 'row' }}>
-                            <TouchableOpacity
-                                onPress={() => {
-                                    this.deleteExerciseSafely(exercise);
-                                }}
-                            >
-                                <AntDesign size={30} name="delete"></AntDesign>
-                            </TouchableOpacity>
-                            <TouchableOpacity
-                                onPress={() => {
-                                    let prevSetData = this.getLastSetData(exercise);
-                                    navigationService.navigate('AddSet', {
-                                        ...prevSetData,
-                                        exerciseId: exercise.id
-                                    });
-                                }}
-                            >
-                                <AntDesign size={30} name="plus"></AntDesign>
-                            </TouchableOpacity>
-                            <TouchableOpacity
-                                onPress={() => {
-                                    navigationService.navigate('AddCompoundExercise', {
-                                        parentId: compoundId
-                                    });
-                                }}
-                            >
-                                <AntDesign size={30} name="warning"></AntDesign>
-                            </TouchableOpacity>
+                            <Menu>
+                                <MenuTrigger>
+                                    <MaterialIcons size={30} name='menu'></MaterialIcons>
+                                </MenuTrigger>
+                                <MenuOptions>
+                                    <MenuOption onSelect={() => {
+                                        let prevSetData = this.getLastSetData(exercise);
+                                        navigationService.navigate('AddSet', {
+                                            ...prevSetData,
+                                            exerciseId: exercise.id
+                                        });
+                                    }} text='Add set' />
+                                    <MenuOption onSelect={() => this.deleteExerciseSafely(exercise)} >
+                                        <Text style={{ color: 'red' }}>Delete</Text>
+                                    </MenuOption>
+                                    <MenuOption onSelect={() => {
+                                        navigationService.navigate('AddCompoundExercise', {
+                                            parentId: compoundId
+                                        });
+                                    }} text='Add another exercise' />
+                                </MenuOptions>
+                            </Menu>
                         </View>
                     </Right>
                 </CardItem>

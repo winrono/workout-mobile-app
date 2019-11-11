@@ -7,6 +7,7 @@ import { AppContainer } from './app-container';
 import { Provider } from 'react-redux';
 import store from './store';
 import navigationService from './navigation-service';
+import { MenuProvider } from 'react-native-popup-menu';
 
 
 class App extends React.Component<any, any> {
@@ -20,11 +21,13 @@ class App extends React.Component<any, any> {
         if (this.state.isReady) {
             return (
                 <View style={{ flex: 1, marginTop: StatusBar.currentHeight }}>
-                    <Provider store={store}>
-                        <AppContainer ref={nav => {
-                            navigationService.setTopLevelNavigator(nav);
-                        }}></AppContainer>
-                    </Provider>
+                    <MenuProvider>
+                        <Provider store={store}>
+                            <AppContainer ref={nav => {
+                                navigationService.setTopLevelNavigator(nav);
+                            }}></AppContainer>
+                        </Provider>
+                    </MenuProvider>
                 </View>
             );
         } else {

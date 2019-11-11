@@ -148,7 +148,6 @@ function deleteSetById(exercises: Exercise[], id: string): void {
         e.sets.forEach((s) => {
             if (s.id === id) {
                 let indexToRemove = e.sets.indexOf(s);
-                console.log(indexToRemove);
                 e.sets.splice(indexToRemove, 1);
             }
         })
