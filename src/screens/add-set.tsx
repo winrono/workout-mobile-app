@@ -9,14 +9,23 @@ import { AddSet as AddSetAction } from '../actions/add-set';
 import SetEditor from '../components/set-editor';
 import { Set } from '../models/set';
 
-class AddSet extends React.Component<{ repsCount: string, weight: string, navigation: any }, { set: Set, exerciseId: string }> {
+class AddSet extends React.Component<
+    { repsCount: string; weight: string; navigation: any },
+    { set: Set; exerciseId: string }
+> {
     @lazyInject('exerciseService') private readonly _exerciseService: ExerciseService;
     _repsInput: any;
     _weightInput: any;
 
     constructor(props) {
         super(props);
-        this.state = { set: { repsCount: props.navigation.getParam('repsCount', null), weight: props.navigation.getParam('weight', null) }, exerciseId: props.navigation.getParam('exerciseId', null) };
+        this.state = {
+            set: {
+                repsCount: props.navigation.getParam('repsCount', null),
+                weight: props.navigation.getParam('weight', null)
+            },
+            exerciseId: props.navigation.getParam('exerciseId', null)
+        };
     }
 
     render() {
@@ -43,7 +52,9 @@ class AddSet extends React.Component<{ repsCount: string, weight: string, naviga
         );
     }
     async submit() {
-        this.props.onAddSet(this.state.set, this.state.exerciseId);
+        this.props.onAddSet(this.state.set, this.state.exerciseId).then(() => {
+            this.props.navigation.navigate('Dashboard');
+        });
     }
 }
 
@@ -70,7 +81,7 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
     return {
         onAddSet: (set, exerciseId) => {
-            dispatch(AddSetAction(set, exerciseId));
+            return dispatch(AddSetAction(set, exerciseId));
         }
     };
 }

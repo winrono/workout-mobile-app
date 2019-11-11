@@ -18,12 +18,16 @@ import { setDate } from '../actions/set-date';
 
 class Dashboard extends Component<
     {
-        dailyWorkout: DailyWorkout, ready: boolean, initialize: () => void, setDate: (date: string | Date) => void
+        dailyWorkout: DailyWorkout;
+        ready: boolean;
+        initialize: () => void;
+        setDate: (date: string | Date) => void;
     },
     {
-        date: string, activeFab: boolean
-    }> {
-
+        date: string;
+        activeFab: boolean;
+    }
+> {
     @lazyInject('exerciseService') private readonly _exerciseService: ExerciseService;
 
     constructor(props) {
@@ -44,26 +48,26 @@ class Dashboard extends Component<
                         containerStyle={{ position: 'relative', left: 5, top: 0 }}
                         active={this.state.activeFab}
                         onPress={() => this.setState({ activeFab: !this.state.activeFab })}
-                        direction='right'
+                        direction="right"
                     >
-                        <Icon name='ios-fitness' />
+                        <Icon name="ios-fitness" />
                         <Button
                             style={{ backgroundColor: '#34A34F' }}
                             onPress={() => this.props.navigation.navigate('AddExercise', { date: this.state.date })}
                         >
-                            <Icon name='ios-add' />
+                            <Icon name="ios-add" />
                         </Button>
                         <Button
                             style={{ backgroundColor: '#3B5998' }}
                             onPress={() => this.props.navigation.navigate('AddSuperset')}
                         >
-                            <Icon name='ios-list' />
+                            <Icon name="ios-list" />
                         </Button>
                         <Button
                             style={{ backgroundColor: '#DD5144' }}
                             onPress={() => this.props.navigation.navigate('AddTimeset')}
                         >
-                            <Icon name='ios-alarm' />
+                            <Icon name="ios-alarm" />
                         </Button>
                     </Fab>
                     <Datepicker
@@ -75,26 +79,20 @@ class Dashboard extends Component<
                         }}
                     />
                 </View>
-                {this.props.ready ? this.renderContent() : <ActivityIndicator size='large' />}
+                {this.props.ready ? this.renderContent() : <ActivityIndicator size="large" />}
             </Container>
         );
     }
     renderContent() {
         if (!this.props.dailyWorkout || this.props.dailyWorkout.exercises.length === 0) {
-            return <NoStatistics />
+            return <NoStatistics />;
         }
-        return <StatisticsView
-            exercises={this.props.dailyWorkout.exercises}
-        />
+        return <StatisticsView exercises={this.props.dailyWorkout.exercises} />;
     }
 
     //added for future usage
     addAfter<T>(array: Array<T>, index: number, newItem: T) {
-        return [
-            ...array.slice(0, index),
-            newItem,
-            ...array.slice(index)
-        ];
+        return [...array.slice(0, index), newItem, ...array.slice(index)];
     }
 }
 
@@ -110,7 +108,7 @@ function mapDispatchToProps(dispatch) {
         initialize: () => {
             dispatch(initialize());
         },
-        setDate: (date) => {
+        setDate: date => {
             dispatch(setDate(date));
         }
     };

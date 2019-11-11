@@ -68,8 +68,6 @@ export function appReducer(state = initialState, action) {
                 activeWorkout: { ...state.activeWorkout, exercises: [...state.activeWorkout.exercises, { ...action.payload.exercise, id: new Date().getTime().toString() }] }
             }
         case ADD_SET:
-            // using navigation here for now as add set will become async at some point
-            navigationService.navigate('Dashboard');
             let newExercises = [...state.activeWorkout.exercises];
             id = null;
             let newExercise = {
