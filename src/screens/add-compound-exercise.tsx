@@ -5,20 +5,19 @@ import { ExerciseService } from '../data-access/exercise-service';
 import { Form, Container, Content, Button, Input, Item, Label } from 'native-base';
 import { Navbar } from '../components/navbar';
 import { connect } from 'react-redux';
-import { setSet } from '../actions/set-set';
-import { addCompoundExercise as addCompoundExerciseAction } from '../actions/add-compound-exercise';
+import { addToExistingExercise as addToExistingExerciseAction } from '../actions/add-to-existing-exercise';
 import SetEditor from '../components/set-editor';
 import { Set } from '../models/set';
 import { Exercise } from '../models/exercise';
 
-class AddCompoundExercise extends React.Component<{ set: Set; navigation: any }, { name: string; exerciseId: string }> {
+class AddCompoundExercise extends React.Component<{ set: Set; navigation: any, addToExistingExercise: (exercise: Exercise, id: string) => void }, { name: string; parentId: string }> {
     @lazyInject('exerciseService') private readonly _exerciseService: ExerciseService;
     _repsInput: any;
     _weightInput: any;
 
     constructor(props) {
         super(props);
-        this.state = { name: '', exerciseId: this.props.navigation.getParam('exerciseId', null) };
+        this.state = { name: '', parentId: this.props.navigation.getParam('parentId', null) };
     }
 
     render() {
@@ -49,7 +48,8 @@ class AddCompoundExercise extends React.Component<{ set: Set; navigation: any },
     }
     async submit() {
         let exercise: Exercise = { title: this.state.name, sets: [] };
-        this.props.onAddCompoundExercise(exercise, this.state.exerciseId);
+        console.log(`submit ${this.state.parentId}`);
+        this.props.addToExistingExercise(exercise, this.state.parentId);
         this.props.navigation.navigate('Dashboard');
     }
 }
@@ -70,8 +70,8 @@ const styles = StyleSheet.create({
 
 function mapDispatchToProps(dispatch) {
     return {
-        onAddCompoundExercise: (exercise, neighborId) => {
-            dispatch(addCompoundExerciseAction(exercise, neighborId));
+        addToExistingExercise: (exercise, parentId) => {
+            dispatch(addToExistingExerciseAction(exercise, parentId));
         }
     };
 }

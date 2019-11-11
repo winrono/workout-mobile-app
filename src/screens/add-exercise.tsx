@@ -5,7 +5,6 @@ import { ExerciseService } from '../data-access/exercise-service';
 import { Form, Container, Content, Button, Input, Item, Label } from 'native-base';
 import { Navbar } from '../components/navbar';
 import { connect } from 'react-redux';
-import { setSet } from '../actions/set-set';
 import { AddExercise as AddExerciseAction } from '../actions/add-exercise';
 import SetEditor from '../components/set-editor';
 import { Set } from '../models/set';

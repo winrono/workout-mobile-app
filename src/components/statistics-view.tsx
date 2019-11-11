@@ -11,7 +11,6 @@ import {
 } from 'react-native';
 import { Accordion, List, Card, CardItem, Body, View, Left, Icon, Right } from 'native-base';
 import { Exercise } from '../models/exercise';
-import { SuperSet } from '../models/super-set';
 import { Set } from '../models/set';
 import { SetView } from './set-view';
 import { SupersetView } from './superset-view';
@@ -25,7 +24,7 @@ import EditSet from './edit-set';
 import { CompoundExercise } from '../models/compound-exercise';
 
 class StatisticsView extends React.Component<{
-    exercises: (Exercise | CompoundExercise)[];
+    exercises: (CompoundExercise)[];
     onDeleteExercise: (exercise: Exercise) => void;
 }> {
     state = { modalVisible: false, editedSet: null };
@@ -36,7 +35,7 @@ class StatisticsView extends React.Component<{
                     animationType="none"
                     transparent={true}
                     visible={this.state.modalVisible}
-                    onRequestClose={() => {}}
+                    onRequestClose={() => { }}
                 >
                     <View
                         style={{
@@ -62,41 +61,25 @@ class StatisticsView extends React.Component<{
         );
     }
 
-    private renderActivity(exercise: Exercise | CompoundExercise) {
-        if ((exercise as Exercise).sets) {
-            return (
-                <View style={{ margin: 10 }}>
-                    <Card
-                        style={{
-                            borderRadius: 10,
-                            borderWidth: 1,
-                            overflow: 'hidden'
-                        }}
-                    >
-                        {this.renderExercise(exercise as Exercise)}
-                    </Card>
-                </View>
-            );
-        } else {
-            return (
-                <View style={{ margin: 10 }}>
-                    <Card
-                        style={{
-                            borderRadius: 10,
-                            borderWidth: 1,
-                            overflow: 'hidden'
-                        }}
-                    >
-                        {(exercise as CompoundExercise).exercises.map(e => {
-                            return this.renderExercise(e, exercise.id);
-                        })}
-                    </Card>
-                </View>
-            );
-        }
+    private renderActivity(exercise: CompoundExercise) {
+        return (
+            <View style={{ margin: 10 }}>
+                <Card
+                    style={{
+                        borderRadius: 10,
+                        borderWidth: 1,
+                        overflow: 'hidden'
+                    }}
+                >
+                    {(exercise as CompoundExercise).exercises.map(e => {
+                        return this.renderExercise(e, exercise.id);
+                    })}
+                </Card>
+            </View>
+        );
     }
 
-    private renderExercise(exercise: Exercise, compoundId?: string) {
+    private renderExercise(exercise: Exercise, compoundId: string) {
         return (
             <View>
                 <CardItem header bordered>
@@ -126,7 +109,7 @@ class StatisticsView extends React.Component<{
                             <TouchableOpacity
                                 onPress={() => {
                                     navigationService.navigate('AddCompoundExercise', {
-                                        exerciseId: compoundId || exercise.id
+                                        parentId: compoundId
                                     });
                                 }}
                             >
@@ -156,7 +139,7 @@ class StatisticsView extends React.Component<{
         if ((set as SuperSet).sets) {
             return <SupersetView superset={set as SuperSet}></SupersetView>;
         } else {
-            return <SetView set={set as Set} onDelete={() => {}} onEdit={this.editSet.bind(this, set)}></SetView>;
+            return <SetView set={set as Set} onDelete={() => { }} onEdit={this.editSet.bind(this, set)}></SetView>;
         }
     }
 

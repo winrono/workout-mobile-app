@@ -7,5 +7,5 @@ export class DailyWorkout {
         this.exercises = [];
     }
     date: string;
-    exercises: (Exercise | CompoundExercise)[];
+    exercises: CompoundExercise[];
 }

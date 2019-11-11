@@ -1,6 +1,4 @@
 import { Set } from '../models/set';
-import { SET_SET } from '../actions/set-set';
-import { SET_SUPERSET } from '../actions/set-superset';
 import { ON_READY } from '../actions/initialize';
 import { DailyWorkout } from '../models/daily-workout';
 import { ADD_EXERCISE } from '../actions/add-exercise';
@@ -13,7 +11,7 @@ import { EDIT_SET } from '../actions/edit-set';
 import { Exercise } from '../models/exercise';
 import * as _ from 'lodash';
 import { DELETE_SET } from '../actions/delete-set';
-import { ADD_COMPOUND_EXERCISE } from '../actions/add-compound-exercise';
+import { ADD_TO_EXISTING_EXERCISE } from '../actions/add-to-existing-exercise';
 import { CompoundExercise } from '../models/compound-exercise';
 
 const initialState: {
@@ -35,6 +33,7 @@ const initialState: {
 export function appReducer(state = initialState, action) {
     let id: number;
     let exercises: Exercise[];
+    let compoundExercises: CompoundExercise[];
     let newState: {
         set: Set;
         ready: boolean;
@@ -45,18 +44,6 @@ export function appReducer(state = initialState, action) {
     let exercisePosition: number;
 
     switch (action.type) {
-        case SET_SET:
-            return {
-                ...state,
-                set: { ...action.set }
-            };
-        case SET_SUPERSET:
-            return {
-                ...state,
-                superset: {
-                    ...action.set
-                }
-            };
         case ON_READY:
             return {
                 ...state,
@@ -75,7 +62,7 @@ export function appReducer(state = initialState, action) {
                     ...state.activeWorkout,
                     exercises: [
                         ...state.activeWorkout.exercises,
-                        { ...action.payload.exercise, id: new Date().getTime().toString() }
+                        new CompoundExercise(new Date().getTime().toString(), [{ ...action.payload.exercise, id: new Date().getTime().toString() + 2 }])
                     ]
                 }
             };
@@ -92,55 +79,47 @@ export function appReducer(state = initialState, action) {
             });
             newExercise.sets.push({ ...action.payload.set, id: new Date().getTime().toString() });
             return newState;
-        case ADD_COMPOUND_EXERCISE:
+        case ADD_TO_EXISTING_EXERCISE:
             newState = _.cloneDeep(state);
             id = null;
             let exercise = newState.activeWorkout.exercises.find((e, index) => {
-                let found = e.id === action.payload.neighborId;
+                let found = e.id === action.payload.parentId;
                 if (found) {
                     id = index;
                 }
                 return found;
             });
-            let compoundExercise: CompoundExercise;
-            if (!isExercise(exercise)) {
-                compoundExercise = exercise;
-            } else {
-                compoundExercise = new CompoundExercise();
-                compoundExercise.id = new Date().getTime().toString();
-                compoundExercise.exercises = [exercise];
-            }
-            compoundExercise.exercises.push({ ...action.payload.exercise, id: new Date().getTime().toString() });
-            newState.activeWorkout.exercises.splice(id, 1, compoundExercise);
+            exercise.exercises.push({ ...action.payload.exercise, id: new Date().getTime().toString() });
+            newState.activeWorkout.exercises.splice(id, 1, exercise);
             return newState;
         case DELETE_EXERCISE:
-            let e = [...state.activeWorkout.exercises];
-            id = e.indexOf(action.payload);
-            if (id === -1) {
-                (e as CompoundExercise[]).forEach(ex => {
-                    let id = ex.exercises.indexOf(action.payload);
-                    if (id != -1) {
-                        console.log('spliced child');
-                        ex.exercises.splice(id, 1);
+            compoundExercises = [...state.activeWorkout.exercises];
+            compoundExercises.forEach((compoundExercise, compoundExerciseIndex) => {
+                let id = compoundExercise.exercises.indexOf(action.payload);
+                if (id != -1) {
+                    compoundExercise.exercises.splice(id, 1);
+                    if (compoundExercise.exercises.length === 0) {
+                        compoundExercises.splice(compoundExerciseIndex, 1);
                     }
-                });
-            } else {
-                e.splice(id, 1);
-            }
+                }
+            });
             return {
                 ...state,
-                activeWorkout: { ...state.activeWorkout, exercises: e }
+                activeWorkout: { ...state.activeWorkout, exercises: compoundExercises }
             };
         case EDIT_SET:
             newState = _.cloneDeep(state);
-            exercises = newState.activeWorkout.exercises as Exercise[];
-            ({ setPosition, exercisePosition } = findSetPositionById(newState, action.payload.id));
-            (newState.activeWorkout.exercises[exercisePosition] as Exercise).sets[setPosition] = action.payload;
+            compoundExercises = newState.activeWorkout.exercises;
+            exercises = getPureExercises(compoundExercises);
+            let set = findSetById(exercises, action.payload.id);
+            set.repsCount = action.payload.repsCount;
+            set.weight = action.payload.weight;
             return newState;
         case DELETE_SET:
             newState = _.cloneDeep(state);
-            ({ setPosition, exercisePosition } = findSetPositionById(newState, action.payload.id));
-            (newState.activeWorkout.exercises[exercisePosition] as Exercise).sets.splice(setPosition, 1);
+            compoundExercises = newState.activeWorkout.exercises;
+            exercises = getPureExercises(compoundExercises);
+            deleteSetById(exercises, action.payload.id);
             return newState;
         case SET_ACTIVE_WORKOUT:
             return {
@@ -151,36 +130,34 @@ export function appReducer(state = initialState, action) {
     return state;
 }
 
-function isExercise(exercise: Exercise | CompoundExercise): exercise is Exercise {
-    return (exercise as Exercise).sets != null;
-}
-
-function findSetPositionById(state: any, id: string): { setPosition: number; exercisePosition: number } {
-    let exercises = state.activeWorkout.exercises;
-    let setPosition: number;
-    let exercisePosition: number;
-    for (let i = 0; i < exercises.length; i++) {
-        for (let j = 0; j < exercises[i].sets.length; j++) {
-            if (exercises[i].sets[j].id === id) {
-                setPosition = j;
-                exercisePosition = i;
-                break;
+function findSetById(exercises: Exercise[], id: string): Set {
+    let set: Set;
+    exercises.forEach((e) => {
+        e.sets.forEach((s) => {
+            if (s.id === id) {
+                set = s;
             }
-        }
-        if (setPosition != null) {
-            break;
-        }
-    }
-    return { setPosition, exercisePosition };
+        })
+    });
+    return set;
 }
 
-function getPureExercises(arr: (Exercise | CompoundExercise)[]): Exercise[] {
+function deleteSetById(exercises: Exercise[], id: string): void {
+    let set: Set;
+    exercises.forEach((e) => {
+        e.sets.forEach((s) => {
+            if (s.id === id) {
+                let indexToRemove = e.sets.indexOf(s);
+                console.log(indexToRemove);
+                e.sets.splice(indexToRemove, 1);
+            }
+        })
+    });
+}
+
+function getPureExercises(arr: CompoundExercise[]): Exercise[] {
     return arr.reduce((prev, current) => {
-        if (isExercise(current)) {
-            prev.push(current);
-        } else {
-            prev.push(...current.exercises);
-        }
+        prev.push(...current.exercises);
         return prev;
     }, []);
 }
