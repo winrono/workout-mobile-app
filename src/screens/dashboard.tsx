@@ -11,6 +11,7 @@ import StatisticsView from '../components/statistics-view';
 import { initialize } from '../actions/initialize';
 import { connect } from 'react-redux';
 import { setDate } from '../actions/set-date';
+import { AntDesign } from '@expo/vector-icons';
 
 class Dashboard extends Component<
     {
@@ -24,7 +25,7 @@ class Dashboard extends Component<
         date: string;
         activeFab: boolean;
     }
-> {
+    > {
     constructor(props) {
         super(props);
         this.state = { date: getShortDate(new Date()), activeFab: false };
@@ -36,39 +37,26 @@ class Dashboard extends Component<
 
     render() {
         return (
-            <Container style={{ backgroundColor: '#c5c7c3' }}>
+            <Container style={{ backgroundColor: '#f0f5f7' }}>
                 <Navbar />
-                <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 20 }}>
-                    <Fab
-                        containerStyle={{ position: 'relative', left: 5, top: 0 }}
-                        active={this.state.activeFab}
-                        onPress={() => this.setState({ activeFab: !this.state.activeFab })}
-                        direction="right"
-                    >
-                        <Icon name="ios-fitness" />
-                        <Button
-                            style={{ backgroundColor: '#34A34F' }}
-                            onPress={() => this.props.navigation.navigate('AddExercise', { date: this.state.date })}
-                        >
-                            <Icon name="ios-add" />
-                        </Button>
-                        <Button
-                            style={{ backgroundColor: '#3B5998' }}
-                            onPress={() => this.props.navigation.navigate('AddTimeset')}
-                        >
-                            <Icon name="ios-alarm" />
-                        </Button>
-                    </Fab>
-                    <Datepicker
-                        pickerStyle={{ width: 150, position: 'absolute', right: 10 }}
-                        date={getShortDate(this.state.date)}
-                        onDateChange={(date: string) => {
-                            this.setState({ date: date });
-                            this.props.setDate(date);
-                        }}
-                    />
-                </View>
+                <Datepicker
+                    pickerStyle={{ width: 200, alignSelf: 'center' }}
+                    date={getShortDate(this.state.date)}
+                    onDateChange={(date: string) => {
+                        this.setState({ date: date });
+                        this.props.setDate(date);
+                    }}
+                />
                 {this.props.ready ? this.renderContent() : <ActivityIndicator size="large" />}
+                <Fab
+                    // active={this.state.activeFab}
+                    // onPress={() => this.setState({ activeFab: !this.state.activeFab })}
+                    onPress={() => this.props.navigation.navigate('AddExercise', { date: this.state.date })}
+                    direction='up'
+                    position='bottomRight'
+                >
+                    <AntDesign name="plus" />
+                </Fab>
             </Container>
         );
     }

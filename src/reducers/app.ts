@@ -31,18 +31,6 @@ const initialState: {
 };
 
 export function appReducer(state = initialState, action) {
-    let id: number;
-    let exercises: Exercise[];
-    let compoundExercises: CompoundExercise[];
-    let newState: {
-        set: Set;
-        ready: boolean;
-        workouts: DailyWorkout[];
-        activeWorkout: DailyWorkout;
-    };
-    let setPosition: number;
-    let exercisePosition: number;
-
     switch (action.type) {
         case ON_READY:
             return {
@@ -66,22 +54,18 @@ export function appReducer(state = initialState, action) {
                     ]
                 }
             };
-        case ADD_SET:
-            newState = _.cloneDeep(state);
-            id = null;
+        case ADD_SET: {
+            const newState = _.cloneDeep(state);
             let exercises: Exercise[] = getPureExercises(newState.activeWorkout.exercises);
             let newExercise = exercises.find((ex, index) => {
-                let found = ex.id === action.payload.exerciseId;
-                if (found) {
-                    id = index;
-                }
-                return found;
+                return ex.id === action.payload.exerciseId;
             });
             newExercise.sets.push({ ...action.payload.set, id: new Date().getTime().toString() });
             return newState;
-        case ADD_TO_EXISTING_EXERCISE:
-            newState = _.cloneDeep(state);
-            id = null;
+        }
+        case ADD_TO_EXISTING_EXERCISE: {
+            const newState = _.cloneDeep(state);
+            let id = null;
             let exercise = newState.activeWorkout.exercises.find((e, index) => {
                 let found = e.id === action.payload.parentId;
                 if (found) {
@@ -92,8 +76,9 @@ export function appReducer(state = initialState, action) {
             exercise.exercises.push({ ...action.payload.exercise, id: new Date().getTime().toString() });
             newState.activeWorkout.exercises.splice(id, 1, exercise);
             return newState;
-        case DELETE_EXERCISE:
-            compoundExercises = [...state.activeWorkout.exercises];
+        }
+        case DELETE_EXERCISE: {
+            let compoundExercises = [...state.activeWorkout.exercises];
             compoundExercises.forEach((compoundExercise, compoundExerciseIndex) => {
                 let id = compoundExercise.exercises.indexOf(action.payload);
                 if (id != -1) {
@@ -107,20 +92,23 @@ export function appReducer(state = initialState, action) {
                 ...state,
                 activeWorkout: { ...state.activeWorkout, exercises: compoundExercises }
             };
-        case EDIT_SET:
-            newState = _.cloneDeep(state);
-            compoundExercises = newState.activeWorkout.exercises;
-            exercises = getPureExercises(compoundExercises);
+        }
+        case EDIT_SET: {
+            const newState = _.cloneDeep(state);
+            const compoundExercises = newState.activeWorkout.exercises;
+            const exercises = getPureExercises(compoundExercises);
             let set = findSetById(exercises, action.payload.id);
             set.repsCount = action.payload.repsCount;
             set.weight = action.payload.weight;
             return newState;
-        case DELETE_SET:
-            newState = _.cloneDeep(state);
-            compoundExercises = newState.activeWorkout.exercises;
-            exercises = getPureExercises(compoundExercises);
+        }
+        case DELETE_SET: {
+            const newState = _.cloneDeep(state);
+            const compoundExercises = newState.activeWorkout.exercises;
+            const exercises = getPureExercises(compoundExercises);
             deleteSetById(exercises, action.payload.id);
             return newState;
+        }
         case SET_ACTIVE_WORKOUT:
             return {
                 ...state,

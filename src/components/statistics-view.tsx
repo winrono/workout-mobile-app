@@ -21,6 +21,7 @@ import { AntDesign, MaterialIcons } from '@expo/vector-icons';
 import { connect } from 'react-redux';
 import { deleteExercise } from '../actions/delete-exercise';
 import EditSet from './edit-set';
+import AddSet from './add-set';
 import { CompoundExercise } from '../models/compound-exercise';
 import { Menu, MenuTrigger, MenuOptions, MenuOption } from 'react-native-popup-menu';
 
@@ -28,7 +29,7 @@ class StatisticsView extends React.Component<{
     exercises: (CompoundExercise)[];
     onDeleteExercise: (exercise: Exercise) => void;
 }> {
-    state = { modalVisible: false, editedSet: null };
+    state = { modalVisible: false, editedSet: null, addingSet: null };
     render() {
         return (
             <View style={{ flex: 1 }}>
@@ -48,18 +49,26 @@ class StatisticsView extends React.Component<{
                         }}
                     >
                         <View style={{ width: 300, height: 300, backgroundColor: '#fff' }}>
-                            <EditSet
-                                onEditCompleted={() => {
-                                    this.setState({ modalVisible: false });
-                                }}
-                                set={this.state.editedSet}
-                            ></EditSet>
+                            {this.renderModalContent()}
                         </View>
                     </View>
                 </Modal>
-                <ScrollView>{this.props.exercises.map(exercise => this.renderActivity(exercise))}</ScrollView>
+                <ScrollView>{this.props.exercises.map(exercise => this.renderActivity(exercise))}<View style={{ height: 70 }}></View></ScrollView>
             </View>
         );
+    }
+
+    private renderModalContent() {
+        if (this.state.editedSet) {
+            return (<EditSet
+                onEditCompleted={() => {
+                    this.setState({ modalVisible: false, editedSet: null });
+                }}
+                set={this.state.editedSet}
+            ></EditSet>);
+        } else {
+            return (<AddSet initialModel={this.state.addingSet} onSubmit={() => this.setState({ modalVisible: false, addingSet: null })}></AddSet>);
+        }
     }
 
     private renderActivity(exercise: CompoundExercise) {
@@ -96,10 +105,7 @@ class StatisticsView extends React.Component<{
                                 <MenuOptions>
                                     <MenuOption onSelect={() => {
                                         let prevSetData = this.getLastSetData(exercise);
-                                        navigationService.navigate('AddSet', {
-                                            ...prevSetData,
-                                            exerciseId: exercise.id
-                                        });
+                                        this.setState({ modalVisible: true, addingSet: { ...prevSetData, exerciseId: exercise.id } })
                                     }} text='Add set' />
                                     <MenuOption onSelect={() => this.deleteExerciseSafely(exercise)} >
                                         <Text style={{ color: 'red' }}>Delete</Text>

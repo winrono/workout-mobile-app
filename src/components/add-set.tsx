@@ -1,18 +1,18 @@
 import React from 'react';
-import { StyleSheet, Text } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import { lazyInject } from '../ioc/container';
 import { ExerciseService } from '../data-access/exercise-service';
 import { Form, Container, Content, Button } from 'native-base';
-import { Navbar } from '../components/navbar';
+import { Navbar } from './navbar';
 import { connect } from 'react-redux';
 import { AddSet as AddSetAction } from '../actions/add-set';
-import SetEditor from '../components/set-editor';
+import SetEditor from './set-editor';
 import { Set } from '../models/set';
 
 class AddSet extends React.Component<
-    { repsCount: string; weight: string; navigation: any },
+    { initialModel: { exerciseId: string, weight: string, repsCount: string }, navigation?: any, onSubmit: () => void },
     { set: Set; exerciseId: string }
-> {
+    > {
     @lazyInject('exerciseService') private readonly _exerciseService: ExerciseService;
     _repsInput: any;
     _weightInput: any;
@@ -21,19 +21,18 @@ class AddSet extends React.Component<
         super(props);
         this.state = {
             set: {
-                repsCount: props.navigation.getParam('repsCount', null),
-                weight: props.navigation.getParam('weight', null)
+                repsCount: this.props.initialModel.repsCount,
+                weight: this.props.initialModel.weight
             },
-            exerciseId: props.navigation.getParam('exerciseId', null)
+            exerciseId: this.props.initialModel.exerciseId
         };
     }
 
     render() {
         return (
             <Container style={styles.container}>
-                <Navbar />
-                <Content>
-                    <Form>
+                <Form style={{ flex: 1 }}>
+                    <View style={styles.contentContainer}>
                         <SetEditor
                             set={this.state.set}
                             onSetChange={set => {
@@ -43,35 +42,46 @@ class AddSet extends React.Component<
                             }}
                             onEditDone={this.submit.bind(this)}
                         ></SetEditor>
-                        <Button block style={{ marginTop: 20 }} onPress={this.submit.bind(this)}>
+                    </View>
+                    <View style={styles.footer}>
+                        <Button bordered success style={styles.footerButton} onPress={() => { }}>
+                            <Text>Cancel</Text>
+                        </Button>
+                        <Button bordered success style={styles.footerButton} onPress={this.submit.bind(this)}>
                             <Text>Submit</Text>
                         </Button>
-                    </Form>
-                </Content>
+                    </View>
+                </Form>
             </Container>
         );
     }
     async submit() {
         this.props.onAddSet(this.state.set, this.state.exerciseId).then(() => {
-            this.props.navigation.navigate('Dashboard');
+            this.props.onSubmit();
         });
     }
 }
 
 const styles = StyleSheet.create({
     container: {
-        backgroundColor: '#fcfdff',
         flex: 1
     },
-    input: {
-        margin: 15,
-        height: 40,
-        borderColor: '#7a42f4',
-        borderWidth: 1,
-        textAlign: 'center'
+    contentContainer: {
+        flex: 1,
+        justifyContent: 'center'
+    },
+    footer: {
+        alignContent: 'flex-end',
+        flexDirection: 'row',
+        alignItems: 'center'
+
+    },
+    footerButton: {
+        margin: 10,
+        flex: 1,
+        justifyContent: 'center'
     }
 });
-
 function mapStateToProps(state) {
     return {
         set: state.set

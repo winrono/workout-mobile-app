@@ -23,6 +23,7 @@ export default class SetEditor extends React.Component<
                         returnKeyType={'next'}
                         keyboardType='numeric'
                         value={this.state.set.weight}
+                        selectTextOnFocus={true}
                         autoFocus={true}
                         onChangeText={weight => {
                             this.setState({ set: { ...this.state.set, weight: weight } }, () => {
@@ -41,6 +42,7 @@ export default class SetEditor extends React.Component<
                         returnKeyType={'done'}
                         keyboardType='numeric'
                         value={this.state.set.repsCount}
+                        selectTextOnFocus={true}
                         onChangeText={repsCount => {
                             this.setState({ set: { ...this.state.set, repsCount: repsCount } }, () => {
                                 this.props.onSetChange(this.state.set);
