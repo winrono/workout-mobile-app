@@ -1,19 +1,17 @@
 import React from 'react';
-import { Container, Content, Form, Button } from 'native-base';
+import { Container, Form, Button } from 'native-base';
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import SetEditor from './set-editor';
 import { Set } from '../models/set';
-import { ExerciseService } from '../data-access/exercise-service';
-import { lazyInject } from '../ioc/container';
-import { Navbar } from './navbar';
 import { connect } from 'react-redux';
-import { setSet } from '../actions/set-set';
 import { editSet } from '../actions/edit-set';
 import { AntDesign } from '@expo/vector-icons';
 import { deleteSet } from '../actions/delete-set';
 
-class EditSet extends React.Component<{ onEditCompleted: () => void, onSaveSet: (set: Set) => void, onDeleteSet: (set: Set) => void, set: Set }, { set: Set }> {
-
+class EditSet extends React.Component<
+    { onEditCompleted: () => void; onSaveSet: (set: Set) => void; onDeleteSet: (set: Set) => void; set: Set },
+    { set: Set }
+> {
     constructor(props) {
         super(props);
         this.state = { set: props.set };
@@ -23,10 +21,13 @@ class EditSet extends React.Component<{ onEditCompleted: () => void, onSaveSet: 
             <Container style={styles.container}>
                 <Form style={{ flex: 1 }}>
                     <View style={styles.contentContainer}>
-                        <TouchableOpacity style={{ marginLeft: 'auto', padding: 20 }} onPress={() => {
-                            this.onDelete()
-                        }}>
-                            <AntDesign size={30} name='delete'></AntDesign>
+                        <TouchableOpacity
+                            style={{ marginLeft: 'auto', padding: 20 }}
+                            onPress={() => {
+                                this.onDelete();
+                            }}
+                        >
+                            <AntDesign size={30} name="delete"></AntDesign>
                         </TouchableOpacity>
                         <SetEditor
                             set={this.state.set}
@@ -42,7 +43,12 @@ class EditSet extends React.Component<{ onEditCompleted: () => void, onSaveSet: 
                         ></SetEditor>
                     </View>
                     <View style={styles.footer}>
-                        <Button bordered success style={styles.footerButton} onPress={() => this.props.onEditCompleted()}>
+                        <Button
+                            bordered
+                            success
+                            style={styles.footerButton}
+                            onPress={() => this.props.onEditCompleted()}
+                        >
                             <Text>Cancel</Text>
                         </Button>
                         <Button bordered success style={styles.footerButton} onPress={this.onSave.bind(this)}>
@@ -76,7 +82,6 @@ const styles = StyleSheet.create({
         alignContent: 'flex-end',
         flexDirection: 'row',
         alignItems: 'center'
-
     },
     footerButton: {
         margin: 10,
@@ -96,7 +101,4 @@ function mapDispatchToProps(dispatch) {
     };
 }
 
-export default connect(
-    undefined,
-    mapDispatchToProps
-)(EditSet);
+export default connect(undefined, mapDispatchToProps)(EditSet);
