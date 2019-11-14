@@ -49,10 +49,10 @@ class AddSet extends React.Component<
 
     private getFooter() {
         return ([
-            <Button bordered success style={styles.footerButton} onPress={() => { }}>
+            <Button bordered success key={0} style={styles.footerButton} onPress={() => { }}>
                 <Text>Cancel</Text>
             </Button>,
-            <Button bordered success style={styles.footerButton} onPress={this.submit.bind(this)}>
+            <Button bordered success key={1} style={styles.footerButton} onPress={this.submit.bind(this)}>
                 <Text>Submit</Text>
             </Button>
         ]);

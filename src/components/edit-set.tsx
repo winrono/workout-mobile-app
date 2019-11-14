@@ -36,6 +36,7 @@ class EditSet extends React.Component<
     private getContent() {
         return ([
             <TouchableOpacity
+                key='0'
                 style={{ marginLeft: 'auto', right: 20 }}
                 onPress={() => {
                     this.onDelete();
@@ -44,6 +45,7 @@ class EditSet extends React.Component<
                 <AntDesign size={30} name='delete'></AntDesign>
             </TouchableOpacity>,
             <SetEditor
+                key='1'
                 set={this.state.set}
                 onSetChange={set => {
                     this.setState({
@@ -63,12 +65,18 @@ class EditSet extends React.Component<
             <Button
                 bordered
                 success
+                key={0}
                 style={styles.footerButton}
                 onPress={() => this.props.onEditCompleted()}
             >
                 <Text>Cancel</Text>
             </Button>,
-            <Button bordered success style={styles.footerButton} onPress={this.onSave.bind(this)}>
+            <Button
+                bordered
+                success
+                key={1}
+                style={styles.footerButton}
+                onPress={this.onSave.bind(this)}>
                 <Text>Save</Text>
             </Button>
         ])

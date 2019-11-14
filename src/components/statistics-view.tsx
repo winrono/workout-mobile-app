@@ -3,21 +3,14 @@ import {
     ScrollView,
     Alert,
     Text,
-    Dimensions,
-    FlatList,
-    TouchableOpacity,
-    Modal,
-    TouchableHighlight
+    StyleSheet
 } from 'react-native';
-import { Accordion, List, Card, CardItem, Body, View, Left, Icon, Right } from 'native-base';
+import { Card, CardItem, View, Left, Right } from 'native-base';
 import { Exercise } from '../models/exercise';
 import { Set } from '../models/set';
 import { SetView } from './set-view';
-import { SupersetView } from './superset-view';
-import { ExerciseService } from '../data-access/exercise-service';
-import { lazyInject } from '../ioc/container';
 import navigationService from '../../navigation-service';
-import { AntDesign, MaterialIcons } from '@expo/vector-icons';
+import { MaterialIcons } from '@expo/vector-icons';
 import { connect } from 'react-redux';
 import { deleteExercise } from '../actions/delete-exercise';
 import EditSet from './edit-set';
@@ -57,7 +50,7 @@ class StatisticsView extends React.Component<{
 
     private renderActivity(exercise: CompoundExercise) {
         return (
-            <View style={{ margin: 10 }}>
+            <View key={exercise.id} style={{ margin: 10 }}>
                 <Card
                     style={{
                         borderRadius: 10,
@@ -75,7 +68,7 @@ class StatisticsView extends React.Component<{
 
     private renderExercise(exercise: Exercise, compoundId: string) {
         return (
-            <View>
+            <View key={exercise.id}>
                 <CardItem header bordered>
                     <Left>
                         <Text>{exercise.title}</Text>
@@ -86,13 +79,13 @@ class StatisticsView extends React.Component<{
                                 <MenuTrigger>
                                     <MaterialIcons size={30} name='menu'></MaterialIcons>
                                 </MenuTrigger>
-                                <MenuOptions>
+                                <MenuOptions customStyles={menuOptionsStyles as any}>
                                     <MenuOption onSelect={() => {
                                         let prevSetData = this.getLastSetData(exercise);
                                         this.setState({ modalVisible: true, addingSet: { ...prevSetData, exerciseId: exercise.id } })
                                     }} text='Add set' />
                                     <MenuOption onSelect={() => this.deleteExerciseSafely(exercise)} >
-                                        <Text style={{ color: 'red' }}>Delete</Text>
+                                        <Text>Delete</Text>
                                     </MenuOption>
                                     <MenuOption onSelect={() => {
                                         navigationService.navigate('AddCompoundExercise', {
@@ -107,7 +100,7 @@ class StatisticsView extends React.Component<{
                 <View style={{ flex: 1, flexWrap: 'wrap', flexDirection: 'row' }}>
                     {exercise.sets.map(s => this.renderSet(s))}
                 </View>
-            </View>
+            </View >
         );
     }
 
@@ -121,12 +114,8 @@ class StatisticsView extends React.Component<{
         return setData;
     }
 
-    renderSet(set: Set | SuperSet) {
-        if ((set as SuperSet).sets) {
-            return <SupersetView superset={set as SuperSet}></SupersetView>;
-        } else {
-            return <SetView set={set as Set} onDelete={() => { }} onEdit={this.editSet.bind(this, set)}></SetView>;
-        }
+    renderSet(set: Set) {
+        return <SetView key={set.id} set={set as Set} onDelete={() => { }} onEdit={this.editSet.bind(this, set)}></SetView>;
     }
 
     deleteExerciseSafely(exercise: Exercise) {
@@ -141,6 +130,15 @@ class StatisticsView extends React.Component<{
     }
     editSet(set: Set) {
         this.setState({ modalVisible: true, editedSet: set });
+    }
+}
+
+const menuOptionsStyles = {
+    optionWrapper: {
+        height: 50,
+        justifyContent: 'center',
+        borderWidth: 0.5,
+        borderColor: '#d6d7da'
     }
 }
 
