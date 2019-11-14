@@ -1,9 +1,6 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-import { lazyInject } from '../ioc/container';
-import { ExerciseService } from '../data-access/exercise-service';
-import { Form, Container, Content, Button } from 'native-base';
-import { Navbar } from './navbar';
+import { StyleSheet, Text } from 'react-native';
+import { Button } from 'native-base';
 import { connect } from 'react-redux';
 import { AddSet as AddSetAction } from '../actions/add-set';
 import SetEditor from './set-editor';
@@ -11,10 +8,9 @@ import { Set } from '../models/set';
 import SetManipulationModalBody from './set-manipulation-modal-body';
 
 class AddSet extends React.Component<
-    { initialModel: { exerciseId: string, weight: string, repsCount: string }, navigation?: any, onSubmit: () => void },
+    { initialModel: { exerciseId: string, weight: string, repsCount: string }, navigation?: any, onAddCompleted: () => void },
     { set: Set; exerciseId: string }
     > {
-    @lazyInject('exerciseService') private readonly _exerciseService: ExerciseService;
     _repsInput: any;
     _weightInput: any;
 
@@ -49,7 +45,7 @@ class AddSet extends React.Component<
 
     private getFooter() {
         return ([
-            <Button bordered success key={0} style={styles.footerButton} onPress={() => { }}>
+            <Button bordered success key={0} style={styles.footerButton} onPress={this.props.onAddCompleted.bind(this)}>
                 <Text>Cancel</Text>
             </Button>,
             <Button bordered success key={1} style={styles.footerButton} onPress={this.submit.bind(this)}>
@@ -60,7 +56,7 @@ class AddSet extends React.Component<
 
     async submit() {
         this.props.onAddSet(this.state.set, this.state.exerciseId).then(() => {
-            this.props.onSubmit();
+            this.props.onAddCompleted();
         });
     }
 }

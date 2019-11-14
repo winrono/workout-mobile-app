@@ -44,7 +44,7 @@ class StatisticsView extends React.Component<{
                 set={this.state.editedSet}
             ></EditSet>);
         } else {
-            return (<AddSet initialModel={this.state.addingSet} onSubmit={() => this.setState({ modalVisible: false, addingSet: null })}></AddSet>);
+            return (<AddSet initialModel={this.state.addingSet} onAddCompleted={() => this.setState({ modalVisible: false, addingSet: null })}></AddSet>);
         }
     }
 
