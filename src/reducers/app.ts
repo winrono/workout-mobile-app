@@ -4,7 +4,7 @@ import { DailyWorkout } from '../models/daily-workout';
 import { ADD_EXERCISE } from '../actions/add-exercise';
 import navigationService from '../../navigation-service';
 import { getShortDate } from '../utils/date';
-import { SET_ACTIVE_WORKOUT } from '../actions/set-active-workout';
+import { SET_ACTIVE_WORKOUTS } from '../actions/set-active-workouts';
 import { ADD_SET } from '../actions/add-set';
 import { DELETE_EXERCISE } from '../actions/delete-exercise';
 import { EDIT_SET } from '../actions/edit-set';
@@ -19,6 +19,8 @@ const initialState: {
     ready: boolean;
     workouts: DailyWorkout[];
     activeWorkout: DailyWorkout;
+    previousWorkout: DailyWorkout,
+    nextWorkout: DailyWorkout
 } = {
     set: {
         id: null,
@@ -27,7 +29,9 @@ const initialState: {
     },
     ready: false,
     workouts: null,
-    activeWorkout: null
+    activeWorkout: null,
+    previousWorkout: null,
+    nextWorkout: null
 };
 
 export function appReducer(state = initialState, action) {
@@ -36,7 +40,9 @@ export function appReducer(state = initialState, action) {
             return {
                 ...state,
                 ready: true,
-                activeWorkout: action.payload
+                previousWorkout: action.payload[0],
+                activeWorkout: action.payload[1],
+                nextWorkout: action.payload[2]
             };
         case ADD_EXERCISE:
             // using navigation here for now as add exercise will become async at some point
@@ -109,10 +115,12 @@ export function appReducer(state = initialState, action) {
             deleteSetById(exercises, action.payload.id);
             return newState;
         }
-        case SET_ACTIVE_WORKOUT:
+        case SET_ACTIVE_WORKOUTS:
             return {
                 ...state,
-                activeWorkout: action.payload
+                previousWorkout: action.payload[0],
+                activeWorkout: action.payload[1],
+                nextWorkout: action.payload[2]
             };
     }
     return state;

@@ -62,7 +62,7 @@ const mainAppNavigator = createDrawerNavigator(drawerNavigatorRouteConfig, { edg
 
 const switchNavigator = createSwitchNavigator({
     Initial: InitialScreen,
-    AuthorizedApp: mainAppNavigator as any,
+    AuthorizedApp: dashboardStack,
     Auth: AuthScreen,
     CreateAccount: CreateAccountScreen,
     ForgotPassword: ForgotPasswordScreen

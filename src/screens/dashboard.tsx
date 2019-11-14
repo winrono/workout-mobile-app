@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View } from 'react-native';
+import { View, StyleSheet, Text } from 'react-native';
 import { ActivityIndicator } from 'react-native';
 import { Container, Fab, Icon, Button } from 'native-base';
 import { Datepicker } from '../components/date-picker';
@@ -12,11 +12,12 @@ import { initialize } from '../actions/initialize';
 import { connect } from 'react-redux';
 import { setDate } from '../actions/set-date';
 import { AntDesign } from '@expo/vector-icons';
+import Swiper from 'react-native-swiper'
 
 class Dashboard extends Component<
     {
         navigation: any;
-        dailyWorkout: DailyWorkout;
+        activeWorkouts: DailyWorkout[];
         ready: boolean;
         initialize: () => void;
         setDate: (date: string | Date) => void;
@@ -42,15 +43,13 @@ class Dashboard extends Component<
                 <Datepicker
                     pickerStyle={{ width: 200, alignSelf: 'center' }}
                     date={getShortDate(this.state.date)}
-                    onDateChange={(date: string) => {
-                        this.setState({ date: date });
-                        this.props.setDate(date);
-                    }}
+                // onDateChange={(date: string) => {
+                //     this.setState({ date: date });
+                //     this.props.setDate(date);
+                // }}
                 />
                 {this.props.ready ? this.renderContent() : <ActivityIndicator size="large" />}
                 <Fab
-                    // active={this.state.activeFab}
-                    // onPress={() => this.setState({ activeFab: !this.state.activeFab })}
                     onPress={() => this.props.navigation.navigate('AddExercise', { date: this.state.date })}
                     direction='up'
                     position='bottomRight'
@@ -61,10 +60,51 @@ class Dashboard extends Component<
         );
     }
     renderContent() {
-        if (!this.props.dailyWorkout || this.props.dailyWorkout.exercises.length === 0) {
-            return <NoStatistics />;
+        console.log('rerender');
+        let pages: JSX.Element[] = [];
+        if (this.props.activeWorkouts) {
+            this.props.activeWorkouts.forEach((workout) => {
+                if (!workout || workout.exercises.length === 0) {
+                    pages.push(<NoStatistics />);
+                } else {
+                    pages.push(<StatisticsView exercises={workout.exercises} />);
+                }
+            })
         }
-        return <StatisticsView exercises={this.props.dailyWorkout.exercises} />;
+
+        return (<Swiper showsPagination={false} key={this.state.key} index={1} onIndexChanged={(id) => { this.onPageChanged(id) }}>
+            {pages}
+        </Swiper>);
+    }
+
+    shouldComponentUpdate(nextProps, nextState) {
+        if (nextState.pendingUpdate) {
+            return false;
+        }
+        return true;
+    }
+
+    private onPageChanged(id) {
+        if (id === 0) {
+            let prevDay: Date | string = new Date(this.state.date);
+            prevDay.setDate(prevDay.getDate() - 1);
+            prevDay = getShortDate(prevDay);
+            this.setState({ date: prevDay }, () => {
+                this.props.setDate(prevDay).then(() => {
+                    this.setState({ pendingUpdate: false });
+                })
+            });
+        } else if (id === 2) {
+            let nextDay: Date | string = new Date(this.state.date);
+            nextDay.setDate(nextDay.getDate() + 1);
+            nextDay = getShortDate(nextDay);
+            this.setState({ date: nextDay }, () => {
+                this.props.setDate(nextDay).then(() => {
+                    this.setState({ pendingUpdate: false });
+                })
+            });
+        }
+        this.setState({ key: new Date().getMilliseconds(), pendingUpdate: true });
     }
 
     //added for future usage
@@ -73,9 +113,36 @@ class Dashboard extends Component<
     }
 }
 
+const styles = StyleSheet.create({
+    wrapper: {},
+    slide1: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#9DD6EB'
+    },
+    slide2: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#97CAE5'
+    },
+    slide3: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#92BBD9'
+    },
+    text: {
+        color: '#fff',
+        fontSize: 30,
+        fontWeight: 'bold'
+    }
+})
+
 function mapStateToProps(state) {
     return {
-        dailyWorkout: state.activeWorkout,
+        activeWorkouts: [state.previousWorkout, state.activeWorkout, state.nextWorkout],
         ready: state.ready
     };
 }
@@ -86,7 +153,7 @@ function mapDispatchToProps(dispatch) {
             dispatch(initialize());
         },
         setDate: date => {
-            dispatch(setDate(date));
+            return dispatch(setDate(date));
         }
     };
 }
