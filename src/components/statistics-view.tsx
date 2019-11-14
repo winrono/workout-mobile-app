@@ -24,6 +24,7 @@ import EditSet from './edit-set';
 import AddSet from './add-set';
 import { CompoundExercise } from '../models/compound-exercise';
 import { Menu, MenuTrigger, MenuOptions, MenuOption } from 'react-native-popup-menu';
+import TransparentModal from './transparent-modal';
 
 class StatisticsView extends React.Component<{
     exercises: (CompoundExercise)[];
@@ -33,26 +34,9 @@ class StatisticsView extends React.Component<{
     render() {
         return (
             <View style={{ flex: 1 }}>
-                <Modal
-                    animationType='none'
-                    transparent={true}
-                    visible={this.state.modalVisible}
-                    onRequestClose={() => { }}
-                >
-                    <View
-                        style={{
-                            flex: 1,
-                            flexDirection: 'column',
-                            justifyContent: 'center',
-                            alignItems: 'center',
-                            backgroundColor: '#00000080'
-                        }}
-                    >
-                        <View style={{ width: 300, height: 300, backgroundColor: '#fff' }}>
-                            {this.renderModalContent()}
-                        </View>
-                    </View>
-                </Modal>
+                <TransparentModal visible={this.state.modalVisible}>
+                    {this.renderModalContent()}
+                </TransparentModal>
                 <ScrollView>{this.props.exercises.map(exercise => this.renderActivity(exercise))}<View style={{ height: 70 }}></View></ScrollView>
             </View>
         );

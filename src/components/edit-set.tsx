@@ -7,56 +7,19 @@ import { connect } from 'react-redux';
 import { editSet } from '../actions/edit-set';
 import { AntDesign } from '@expo/vector-icons';
 import { deleteSet } from '../actions/delete-set';
+import SetManipulationModalBody from './set-manipulation-modal-body';
 
 class EditSet extends React.Component<
     { onEditCompleted: () => void; onSaveSet: (set: Set) => void; onDeleteSet: (set: Set) => void; set: Set },
     { set: Set }
-> {
+    > {
     constructor(props) {
         super(props);
         this.state = { set: props.set };
     }
     render() {
         return (
-            <Container style={styles.container}>
-                <Form style={{ flex: 1 }}>
-                    <View style={styles.contentContainer}>
-                        <TouchableOpacity
-                            style={{ marginLeft: 'auto', padding: 20 }}
-                            onPress={() => {
-                                this.onDelete();
-                            }}
-                        >
-                            <AntDesign size={30} name="delete"></AntDesign>
-                        </TouchableOpacity>
-                        <SetEditor
-                            set={this.state.set}
-                            onSetChange={set => {
-                                this.setState({
-                                    set: {
-                                        ...this.state.set,
-                                        ...set
-                                    }
-                                });
-                            }}
-                            onEditDone={this.onSave.bind(this)}
-                        ></SetEditor>
-                    </View>
-                    <View style={styles.footer}>
-                        <Button
-                            bordered
-                            success
-                            style={styles.footerButton}
-                            onPress={() => this.props.onEditCompleted()}
-                        >
-                            <Text>Cancel</Text>
-                        </Button>
-                        <Button bordered success style={styles.footerButton} onPress={this.onSave.bind(this)}>
-                            <Text>Save</Text>
-                        </Button>
-                    </View>
-                </Form>
-            </Container>
+            <SetManipulationModalBody content={this.getContent()} footer={this.getFooter()} />
         );
     }
 
@@ -68,6 +31,47 @@ class EditSet extends React.Component<
     onSave() {
         this.props.onSaveSet(this.state.set);
         this.props.onEditCompleted();
+    }
+
+    private getContent() {
+        return ([
+            <TouchableOpacity
+                style={{ marginLeft: 'auto', right: 20 }}
+                onPress={() => {
+                    this.onDelete();
+                }}
+            >
+                <AntDesign size={30} name='delete'></AntDesign>
+            </TouchableOpacity>,
+            <SetEditor
+                set={this.state.set}
+                onSetChange={set => {
+                    this.setState({
+                        set: {
+                            ...this.state.set,
+                            ...set
+                        }
+                    });
+                }}
+                onEditDone={this.onSave.bind(this)}
+            ></SetEditor>
+        ])
+    }
+
+    private getFooter() {
+        return ([
+            <Button
+                bordered
+                success
+                style={styles.footerButton}
+                onPress={() => this.props.onEditCompleted()}
+            >
+                <Text>Cancel</Text>
+            </Button>,
+            <Button bordered success style={styles.footerButton} onPress={this.onSave.bind(this)}>
+                <Text>Save</Text>
+            </Button>
+        ])
     }
 }
 

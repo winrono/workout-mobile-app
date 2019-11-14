@@ -1,18 +1,20 @@
 import React from 'react';
-import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, Modal } from 'react-native';
 import { Container, Form, Button } from 'native-base';
 import { AntDesign } from '@expo/vector-icons';
 import SetEditor from './set-editor';
 
-export default class SetModalLayout extends React.Component<{content: React.ReactNode, footer: React.ReactNode} {
+export default class TransparentModal extends React.Component<{ visible: boolean }> {
     render() {
         return (
-            <Container style={styles.container}>
-                <Form style={{ flex: 1 }}>
-                    <View style={styles.contentContainer}>{this.props.content}</View>
-                    <View style={styles.footer}>{this.props.footer}</View>
-                </Form>
-            </Container>
+            <Modal
+                animationType='none'
+                transparent={true}
+                visible={this.props.visible}
+                onRequestClose={() => { }}
+            >
+                {this.props.children}
+            </Modal>
         );
     }
 }

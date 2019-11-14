@@ -8,6 +8,7 @@ import { connect } from 'react-redux';
 import { AddSet as AddSetAction } from '../actions/add-set';
 import SetEditor from './set-editor';
 import { Set } from '../models/set';
+import SetManipulationModalBody from './set-manipulation-modal-body';
 
 class AddSet extends React.Component<
     { initialModel: { exerciseId: string, weight: string, repsCount: string }, navigation?: any, onSubmit: () => void },
@@ -30,31 +31,33 @@ class AddSet extends React.Component<
 
     render() {
         return (
-            <Container style={styles.container}>
-                <Form style={{ flex: 1 }}>
-                    <View style={styles.contentContainer}>
-                        <SetEditor
-                            set={this.state.set}
-                            onSetChange={set => {
-                                this.setState({
-                                    set: set
-                                });
-                            }}
-                            onEditDone={this.submit.bind(this)}
-                        ></SetEditor>
-                    </View>
-                    <View style={styles.footer}>
-                        <Button bordered success style={styles.footerButton} onPress={() => { }}>
-                            <Text>Cancel</Text>
-                        </Button>
-                        <Button bordered success style={styles.footerButton} onPress={this.submit.bind(this)}>
-                            <Text>Submit</Text>
-                        </Button>
-                    </View>
-                </Form>
-            </Container>
+            <SetManipulationModalBody content={this.getContent()} footer={this.getFooter()} />
         );
     }
+
+    private getContent() {
+        return <SetEditor
+            set={this.state.set}
+            onSetChange={set => {
+                this.setState({
+                    set: set
+                });
+            }}
+            onEditDone={this.submit.bind(this)}
+        ></SetEditor>
+    }
+
+    private getFooter() {
+        return ([
+            <Button bordered success style={styles.footerButton} onPress={() => { }}>
+                <Text>Cancel</Text>
+            </Button>,
+            <Button bordered success style={styles.footerButton} onPress={this.submit.bind(this)}>
+                <Text>Submit</Text>
+            </Button>
+        ]);
+    }
+
     async submit() {
         this.props.onAddSet(this.state.set, this.state.exerciseId).then(() => {
             this.props.onSubmit();
