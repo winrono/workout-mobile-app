@@ -8,7 +8,7 @@ export default class TransparentModal extends React.Component<{ visible: boolean
     render() {
         return (
             <Modal
-                animationType='none'
+                animationType='fade'
                 transparent={true}
                 visible={this.props.visible}
                 onRequestClose={() => { }}

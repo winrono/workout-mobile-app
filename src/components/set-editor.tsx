@@ -24,6 +24,7 @@ export default class SetEditor extends React.Component<
                         keyboardType='numeric'
                         value={this.state.set.weight}
                         selectTextOnFocus={true}
+                        blurOnSubmit={false}
                         autoFocus={true}
                         onChangeText={weight => {
                             this.setState({ set: { ...this.state.set, weight: weight } }, () => {
