@@ -43,10 +43,10 @@ class Dashboard extends Component<
                 <Datepicker
                     pickerStyle={{ width: 200, alignSelf: 'center' }}
                     date={getShortDate(this.state.date)}
-                // onDateChange={(date: string) => {
-                //     this.setState({ date: date });
-                //     this.props.setDate(date);
-                // }}
+                    onDateChange={(date: string) => {
+                        this.setState({ date: date });
+                        this.props.setDate(date);
+                    }}
                 />
                 {this.props.ready ? this.renderContent() : <ActivityIndicator size="large" />}
                 <Fab
