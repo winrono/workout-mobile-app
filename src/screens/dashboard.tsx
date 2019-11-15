@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, StyleSheet, Text } from 'react-native';
+import { View, StyleSheet, Text, TouchableOpacity } from 'react-native';
 import { ActivityIndicator } from 'react-native';
 import { Container, Fab, Icon, Button } from 'native-base';
 import { Datepicker } from '../components/date-picker';
@@ -13,6 +13,9 @@ import { connect } from 'react-redux';
 import { setDate } from '../actions/set-date';
 import { AntDesign } from '@expo/vector-icons';
 import Swiper from 'react-native-swiper'
+import { CalendarList } from 'react-native-calendars';
+import TransparentModal from '../components/transparent-modal';
+import CalendarModalBody from '../components/calendar-modal-content';
 
 class Dashboard extends Component<
     {
@@ -25,11 +28,12 @@ class Dashboard extends Component<
     {
         date: string;
         activeFab: boolean;
+        showCalendarModal: boolean
     }
     > {
     constructor(props) {
         super(props);
-        this.state = { date: getShortDate(new Date()), activeFab: false };
+        this.state = { date: getShortDate(new Date()), activeFab: false, showCalendarModal: false };
     }
 
     componentWillMount() {
@@ -39,28 +43,40 @@ class Dashboard extends Component<
     render() {
         return (
             <Container style={{ backgroundColor: '#f0f5f7' }}>
-                <Navbar />
-                <Datepicker
-                    pickerStyle={{ width: 200, alignSelf: 'center' }}
-                    date={getShortDate(this.state.date)}
-                    onDateChange={(date: string) => {
-                        this.setState({ date: date });
-                        this.props.setDate(date);
-                    }}
-                />
-                {this.props.ready ? this.renderContent() : <ActivityIndicator size="large" />}
+                <View style={{ flexDirection: 'row', marginLeft: 'auto', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ right: 20 }}>{new Date(this.state.date).toDateString()}</Text>
+                    <TouchableOpacity
+                        style={{ right: 20 }}
+                        onPress={() => {
+                            this.setState({ showCalendarModal: !this.state.showCalendarModal });
+                        }}
+                    >
+                        <AntDesign size={30} name='calendar' />
+                    </TouchableOpacity>
+                </View>
+                <TransparentModal visible={this.state.showCalendarModal}>
+                    <CalendarModalBody onCancel={() => { this.setState({ showCalendarModal: false }) }} onDateSubmit={this.onDateSelected.bind(this)} date={this.state.date}>
+                    </CalendarModalBody>
+                </TransparentModal>
+                {this.props.ready ? this.renderContent() : <ActivityIndicator size='large' />}
                 <Fab
                     onPress={() => this.props.navigation.navigate('AddExercise', { date: this.state.date })}
                     direction='up'
                     position='bottomRight'
                 >
-                    <AntDesign name="plus" />
+                    <AntDesign name='plus' />
                 </Fab>
             </Container>
         );
     }
+    onDateSelected(date) {
+        this.setState({
+            date: date, showCalendarModal: false
+        });
+        this.props.setDate(date);
+    }
+
     renderContent() {
-        console.log('rerender');
         let pages: JSX.Element[] = [];
         if (this.props.activeWorkouts) {
             this.props.activeWorkouts.forEach((workout) => {

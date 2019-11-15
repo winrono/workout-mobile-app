@@ -25,6 +25,7 @@
         "react-native": "https://github.com/expo/react-native/archive/sdk-35.0.0.tar.gz",
         "react-native-autocomplete-input": "^4.1.0",
         "react-native-autosuggest": "^1.0.1",
+        "react-native-calendars": "^1.214.0",
         "react-native-collapsible": "^1.5.1",
         "react-native-datepicker": "^1.7.2",
         "react-native-gesture-handler": "^1.4.1",
@@ -48,6 +49,7 @@
     "devDependencies": {
         "@types/react": "^16.8.23",
         "@types/react-native": "^0.57.65",
+        "@types/react-native-calendars": "^1.20.7",
         "@types/react-redux": "^7.1.5",
         "babel-preset-expo": "^7.0.0",
         "typescript": "^3.4.5"

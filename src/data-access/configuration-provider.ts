@@ -5,3 +5,5 @@ export class ConfigurationProvider {
         return config.localMode;
     }
 }
+
+export default new ConfigurationProvider();

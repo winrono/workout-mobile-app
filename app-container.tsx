@@ -1,5 +1,5 @@
 import React from 'react';
-import { ConfigurationProvider } from './src/data-access/configuration-provider';
+import configurationProvider from './src/data-access/configuration-provider';
 import { ContainerConfigurator } from './src/ioc/container-configurator';
 import { container } from './src/ioc/container';
 import { createStackNavigator } from 'react-navigation-stack';
@@ -17,7 +17,6 @@ import AddTimesetScreen from './src/screens/add-timeset';
 import AddExerciseScreen from './src/screens/add-exercise';
 import AddCompoundExerciseScreen from './src/screens/add-compound-exercise';
 
-let configurationProvider = new ConfigurationProvider();
 new ContainerConfigurator(configurationProvider).configure(container);
 
 const dashboardStack = createStackNavigator(
