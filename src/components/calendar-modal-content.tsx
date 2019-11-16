@@ -71,7 +71,6 @@ export default class CalendarModalContent extends React.Component<any, any> {
         datesWithActivity.forEach((date) => {
             markers[date] = { dots: [workout] };
         });
-        console.log(markers);
         return {
             ...markers,
             [this.state.date]: { selected: true, disableTouchEvent: true }
