@@ -81,7 +81,6 @@ class Dashboard extends Component<
     }
 
     renderContent() {
-        console.log(performance.now() - this.t1);
         let pages: JSX.Element[] = [];
         if (this.props.activeWorkouts) {
             this.props.activeWorkouts.forEach((workout) => {
@@ -106,7 +105,6 @@ class Dashboard extends Component<
     }
 
     private onPageChanged(id) {
-        console.log('page')
         this.t1 = performance.now();
         if (id === 0) {
             let prevDay: Date | string = new Date(this.state.date);
@@ -127,39 +125,7 @@ class Dashboard extends Component<
         }
         this.setState({ key: new Date().getMilliseconds(), suspendRendering: true });
     }
-
-    //added for future usage
-    addAfter<T>(array: Array<T>, index: number, newItem: T) {
-        return [...array.slice(0, index), newItem, ...array.slice(index)];
-    }
 }
-
-const styles = StyleSheet.create({
-    wrapper: {},
-    slide1: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: '#9DD6EB'
-    },
-    slide2: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: '#97CAE5'
-    },
-    slide3: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: '#92BBD9'
-    },
-    text: {
-        color: '#fff',
-        fontSize: 30,
-        fontWeight: 'bold'
-    }
-})
 
 function mapStateToProps(state) {
     return {
