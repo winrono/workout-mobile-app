@@ -3,27 +3,21 @@ import {
     ScrollView,
     Alert,
     Text,
-    Dimensions,
-    FlatList,
-    TouchableOpacity,
-    Modal,
-    TouchableHighlight
+    StyleSheet
 } from 'react-native';
-import { Accordion, List, Card, CardItem, Body, View, Left, Icon, Right } from 'native-base';
+import { Card, CardItem, View, Left, Right } from 'native-base';
 import { Exercise } from '../models/exercise';
 import { Set } from '../models/set';
 import { SetView } from './set-view';
-import { SupersetView } from './superset-view';
-import { ExerciseService } from '../data-access/exercise-service';
-import { lazyInject } from '../ioc/container';
 import navigationService from '../../navigation-service';
-import { AntDesign, MaterialIcons } from '@expo/vector-icons';
+import { MaterialIcons } from '@expo/vector-icons';
 import { connect } from 'react-redux';
 import { deleteExercise } from '../actions/delete-exercise';
 import EditSet from './edit-set';
 import AddSet from './add-set';
 import { CompoundExercise } from '../models/compound-exercise';
 import { Menu, MenuTrigger, MenuOptions, MenuOption } from 'react-native-popup-menu';
+import TransparentModal from './transparent-modal';
 
 class StatisticsView extends React.Component<{
     exercises: (CompoundExercise)[];
@@ -33,26 +27,9 @@ class StatisticsView extends React.Component<{
     render() {
         return (
             <View style={{ flex: 1 }}>
-                <Modal
-                    animationType='none'
-                    transparent={true}
-                    visible={this.state.modalVisible}
-                    onRequestClose={() => { }}
-                >
-                    <View
-                        style={{
-                            flex: 1,
-                            flexDirection: 'column',
-                            justifyContent: 'center',
-                            alignItems: 'center',
-                            backgroundColor: '#00000080'
-                        }}
-                    >
-                        <View style={{ width: 300, height: 300, backgroundColor: '#fff' }}>
-                            {this.renderModalContent()}
-                        </View>
-                    </View>
-                </Modal>
+                <TransparentModal visible={this.state.modalVisible}>
+                    {this.renderModalContent()}
+                </TransparentModal>
                 <ScrollView>{this.props.exercises.map(exercise => this.renderActivity(exercise))}<View style={{ height: 70 }}></View></ScrollView>
             </View>
         );
@@ -67,13 +44,13 @@ class StatisticsView extends React.Component<{
                 set={this.state.editedSet}
             ></EditSet>);
         } else {
-            return (<AddSet initialModel={this.state.addingSet} onSubmit={() => this.setState({ modalVisible: false, addingSet: null })}></AddSet>);
+            return (<AddSet initialModel={this.state.addingSet} onAddCompleted={() => this.setState({ modalVisible: false, addingSet: null })}></AddSet>);
         }
     }
 
     private renderActivity(exercise: CompoundExercise) {
         return (
-            <View style={{ margin: 10 }}>
+            <View key={exercise.id} style={{ margin: 10 }}>
                 <Card
                     style={{
                         borderRadius: 10,
@@ -91,7 +68,7 @@ class StatisticsView extends React.Component<{
 
     private renderExercise(exercise: Exercise, compoundId: string) {
         return (
-            <View>
+            <View key={exercise.id}>
                 <CardItem header bordered>
                     <Left>
                         <Text>{exercise.title}</Text>
@@ -102,13 +79,13 @@ class StatisticsView extends React.Component<{
                                 <MenuTrigger>
                                     <MaterialIcons size={30} name='menu'></MaterialIcons>
                                 </MenuTrigger>
-                                <MenuOptions>
+                                <MenuOptions customStyles={menuOptionsStyles as any}>
                                     <MenuOption onSelect={() => {
                                         let prevSetData = this.getLastSetData(exercise);
                                         this.setState({ modalVisible: true, addingSet: { ...prevSetData, exerciseId: exercise.id } })
                                     }} text='Add set' />
                                     <MenuOption onSelect={() => this.deleteExerciseSafely(exercise)} >
-                                        <Text style={{ color: 'red' }}>Delete</Text>
+                                        <Text>Delete</Text>
                                     </MenuOption>
                                     <MenuOption onSelect={() => {
                                         navigationService.navigate('AddCompoundExercise', {
@@ -123,7 +100,7 @@ class StatisticsView extends React.Component<{
                 <View style={{ flex: 1, flexWrap: 'wrap', flexDirection: 'row' }}>
                     {exercise.sets.map(s => this.renderSet(s))}
                 </View>
-            </View>
+            </View >
         );
     }
 
@@ -137,12 +114,8 @@ class StatisticsView extends React.Component<{
         return setData;
     }
 
-    renderSet(set: Set | SuperSet) {
-        if ((set as SuperSet).sets) {
-            return <SupersetView superset={set as SuperSet}></SupersetView>;
-        } else {
-            return <SetView set={set as Set} onDelete={() => { }} onEdit={this.editSet.bind(this, set)}></SetView>;
-        }
+    renderSet(set: Set) {
+        return <SetView key={set.id} set={set as Set} onDelete={() => { }} onEdit={this.editSet.bind(this, set)}></SetView>;
     }
 
     deleteExerciseSafely(exercise: Exercise) {
@@ -157,6 +130,15 @@ class StatisticsView extends React.Component<{
     }
     editSet(set: Set) {
         this.setState({ modalVisible: true, editedSet: set });
+    }
+}
+
+const menuOptionsStyles = {
+    optionWrapper: {
+        height: 50,
+        justifyContent: 'center',
+        borderWidth: 0.5,
+        borderColor: '#d6d7da'
     }
 }
 

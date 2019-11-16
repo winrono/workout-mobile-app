@@ -48,7 +48,6 @@ class AddCompoundExercise extends React.Component<{ set: Set; navigation: any, a
     }
     async submit() {
         let exercise: Exercise = { title: this.state.name, sets: [] };
-        console.log(`submit ${this.state.parentId}`);
         this.props.addToExistingExercise(exercise, this.state.parentId);
         this.props.navigation.navigate('Dashboard');
     }
