@@ -5,6 +5,7 @@ import { getShortDate } from '../utils/date';
 import exerciseStorage from '../data-access/exercise-storage';
 
 export function setDate(date: string) {
+
     return async function (dispatch) {
 
         let workouts = await getActiveWorkouts(date);
@@ -15,7 +16,6 @@ export function setDate(date: string) {
 
 async function getActiveWorkouts(date: string): Promise<DailyWorkout[]> {
 
-    let t1 = performance.now();
     let prevDay: Date | string = new Date(date);
     prevDay.setDate(prevDay.getDate() - 1);
     prevDay = getShortDate(prevDay);

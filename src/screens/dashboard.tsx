@@ -28,15 +28,16 @@ class Dashboard extends Component<
     {
         date: string;
         activeFab: boolean;
-        showCalendarModal: boolean
+        showCalendarModal: boolean,
+        suspendRendering: boolean
     }
     > {
 
-    private t1: Date;
+    private t1: number;
 
     constructor(props) {
         super(props);
-        this.state = { date: getShortDate(new Date()), activeFab: false, showCalendarModal: false };
+        this.state = { date: getShortDate(new Date()), activeFab: false, showCalendarModal: false, suspendRendering: false };
     }
 
     componentWillMount() {
@@ -80,6 +81,7 @@ class Dashboard extends Component<
     }
 
     renderContent() {
+        console.log(performance.now() - this.t1);
         let pages: JSX.Element[] = [];
         if (this.props.activeWorkouts) {
             this.props.activeWorkouts.forEach((workout) => {
@@ -91,39 +93,39 @@ class Dashboard extends Component<
             })
         }
 
-        return (<Swiper loadMinimal={true} showsPagination={false} key={this.state.key} index={1} onIndexChanged={(id) => { this.onPageChanged(id) }}>
+        return (<Swiper showsPagination={false} key={this.state.key} index={1} onIndexChanged={(id) => { this.onPageChanged(id) }}>
             {pages}
         </Swiper>);
     }
 
     shouldComponentUpdate(nextProps, nextState) {
-        if (nextState.pendingUpdate) {
+        if (nextState.suspendRendering) {
             return false;
         }
         return true;
     }
 
     private onPageChanged(id) {
+        console.log('page')
+        this.t1 = performance.now();
         if (id === 0) {
             let prevDay: Date | string = new Date(this.state.date);
             prevDay.setDate(prevDay.getDate() - 1);
             prevDay = getShortDate(prevDay);
-            this.setState({ date: prevDay }, () => {
-                this.props.setDate(prevDay).then(() => {
-                    this.setState({ pendingUpdate: false });
-                })
-            });
+            this.setState({ date: prevDay });
+            this.props.setDate(prevDay).then(() => {
+                this.setState({ suspendRendering: false });
+            })
         } else if (id === 2) {
             let nextDay: Date | string = new Date(this.state.date);
             nextDay.setDate(nextDay.getDate() + 1);
             nextDay = getShortDate(nextDay);
-            this.setState({ date: nextDay }, () => {
-                this.props.setDate(nextDay).then(() => {
-                    this.setState({ pendingUpdate: false });
-                })
-            });
+            this.setState({ date: nextDay });
+            this.props.setDate(nextDay).then(() => {
+                this.setState({ suspendRendering: false });
+            })
         }
-        this.setState({ key: new Date().getMilliseconds(), pendingUpdate: true });
+        this.setState({ key: new Date().getMilliseconds(), suspendRendering: true });
     }
 
     //added for future usage

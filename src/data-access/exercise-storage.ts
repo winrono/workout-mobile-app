@@ -16,8 +16,9 @@ class ExerciseStorage {
             shortDates.push(getShortDate(startDate));
             startDate.setDate(startDate.getDate() + 1);
         }
-
+        let t1 = performance.now();
         let keyValuePairs = await AsyncStorage.multiGet(shortDates.map((d) => `${this._storagePrefix}${d}`));
+        console.log(performance.now() - t1);
         keyValuePairs.forEach((pair, index) => {
             let workout: DailyWorkout = JSON.parse(pair[1]);
             if (!workout) {
