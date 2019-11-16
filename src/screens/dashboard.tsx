@@ -31,6 +31,9 @@ class Dashboard extends Component<
         showCalendarModal: boolean
     }
     > {
+
+    private t1: Date;
+
     constructor(props) {
         super(props);
         this.state = { date: getShortDate(new Date()), activeFab: false, showCalendarModal: false };
@@ -88,7 +91,7 @@ class Dashboard extends Component<
             })
         }
 
-        return (<Swiper showsPagination={false} key={this.state.key} index={1} onIndexChanged={(id) => { this.onPageChanged(id) }}>
+        return (<Swiper loadMinimal={true} showsPagination={false} key={this.state.key} index={1} onIndexChanged={(id) => { this.onPageChanged(id) }}>
             {pages}
         </Swiper>);
     }

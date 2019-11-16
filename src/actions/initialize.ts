@@ -1,11 +1,13 @@
 import { AsyncStorage } from 'react-native';
 import { DailyWorkout } from '../models/daily-workout';
 import { getShortDate } from '../utils/date';
+import exerciseStorage from '../data-access/exercise-storage';
 
 const storageKeyPrefix: string = 'workout';
 
 export function initialize() {
     return async function (dispatch) {
+        await exerciseStorage.initialize();
         let date = getShortDate(new Date());
         let workouts = await getActiveWorkouts(date);
         dispatch(onReady(workouts));
@@ -32,15 +34,7 @@ async function getActiveWorkouts(date: string): Promise<DailyWorkout[]> {
     nextDay.setDate(nextDay.getDate() + 1);
     nextDay = getShortDate(nextDay);
 
-    let prefix = 'workout';
-    let keyValuePairs = await AsyncStorage.multiGet([prefix + prevDay, prefix + date, prefix + nextDay]);
-    let workouts = keyValuePairs.map((pair) => {
-        let workout: DailyWorkout = JSON.parse(pair[1]);
-        if (!workout) {
-            workout = new DailyWorkout(date);
-        }
-        return workout;
-    })
+    let workouts: DailyWorkout[] = [exerciseStorage.getWorkoutByShortDate(prevDay), exerciseStorage.getWorkoutByShortDate(date), exerciseStorage.getWorkoutByShortDate(nextDay)];
 
-    return workouts;
+    return Promise.resolve(workouts);
 }
