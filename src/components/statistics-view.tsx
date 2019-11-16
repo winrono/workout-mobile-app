@@ -104,12 +104,13 @@ class StatisticsView extends React.Component<{
         );
     }
 
-    private getLastSetData(exercise: Exercise): { repsCount: string; weight: string } {
-        let setData = { repsCount: '', weight: '' };
+    private getLastSetData(exercise: Exercise): { repsCount: string; weight: string, comment: string } {
+        let setData = { repsCount: '', weight: '', comment: '' };
         let lastSet = exercise.sets[exercise.sets.length - 1] as Set;
         if (lastSet) {
             setData.repsCount = lastSet.repsCount;
             setData.weight = lastSet.weight;
+            setData.comment = lastSet.comment;
         }
         return setData;
     }

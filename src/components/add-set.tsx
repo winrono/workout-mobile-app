@@ -8,7 +8,7 @@ import { Set } from '../models/set';
 import SetManipulationModalBody from './set-manipulation-modal-body';
 
 class AddSet extends React.Component<
-    { initialModel: { exerciseId: string, weight: string, repsCount: string }, navigation?: any, onAddCompleted: () => void },
+    { initialModel: { exerciseId: string, weight: string, repsCount: string, comment: string }, navigation?: any, onAddCompleted: () => void },
     { set: Set; exerciseId: string }
     > {
     _repsInput: any;
@@ -19,7 +19,8 @@ class AddSet extends React.Component<
         this.state = {
             set: {
                 repsCount: this.props.initialModel.repsCount,
-                weight: this.props.initialModel.weight
+                weight: this.props.initialModel.weight,
+                comment: this.props.initialModel.comment
             },
             exerciseId: this.props.initialModel.exerciseId
         };
