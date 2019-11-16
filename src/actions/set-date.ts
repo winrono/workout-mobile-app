@@ -24,6 +24,6 @@ async function getActiveWorkouts(date: string): Promise<DailyWorkout[]> {
     nextDay.setDate(nextDay.getDate() + 1);
     nextDay = getShortDate(nextDay);
 
-    let workouts: DailyWorkout[] = [exerciseStorage.getWorkoutByShortDate(prevDay), exerciseStorage.getWorkoutByShortDate(date), exerciseStorage.getWorkoutByShortDate(nextDay)];
+    let workouts: DailyWorkout[] = [await exerciseStorage.getWorkoutByShortDate(prevDay), await exerciseStorage.getWorkoutByShortDate(date), await exerciseStorage.getWorkoutByShortDate(nextDay)];
     return Promise.resolve(workouts);
 }

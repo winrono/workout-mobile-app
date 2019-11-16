@@ -33,8 +33,6 @@ class Dashboard extends Component<
     }
     > {
 
-    private t1: number;
-
     constructor(props) {
         super(props);
         this.state = { date: getShortDate(new Date()), activeFab: false, showCalendarModal: false, suspendRendering: false };
@@ -105,7 +103,6 @@ class Dashboard extends Component<
     }
 
     private onPageChanged(id) {
-        this.t1 = performance.now();
         if (id === 0) {
             let prevDay: Date | string = new Date(this.state.date);
             prevDay.setDate(prevDay.getDate() - 1);

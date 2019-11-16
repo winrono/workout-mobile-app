@@ -16,9 +16,7 @@ class ExerciseStorage {
             shortDates.push(getShortDate(startDate));
             startDate.setDate(startDate.getDate() + 1);
         }
-        let t1 = performance.now();
         let keyValuePairs = await AsyncStorage.multiGet(shortDates.map((d) => `${this._storagePrefix}${d}`));
-        console.log(performance.now() - t1);
         keyValuePairs.forEach((pair, index) => {
             let workout: DailyWorkout = JSON.parse(pair[1]);
             if (!workout) {
@@ -26,11 +24,40 @@ class ExerciseStorage {
             }
             this._storage.set(pair[0], workout);
             return workout;
-        })
+        });
     }
 
-    getWorkoutByShortDate(date: string): DailyWorkout {
-        return this._storage.get(`${this._storagePrefix}${date}`);
+    async getWorkoutByShortDate(date: string): Promise<DailyWorkout> {
+        let key = `${this._storagePrefix}${date}`;
+        let workout = this._storage.get(key);
+        if (!workout) {
+            let data = await AsyncStorage.getItem(key);
+            if (data) {
+                workout = JSON.parse(data);
+            } else {
+                workout = new DailyWorkout(getShortDate(date));
+            }
+        }
+        return workout;
+    }
+
+    async saveWorkout(workout: DailyWorkout): Promise<void> {
+        let key: string = `${this._storagePrefix}${workout.date}`;
+        if (this._storage.get(key) !== workout) {
+            console.log('saved with ' + key);
+            this._storage.set(key, workout);
+            await AsyncStorage.setItem(key, JSON.stringify(workout));
+        }
+    }
+
+    getDatesWithActivity(): string[] {
+        let keys = [];
+        this._storage.forEach((value, key) => {
+            if (value.exercises.length > 0) {
+                keys.push(key.replace('workout', ''));
+            }
+        })
+        return keys;
     }
 
 }
