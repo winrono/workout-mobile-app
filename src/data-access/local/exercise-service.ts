@@ -4,11 +4,8 @@ import { AddSet } from '../../models/add-set';
 import { ExerciseService } from '../exercise-service';
 import { injectable } from 'inversify';
 import { AsyncStorage } from 'react-native';
-import { Set } from '../../models/set';
-import { SuperSet } from '../../models/super-set';
 import { DailyWorkout } from '../../models/daily-workout';
 
-// implements ExerciseService
 @injectable()
 export class LocalExerciseService implements ExerciseService {
     private _storageKey: string = 'workouts';
