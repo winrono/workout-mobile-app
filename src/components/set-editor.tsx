@@ -54,6 +54,22 @@ export default class SetEditor extends React.Component<
                         }}
                     />
                 </Item>
+                <Item floatingLabel>
+                    <Label>Comment(optional)</Label>
+                    <Input
+                        returnKeyType={'done'}
+                        value={this.state.set.comment}
+                        selectTextOnFocus={true}
+                        onChangeText={comment => {
+                            this.setState({ set: { ...this.state.set, comment: comment } }, () => {
+                                this.props.onSetChange(this.state.set);
+                            });
+                        }}
+                        onSubmitEditing={() => {
+                            this.props.onEditDone();
+                        }}
+                    />
+                </Item>
             </View>
         );
     }

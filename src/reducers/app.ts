@@ -106,6 +106,7 @@ export function appReducer(state = initialState, action) {
             let set = findSetById(exercises, action.payload.id);
             set.repsCount = action.payload.repsCount;
             set.weight = action.payload.weight;
+            set.comment = action.payload.comment;
             return newState;
         }
         case DELETE_SET: {

@@ -6,13 +6,14 @@ import { AntDesign } from '@expo/vector-icons';
 import { Set } from '../models/set';
 
 export function SetView(props: SetViewProps) {
+    let marker = props.set.comment != null && props.set.comment !== '' ? '*' : '';
     return (
         <CardItem cardBody={true} style={{ flexBasis: '20%' }}>
             <Body style={{ padding: 5 }}>
                 <TouchableOpacity onPress={() => props.onEdit()}>
                     <Text>
-                        {props.set.weight} kg
-            </Text>
+                        {props.set.weight} kg <Text style={{ fontWeight: 'bold' }}>{marker}</Text>
+                    </Text>
                     <Text>
                         {props.set.repsCount} reps
             </Text>
