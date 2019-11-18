@@ -44,7 +44,6 @@ class ExerciseStorage {
     async saveWorkout(workout: DailyWorkout): Promise<void> {
         let key: string = `${this._storagePrefix}${workout.date}`;
         if (this._storage.get(key) !== workout) {
-            console.log('saved with ' + key);
             this._storage.set(key, workout);
             await AsyncStorage.setItem(key, JSON.stringify(workout));
         }
