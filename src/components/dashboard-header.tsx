@@ -12,13 +12,14 @@ export class DashboardHeader extends React.Component<{ date: string, navigation?
                     <Icon name='menu' />
                 </TouchableOpacity>
             </Left>
-            <Right style={{ alignItems: 'center' }}>
-                <Text>{new Date(this.props.date).toDateString()}</Text>
+            <Right>
                 <TouchableOpacity
                     onPress={() => {
                         this.props.onOpenCalendar();
                     }}
+                    style={{ flexDirection: 'row', alignItems: 'center' }}
                 >
+                    <Text>{new Date(this.props.date).toDateString()}</Text>
                     <AntDesign size={30} name='calendar' />
                 </TouchableOpacity>
             </Right>
