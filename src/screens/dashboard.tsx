@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { View, StyleSheet, Text, TouchableOpacity } from 'react-native';
 import { ActivityIndicator } from 'react-native';
-import { Container, Fab } from 'native-base';
+import { Container, Fab, Drawer } from 'native-base';
 import { DailyWorkout } from '../models/daily-workout';
 import { getShortDate } from '../utils/date';
 import { NoStatistics } from '../components/no-statistics';
@@ -14,6 +14,8 @@ import Swiper from 'react-native-swiper';
 import TransparentModal from '../components/transparent-modal';
 import CalendarModalBody from '../components/calendar-modal-content';
 import AddExercise from '../components/add-exercise';
+import { DashboardHeader } from '../components/dashboard-header';
+import SideBar from '../components/side-bar';
 
 class Dashboard extends Component<
     {
@@ -32,7 +34,10 @@ class Dashboard extends Component<
         exerciseParentId: string;
         swiperKey: number;
     }
-> {
+    > {
+
+    _drawer: Drawer;
+
     constructor(props) {
         super(props);
         this.state = {
@@ -52,44 +57,38 @@ class Dashboard extends Component<
 
     render() {
         return (
-            <Container style={{ backgroundColor: '#f0f5f7' }}>
-                <View
-                    style={{ flexDirection: 'row', marginLeft: 'auto', justifyContent: 'center', alignItems: 'center' }}
-                >
-                    <Text style={{ right: 20 }}>{new Date(this.state.date).toDateString()}</Text>
-                    <TouchableOpacity
-                        style={{ right: 20 }}
-                        onPress={() => {
-                            this.setState({ showCalendarModal: !this.state.showCalendarModal });
-                        }}
-                    >
-                        <AntDesign size={30} name="calendar" />
-                    </TouchableOpacity>
-                </View>
-                <TransparentModal visible={this.state.showCalendarModal}>
-                    <CalendarModalBody
-                        onCancel={() => {
-                            this.setState({ showCalendarModal: false });
-                        }}
-                        onDateSubmit={this.onDateSelected.bind(this)}
+            <Drawer ref={(ref) => { this._drawer = ref; }} content={<SideBar />}>
+                <Container style={{ backgroundColor: '#f0f5f7' }}>
+                    <DashboardHeader
                         date={this.state.date}
-                    ></CalendarModalBody>
-                </TransparentModal>
-                <TransparentModal visible={this.state.showExerciseModal}>
-                    <AddExercise
-                        parentId={this.state.exerciseParentId}
-                        onComplete={() => this.setState({ showExerciseModal: false })}
+                        onOpenCalendar={() => { this.setState({ showCalendarModal: !this.state.showCalendarModal }); }}
+                        onOpenSideBar={() => { this._drawer._root.open() }}
                     />
-                </TransparentModal>
-                {this.props.ready ? this.renderContent() : <ActivityIndicator size="large" />}
-                <Fab
-                    onPress={() => this.setState({ showExerciseModal: true, exerciseParentId: null })}
-                    direction="up"
-                    position="bottomRight"
-                >
-                    <AntDesign name="plus" />
-                </Fab>
-            </Container>
+                    <TransparentModal visible={this.state.showCalendarModal}>
+                        <CalendarModalBody
+                            onCancel={() => {
+                                this.setState({ showCalendarModal: false });
+                            }}
+                            onDateSubmit={this.onDateSelected.bind(this)}
+                            date={this.state.date}
+                        ></CalendarModalBody>
+                    </TransparentModal>
+                    <TransparentModal visible={this.state.showExerciseModal}>
+                        <AddExercise
+                            parentId={this.state.exerciseParentId}
+                            onComplete={() => this.setState({ showExerciseModal: false })}
+                        />
+                    </TransparentModal>
+                    {this.props.ready ? this.renderContent() : <ActivityIndicator size="large" />}
+                    <Fab
+                        onPress={() => this.setState({ showExerciseModal: true, exerciseParentId: null })}
+                        direction="up"
+                        position="bottomRight"
+                    >
+                        <AntDesign name="plus" />
+                    </Fab>
+                </Container>
+            </Drawer>
         );
     }
     onDateSelected(date) {

@@ -12,12 +12,14 @@ import CreateAccountScreen from './src/screens/create-account';
 import ForgotPasswordScreen from './src/screens/forgot-password';
 import DummyScreen from './src/screens/dummy';
 import { Text } from 'react-native';
+import SettingsScreen from './src/screens/settings';
 
 new ContainerConfigurator(configurationProvider).configure(container);
 
 const dashboardStack = createStackNavigator(
     {
-        Dashboard: { screen: DashboardScreen }
+        Dashboard: { screen: DashboardScreen },
+        Settings: { screen: SettingsScreen }
     },
     {
         headerMode: 'none',
@@ -32,7 +34,7 @@ let drawerNavigatorRouteConfig = {
         screen: dashboardStack,
         navigationOptions: {
             drawerLabel: 'Dashboard',
-            drawerIcon: () => <Ionicons name="md-home" size={30} />
+            drawerIcon: () => <Ionicons name='md-home' size={30} />
         }
     }
 };
@@ -44,7 +46,7 @@ if (!configurationProvider.isInLocalMode()) {
         screen: DummyScreen,
         navigationOptions: {
             drawerLabel: 'Log out',
-            tabBarIcon: () => <Ionicons name="md-log-out" size={30} />
+            tabBarIcon: () => <Ionicons name='md-log-out' size={30} />
         }
     };
 }
