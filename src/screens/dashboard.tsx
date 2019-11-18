@@ -16,6 +16,7 @@ import Swiper from 'react-native-swiper'
 import { CalendarList } from 'react-native-calendars';
 import TransparentModal from '../components/transparent-modal';
 import CalendarModalBody from '../components/calendar-modal-content';
+import AddExercise from '../components/add-exercise';
 
 class Dashboard extends Component<
     {
@@ -29,13 +30,15 @@ class Dashboard extends Component<
         date: string;
         activeFab: boolean;
         showCalendarModal: boolean,
-        suspendRendering: boolean
+        showExerciseModal: boolean,
+        suspendRendering: boolean,
+        exerciseParentId: string
     }
     > {
 
     constructor(props) {
         super(props);
-        this.state = { date: getShortDate(new Date()), activeFab: false, showCalendarModal: false, suspendRendering: false };
+        this.state = { date: getShortDate(new Date()), activeFab: false, showCalendarModal: false, suspendRendering: false, showExerciseModal: false, exerciseParentId: null };
     }
 
     componentWillMount() {
@@ -60,9 +63,12 @@ class Dashboard extends Component<
                     <CalendarModalBody onCancel={() => { this.setState({ showCalendarModal: false }) }} onDateSubmit={this.onDateSelected.bind(this)} date={this.state.date}>
                     </CalendarModalBody>
                 </TransparentModal>
+                <TransparentModal visible={this.state.showExerciseModal}>
+                    <AddExercise parentId={this.state.exerciseParentId} onComplete={() => this.setState({ showExerciseModal: false })} />
+                </TransparentModal>
                 {this.props.ready ? this.renderContent() : <ActivityIndicator size='large' />}
                 <Fab
-                    onPress={() => this.props.navigation.navigate('AddExercise', { date: this.state.date })}
+                    onPress={() => this.setState({ showExerciseModal: true, exerciseParentId: null })}
                     direction='up'
                     position='bottomRight'
                 >
@@ -85,7 +91,7 @@ class Dashboard extends Component<
                 if (!workout || workout.exercises.length === 0) {
                     pages.push(<NoStatistics />);
                 } else {
-                    pages.push(<StatisticsView exercises={workout.exercises} />);
+                    pages.push(<StatisticsView exercises={workout.exercises} onAddChildExercise={(parentId: string) => this.setState({ showExerciseModal: true, exerciseParentId: parentId })} />);
                 }
             })
         }
@@ -96,6 +102,7 @@ class Dashboard extends Component<
     }
 
     shouldComponentUpdate(nextProps, nextState) {
+        // prevent redundant and time-consuming rendering
         if (nextState.suspendRendering) {
             return false;
         }

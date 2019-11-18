@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 import { editSet } from '../actions/edit-set';
 import { AntDesign } from '@expo/vector-icons';
 import { deleteSet } from '../actions/delete-set';
-import SetManipulationModalBody from './set-manipulation-modal-body';
+import ModalLayout from './modal-layout';
 
 class EditSet extends React.Component<
     { onEditCompleted: () => void; onSaveSet: (set: Set) => void; onDeleteSet: (set: Set) => void; set: Set },
@@ -19,7 +19,7 @@ class EditSet extends React.Component<
     }
     render() {
         return (
-            <SetManipulationModalBody content={this.getContent()} footer={this.getFooter()} />
+            <ModalLayout content={this.getContent()} footer={this.getFooter()} />
         );
     }
 

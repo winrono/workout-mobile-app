@@ -1,11 +1,10 @@
 import React from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, Modal } from 'react-native';
-import { Container, Form, Button } from 'native-base';
-import { AntDesign } from '@expo/vector-icons';
-import SetEditor from './set-editor';
+import { StyleSheet, View } from 'react-native';
+import { Container, Form } from 'native-base';
 
-export default class SetManipulationModalBody extends React.Component<{ content: React.ReactNode, footer: React.ReactNode }> {
+export default class ModalLayout extends React.Component<{ content: React.ReactNode, footer: React.ReactNode, height?: number }> {
     render() {
+        let height = this.props.height || 300;
         return (
             <View
                 style={{
@@ -16,7 +15,7 @@ export default class SetManipulationModalBody extends React.Component<{ content:
                     backgroundColor: '#00000080'
                 }}
             >
-                <View style={{ width: 300, height: 300, backgroundColor: '#fff' }}>
+                <View style={{ width: 300, height: height, backgroundColor: '#fff' }}>
                     <Container style={styles.container}>
                         <Form style={{ flex: 1 }}>
                             <View style={styles.contentContainer}>

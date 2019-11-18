@@ -25,7 +25,8 @@ const initialState: {
     set: {
         id: null,
         weight: undefined,
-        repsCount: undefined
+        repsCount: undefined,
+        comment: undefined
     },
     ready: false,
     workouts: null,
@@ -45,8 +46,6 @@ export function appReducer(state = initialState, action) {
                 nextWorkout: action.payload[2]
             };
         case ADD_EXERCISE:
-            // using navigation here for now as add exercise will become async at some point
-            navigationService.navigate('Dashboard');
             if (!state.activeWorkout) {
                 state.activeWorkout = new DailyWorkout(getShortDate(new Date()));
             }

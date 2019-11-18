@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { AddSet as AddSetAction } from '../actions/add-set';
 import SetEditor from './set-editor';
 import { Set } from '../models/set';
-import SetManipulationModalBody from './set-manipulation-modal-body';
+import ModalLayout from './modal-layout';
 
 class AddSet extends React.Component<
     { initialModel: { exerciseId: string, weight: string, repsCount: string, comment: string }, navigation?: any, onAddCompleted: () => void },
@@ -28,7 +28,7 @@ class AddSet extends React.Component<
 
     render() {
         return (
-            <SetManipulationModalBody content={this.getContent()} footer={this.getFooter()} />
+            <ModalLayout content={this.getContent()} footer={this.getFooter()} />
         );
     }
 

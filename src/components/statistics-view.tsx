@@ -20,8 +20,9 @@ import { Menu, MenuTrigger, MenuOptions, MenuOption } from 'react-native-popup-m
 import TransparentModal from './transparent-modal';
 
 class StatisticsView extends React.Component<{
-    exercises: (CompoundExercise)[];
-    onDeleteExercise: (exercise: Exercise) => void;
+    exercises: (CompoundExercise)[],
+    onDeleteExercise: (exercise: Exercise) => void,
+    onAddChildExercise: (parentId: string) => void;
 }> {
     state = { modalVisible: false, editedSet: null, addingSet: null };
     render() {
@@ -88,9 +89,7 @@ class StatisticsView extends React.Component<{
                                         <Text>Delete</Text>
                                     </MenuOption>
                                     <MenuOption onSelect={() => {
-                                        navigationService.navigate('AddCompoundExercise', {
-                                            parentId: compoundId
-                                        });
+                                        this.props.onAddChildExercise(compoundId);
                                     }} text='Add another exercise' />
                                 </MenuOptions>
                             </Menu>
