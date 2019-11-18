@@ -6,13 +6,18 @@ import ModalLayout from './modal-layout';
 import { Exercise } from '../models/exercise';
 import { AddExercise as AddExerciseAction } from '../actions/add-exercise';
 import { addToExistingExercise as addToExistingExerciseAction } from '../actions/add-to-existing-exercise';
+import localizationProvider from '../localization/localization-provider';
+import { ExerciseName, Cancel, Create } from '../localization/constants';
 
-class AddExercise extends React.Component<{
-    onAddExercise: (exercise: Exercise) => void,
-    onAddToExistingExercise: (exerise: Exercise, parentId: string) => void,
-    onComplete: () => void, parentId: string
-}, { name: string }> {
-
+class AddExercise extends React.Component<
+    {
+        onAddExercise: (exercise: Exercise) => void;
+        onAddToExistingExercise: (exerise: Exercise, parentId: string) => void;
+        onComplete: () => void;
+        parentId: string;
+    },
+    { name: string }
+> {
     _repsInput: any;
     _weightInput: any;
 
@@ -21,9 +26,7 @@ class AddExercise extends React.Component<{
         this.state = { name: '' };
     }
     render() {
-        return (
-            <ModalLayout height={200} content={this.getContent()} footer={this.getFooter()} />
-        );
+        return <ModalLayout height={200} content={this.getContent()} footer={this.getFooter()} />;
     }
 
     submit() {
@@ -37,37 +40,31 @@ class AddExercise extends React.Component<{
     }
 
     private getContent() {
-        return (<Item floatingLabel>
-            <Label>Exercise name</Label>
-            <Input
-                value={this.state.name}
-                returnKeyType={'done'}
-                autoFocus={true}
-                onChangeText={name => {
-                    this.setState({ name })
-                }}
-                onSubmitEditing={this.submit.bind(this)}
-            />
-        </Item>)
+        return (
+            <Item floatingLabel>
+                <Label>{localizationProvider.getLocalizedString(ExerciseName)}</Label>
+                <Input
+                    value={this.state.name}
+                    returnKeyType={'done'}
+                    autoFocus={true}
+                    onChangeText={name => {
+                        this.setState({ name });
+                    }}
+                    onSubmitEditing={this.submit.bind(this)}
+                />
+            </Item>
+        );
     }
 
     private getFooter() {
-        return ([
-            <Button
-                bordered
-                success
-                style={styles.footerButton}
-                onPress={() => this.props.onComplete()}
-            >
-                <Text>Cancel</Text>
+        return [
+            <Button bordered success style={styles.footerButton} onPress={() => this.props.onComplete()}>
+                <Text>{localizationProvider.getLocalizedString(Cancel)}</Text>
             </Button>,
-            <Button bordered
-                success
-                style={styles.footerButton}
-                onPress={this.submit.bind(this)}>
-                <Text>Submit</Text>
+            <Button bordered success style={styles.footerButton} onPress={this.submit.bind(this)}>
+                <Text>{localizationProvider.getLocalizedString(Create)}</Text>
             </Button>
-        ])
+        ];
     }
 }
 
@@ -92,8 +89,8 @@ const styles = StyleSheet.create({
 
 function mapDispatchToProps(dispatch) {
     return {
-        onAddExercise: (exercise) => {
-            dispatch((AddExerciseAction(exercise)));
+        onAddExercise: exercise => {
+            dispatch(AddExerciseAction(exercise));
         },
         onAddToExistingExercise: (exercise, parentId) => {
             dispatch(addToExistingExerciseAction(exercise, parentId));
@@ -101,7 +98,4 @@ function mapDispatchToProps(dispatch) {
     };
 }
 
-export default connect(
-    undefined,
-    mapDispatchToProps
-)(AddExercise);
+export default connect(undefined, mapDispatchToProps)(AddExercise);

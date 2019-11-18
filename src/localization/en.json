@@ -1,0 +1,17 @@
+{
+    "ADD_SET": "Add set",
+    "DELETE": "Delete",
+    "ADD_EXERCISE": "Add exercise",
+    "EXERCISE_NAME": "Exercise name",
+    "NO_WORKOUT_STATISTICS": "No workout statistics",
+    "WEIGHT": "Weight(kg)",
+    "REPS": "Reps",
+    "COMMENT": "Comment(optional)",
+    "CREATE": "Create",
+    "SAVE": "Save",
+    "CANCEL": "Cancel",
+    "SELECT": "Select",
+    "DELETE_EXERCISE_CONFIRMATION": "Are you sure you want to delete exercise?",
+    "REPS_LOWERCASE": "reps",
+    "KG_LOWERCASE": "kg"
+}

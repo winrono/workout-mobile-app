@@ -1,0 +1,15 @@
+export const AddSet: string = 'ADD_SET';
+export const Delete: string = 'DELETE';
+export const AddExercise: string = 'ADD_EXERCISE';
+export const ExerciseName: string = 'EXERCISE_NAME';
+export const NoWorkoutStatistics: string = 'NO_WORKOUT_STATISTICS';
+export const Weight: string = 'WEIGHT';
+export const Reps: string = 'REPS';
+export const Comment: string = 'COMMENT';
+export const Create: string = 'CREATE';
+export const Save: string = 'SAVE';
+export const Cancel: string = 'CANCEL';
+export const Select: string = 'SELECT';
+export const DeleteExerciseConfirmation: string = 'DELETE_EXERCISE_CONFIRMATION';
+export const RepsLowercase: string = 'REPS_LOWERCASE';
+export const KgLowercase: string = 'KG_LOWERCASE';

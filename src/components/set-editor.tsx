@@ -2,11 +2,13 @@ import React from 'react';
 import { View } from 'react-native';
 import { Item, Input, Label } from 'native-base';
 import { Set } from '../models/set';
+import localizationProvider from '../localization/localization-provider';
+import { Weight, Reps, Comment } from '../localization/constants';
 
 export default class SetEditor extends React.Component<
-    { set: Set, onEditDone: () => void, onSetChange: (set: Set) => void },
+    { set: Set; onEditDone: () => void; onSetChange: (set: Set) => void },
     { set: Set }
-    > {
+> {
     _weightInput: any;
     _repsInput: any;
     constructor(props) {
@@ -17,11 +19,11 @@ export default class SetEditor extends React.Component<
         return (
             <View>
                 <Item floatingLabel>
-                    <Label>Weight(kg)</Label>
+                    <Label>{localizationProvider.getLocalizedString(Weight)}</Label>
                     <Input
                         getRef={c => (this._weightInput = c)}
                         returnKeyType={'next'}
-                        keyboardType='numeric'
+                        keyboardType="numeric"
                         value={this.state.set.weight}
                         selectTextOnFocus={true}
                         blurOnSubmit={false}
@@ -37,11 +39,11 @@ export default class SetEditor extends React.Component<
                     />
                 </Item>
                 <Item floatingLabel>
-                    <Label>Reps</Label>
+                    <Label>{localizationProvider.getLocalizedString(Reps)}</Label>
                     <Input
                         getRef={c => (this._repsInput = c)}
                         returnKeyType={'done'}
-                        keyboardType='numeric'
+                        keyboardType="numeric"
                         value={this.state.set.repsCount}
                         selectTextOnFocus={true}
                         onChangeText={repsCount => {
@@ -55,7 +57,7 @@ export default class SetEditor extends React.Component<
                     />
                 </Item>
                 <Item floatingLabel>
-                    <Label>Comment(optional)</Label>
+                    <Label>{localizationProvider.getLocalizedString(Comment)}</Label>
                     <Input
                         returnKeyType={'done'}
                         value={this.state.set.comment}

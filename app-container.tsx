@@ -32,8 +32,7 @@ let drawerNavigatorRouteConfig = {
         screen: dashboardStack,
         navigationOptions: {
             drawerLabel: 'Dashboard',
-            drawerIcon: () => <Ionicons name='md-home' size={30} />,
-            headerRight: <Text>Boom</Text>
+            drawerIcon: () => <Ionicons name="md-home" size={30} />
         }
     }
 };
@@ -45,7 +44,7 @@ if (!configurationProvider.isInLocalMode()) {
         screen: DummyScreen,
         navigationOptions: {
             drawerLabel: 'Log out',
-            tabBarIcon: () => <Ionicons name='md-log-out' size={30} />
+            tabBarIcon: () => <Ionicons name="md-log-out" size={30} />
         }
     };
 }

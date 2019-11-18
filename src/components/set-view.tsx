@@ -1,9 +1,10 @@
 import React from 'react';
-import { ListItem, Body, Right, View, CardItem } from 'native-base';
+import { Body, CardItem } from 'native-base';
 import { Text } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
-import { AntDesign } from '@expo/vector-icons';
 import { Set } from '../models/set';
+import localizationProvider from '../localization/localization-provider';
+import { KgLowercase, RepsLowercase } from '../localization/constants';
 
 export function SetView(props: SetViewProps) {
     let marker = props.set.comment != null && props.set.comment !== '' ? '*' : '';
@@ -12,11 +13,12 @@ export function SetView(props: SetViewProps) {
             <Body style={{ padding: 5 }}>
                 <TouchableOpacity onPress={() => props.onEdit()}>
                     <Text>
-                        {props.set.weight} kg <Text style={{ fontWeight: 'bold' }}>{marker}</Text>
+                        {props.set.weight} {localizationProvider.getLocalizedString(KgLowercase)}{' '}
+                        <Text style={{ fontWeight: 'bold' }}>{marker}</Text>
                     </Text>
                     <Text>
-                        {props.set.repsCount} reps
-            </Text>
+                        {props.set.repsCount} {localizationProvider.getLocalizedString(RepsLowercase)}
+                    </Text>
                 </TouchableOpacity>
             </Body>
         </CardItem>
@@ -24,7 +26,7 @@ export function SetView(props: SetViewProps) {
 }
 
 interface SetViewProps {
-    set: Set,
+    set: Set;
     onDelete: () => void;
     onEdit: () => void;
 }

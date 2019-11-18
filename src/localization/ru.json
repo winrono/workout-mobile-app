@@ -1,0 +1,17 @@
+{
+    "ADD_SET": "Добавить подход",
+    "DELETE": "Удалить",
+    "ADD_EXERCISE": "Добавить упражнение",
+    "EXERCISE_NAME": "Название упражнения",
+    "NO_WORKOUT_STATISTICS": "Упражнения не добавлены",
+    "WEIGHT": "Вес(кг)",
+    "REPS": "Количество повторений",
+    "COMMENT": "Комментарий(опционально)",
+    "CREATE": "Создать",
+    "SAVE": "Сохранить",
+    "CANCEL": "Отменить",
+    "SELECT": "Выбрать",
+    "DELETE_EXERCISE_CONFIRMATION": "Вы точно хотите удалить упражнение?",
+    "REPS_LOWERCASE": "пвт",
+    "KG_LOWERCASE": "кг"
+}

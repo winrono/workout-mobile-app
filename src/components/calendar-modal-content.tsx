@@ -3,6 +3,8 @@ import { StyleSheet, Text, View } from 'react-native';
 import { Container, Form, Button } from 'native-base';
 import { CalendarList } from 'react-native-calendars';
 import exerciseStorage from '../data-access/exercise-storage';
+import localizationProvider from '../localization/localization-provider';
+import { Cancel, Select } from '../localization/constants';
 
 const workout = { key: 'workout', color: 'green' };
 
@@ -43,7 +45,7 @@ export default class CalendarModalContent extends React.Component<any, any> {
                                     style={styles.footerButton}
                                     onPress={() => this.props.onCancel()}
                                 >
-                                    <Text>Cancel</Text>
+                                    <Text>{localizationProvider.getLocalizedString(Cancel)}</Text>
                                 </Button>
                                 <Button
                                     bordered
@@ -51,7 +53,7 @@ export default class CalendarModalContent extends React.Component<any, any> {
                                     style={styles.footerButton}
                                     onPress={() => this.props.onDateSubmit(this.state.date)}
                                 >
-                                    <Text>Done</Text>
+                                    <Text>{localizationProvider.getLocalizedString(Select)}</Text>
                                 </Button>
                             </View>
                         </Form>

@@ -8,19 +8,19 @@ import { editSet } from '../actions/edit-set';
 import { AntDesign } from '@expo/vector-icons';
 import { deleteSet } from '../actions/delete-set';
 import ModalLayout from './modal-layout';
+import localizationProvider from '../localization/localization-provider';
+import { Cancel, Create, Save } from '../localization/constants';
 
 class EditSet extends React.Component<
     { onEditCompleted: () => void; onSaveSet: (set: Set) => void; onDeleteSet: (set: Set) => void; set: Set },
     { set: Set }
-    > {
+> {
     constructor(props) {
         super(props);
         this.state = { set: props.set };
     }
     render() {
-        return (
-            <ModalLayout content={this.getContent()} footer={this.getFooter()} />
-        );
+        return <ModalLayout content={this.getContent()} footer={this.getFooter()} />;
     }
 
     onDelete() {
@@ -34,18 +34,18 @@ class EditSet extends React.Component<
     }
 
     private getContent() {
-        return ([
+        return [
             <TouchableOpacity
-                key='0'
+                key="0"
                 style={{ marginLeft: 'auto', right: 20 }}
                 onPress={() => {
                     this.onDelete();
                 }}
             >
-                <AntDesign size={30} name='delete'></AntDesign>
+                <AntDesign size={30} name="delete"></AntDesign>
             </TouchableOpacity>,
             <SetEditor
-                key='1'
+                key="1"
                 set={this.state.set}
                 onSetChange={set => {
                     this.setState({
@@ -57,29 +57,18 @@ class EditSet extends React.Component<
                 }}
                 onEditDone={this.onSave.bind(this)}
             ></SetEditor>
-        ])
+        ];
     }
 
     private getFooter() {
-        return ([
-            <Button
-                bordered
-                success
-                key={0}
-                style={styles.footerButton}
-                onPress={() => this.props.onEditCompleted()}
-            >
-                <Text>Cancel</Text>
+        return [
+            <Button bordered success key={0} style={styles.footerButton} onPress={() => this.props.onEditCompleted()}>
+                <Text>{localizationProvider.getLocalizedString(Cancel)}</Text>
             </Button>,
-            <Button
-                bordered
-                success
-                key={1}
-                style={styles.footerButton}
-                onPress={this.onSave.bind(this)}>
-                <Text>Save</Text>
+            <Button bordered success key={1} style={styles.footerButton} onPress={this.onSave.bind(this)}>
+                <Text>{localizationProvider.getLocalizedString(Save)}</Text>
             </Button>
-        ])
+        ];
     }
 }
 

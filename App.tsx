@@ -8,7 +8,7 @@ import { Provider } from 'react-redux';
 import store from './store';
 import navigationService from './navigation-service';
 import { MenuProvider } from 'react-native-popup-menu';
-
+import localizationProvider from './src/localization/localization-provider';
 
 class App extends React.Component<any, any> {
     constructor(props) {
@@ -24,22 +24,24 @@ class App extends React.Component<any, any> {
                     <View style={{ height: StatusBar.currentHeight, backgroundColor: '#303331' }} />
                     <MenuProvider>
                         <Provider store={store}>
-                            <AppContainer ref={nav => {
-                                navigationService.setTopLevelNavigator(nav);
-                            }}></AppContainer>
+                            <AppContainer
+                                ref={nav => {
+                                    navigationService.setTopLevelNavigator(nav);
+                                }}
+                            ></AppContainer>
                         </Provider>
                     </MenuProvider>
                 </View>
             );
         } else {
-            return this.renderLoadingIndicator()
+            return this.renderLoadingIndicator();
         }
     }
 
     renderLoadingIndicator() {
         return (
             <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                <ActivityIndicator size='large' />
+                <ActivityIndicator size="large" />
             </View>
         );
     }
@@ -50,6 +52,7 @@ class App extends React.Component<any, any> {
             Roboto_medium: require('native-base/Fonts/Roboto_medium.ttf'),
             ...Ionicons.font
         });
+        await localizationProvider.initialize();
         this.setState({ isReady: true });
     }
 }

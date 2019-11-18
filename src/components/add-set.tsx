@@ -6,6 +6,8 @@ import { AddSet as AddSetAction } from '../actions/add-set';
 import SetEditor from './set-editor';
 import { Set } from '../models/set';
 import ModalLayout from './modal-layout';
+import localizationProvider from '../localization/localization-provider';
+import { Cancel, Create } from '../localization/constants';
 
 class AddSet extends React.Component<
     {
@@ -52,10 +54,10 @@ class AddSet extends React.Component<
     private getFooter() {
         return [
             <Button bordered success key={0} style={styles.footerButton} onPress={this.props.onAddCompleted.bind(this)}>
-                <Text>Cancel</Text>
+                <Text>{localizationProvider.getLocalizedString(Cancel)}</Text>
             </Button>,
             <Button bordered success key={1} style={styles.footerButton} onPress={this.submit.bind(this)}>
-                <Text>Submit</Text>
+                <Text>{localizationProvider.getLocalizedString(Create)}</Text>
             </Button>
         ];
     }
