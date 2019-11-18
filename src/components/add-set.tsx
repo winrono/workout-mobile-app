@@ -12,6 +12,7 @@ class AddSet extends React.Component<
         initialModel: { exerciseId: string; weight: string; repsCount: string; comment: string };
         navigation?: any;
         onAddCompleted: () => void;
+        onAddSet: (set: Set, exerciseId: string) => Promise<void>;
     },
     { set: Set; exerciseId: string }
 > {

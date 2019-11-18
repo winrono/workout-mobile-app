@@ -4,8 +4,6 @@ import { Container, Form, Button } from 'native-base';
 import { CalendarList } from 'react-native-calendars';
 import exerciseStorage from '../data-access/exercise-storage';
 
-const vacation = { key: 'vacation', color: 'red', selectedDotColor: 'blue' };
-const massage = { key: 'massage', color: 'blue', selectedDotColor: 'blue' };
 const workout = { key: 'workout', color: 'green' };
 
 export default class CalendarModalContent extends React.Component<any, any> {
@@ -66,13 +64,13 @@ export default class CalendarModalContent extends React.Component<any, any> {
     private getMarkerDates() {
         let datesWithActivity = exerciseStorage.getDatesWithActivity();
         let markers = {};
-        datesWithActivity.forEach((date) => {
+        datesWithActivity.forEach(date => {
             markers[date] = { dots: [workout] };
         });
         return {
             ...markers,
             [this.state.date]: { selected: true, disableTouchEvent: true }
-        }
+        };
     }
 
     private onDayPress(day) {

@@ -30,6 +30,7 @@ class Dashboard extends Component<
         showExerciseModal: boolean;
         suspendRendering: boolean;
         exerciseParentId: string;
+        swiperKey: number;
     }
 > {
     constructor(props) {
@@ -40,7 +41,8 @@ class Dashboard extends Component<
             showCalendarModal: false,
             suspendRendering: false,
             showExerciseModal: false,
-            exerciseParentId: null
+            exerciseParentId: null,
+            swiperKey: 1
         };
     }
 
@@ -120,9 +122,9 @@ class Dashboard extends Component<
         return (
             <Swiper
                 showsPagination={false}
-                key={this.state.key}
+                key={this.state.swiperKey}
                 index={1}
-                onIndexChanged={id => {
+                onIndexChanged={(id: number) => {
                     this.onPageChanged(id);
                 }}
             >
@@ -139,7 +141,7 @@ class Dashboard extends Component<
         return true;
     }
 
-    private onPageChanged(id) {
+    private onPageChanged(id: number) {
         if (id === 0) {
             let prevDay: Date | string = new Date(this.state.date);
             prevDay.setDate(prevDay.getDate() - 1);
@@ -157,7 +159,7 @@ class Dashboard extends Component<
                 this.setState({ suspendRendering: false });
             });
         }
-        this.setState({ key: new Date().getMilliseconds(), suspendRendering: true });
+        this.setState({ swiperKey: new Date().getMilliseconds(), suspendRendering: true });
     }
 }
 
