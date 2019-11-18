@@ -2,9 +2,7 @@ import React from 'react';
 import {
     ScrollView,
     Alert,
-    Text,
-    StyleSheet
-} from 'react-native';
+    Text} from 'react-native';
 import { Card, CardItem, View, Left, Right } from 'native-base';
 import { Exercise } from '../models/exercise';
 import { Set } from '../models/set';

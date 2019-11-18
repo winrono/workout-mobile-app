@@ -1,6 +1,6 @@
 import React from 'react';
-import { Container, Form, Button } from 'native-base';
-import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
+import { Button } from 'native-base';
+import { StyleSheet, Text, TouchableOpacity } from 'react-native';
 import SetEditor from './set-editor';
 import { Set } from '../models/set';
 import { connect } from 'react-redux';

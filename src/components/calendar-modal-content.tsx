@@ -1,8 +1,6 @@
 import React from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, Modal } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import { Container, Form, Button } from 'native-base';
-import { AntDesign } from '@expo/vector-icons';
-import SetEditor from './set-editor';
 import { CalendarList } from 'react-native-calendars';
 import exerciseStorage from '../data-access/exercise-storage';
 

@@ -8,9 +8,13 @@ import { Set } from '../models/set';
 import ModalLayout from './modal-layout';
 
 class AddSet extends React.Component<
-    { initialModel: { exerciseId: string, weight: string, repsCount: string, comment: string }, navigation?: any, onAddCompleted: () => void },
+    {
+        initialModel: { exerciseId: string; weight: string; repsCount: string; comment: string };
+        navigation?: any;
+        onAddCompleted: () => void;
+    },
     { set: Set; exerciseId: string }
-    > {
+> {
     _repsInput: any;
     _weightInput: any;
 
@@ -27,32 +31,32 @@ class AddSet extends React.Component<
     }
 
     render() {
-        return (
-            <ModalLayout content={this.getContent()} footer={this.getFooter()} />
-        );
+        return <ModalLayout content={this.getContent()} footer={this.getFooter()} />;
     }
 
     private getContent() {
-        return <SetEditor
-            set={this.state.set}
-            onSetChange={set => {
-                this.setState({
-                    set: set
-                });
-            }}
-            onEditDone={this.submit.bind(this)}
-        ></SetEditor>
+        return (
+            <SetEditor
+                set={this.state.set}
+                onSetChange={set => {
+                    this.setState({
+                        set: set
+                    });
+                }}
+                onEditDone={this.submit.bind(this)}
+            ></SetEditor>
+        );
     }
 
     private getFooter() {
-        return ([
+        return [
             <Button bordered success key={0} style={styles.footerButton} onPress={this.props.onAddCompleted.bind(this)}>
                 <Text>Cancel</Text>
             </Button>,
             <Button bordered success key={1} style={styles.footerButton} onPress={this.submit.bind(this)}>
                 <Text>Submit</Text>
             </Button>
-        ]);
+        ];
     }
 
     async submit() {
@@ -74,7 +78,6 @@ const styles = StyleSheet.create({
         alignContent: 'flex-end',
         flexDirection: 'row',
         alignItems: 'center'
-
     },
     footerButton: {
         margin: 10,
@@ -96,7 +99,4 @@ function mapDispatchToProps(dispatch) {
     };
 }
 
-export default connect(
-    mapStateToProps,
-    mapDispatchToProps
-)(AddSet);
+export default connect(mapStateToProps, mapDispatchToProps)(AddSet);
