@@ -20,7 +20,8 @@ class App extends React.Component<any, any> {
     render() {
         if (this.state.isReady) {
             return (
-                <View style={{ flex: 1, marginTop: StatusBar.currentHeight }}>
+                <View style={{ flex: 1 }}>
+                    <View style={{ height: StatusBar.currentHeight, backgroundColor: '#303331' }} />
                     <MenuProvider>
                         <Provider store={store}>
                             <AppContainer ref={nav => {
