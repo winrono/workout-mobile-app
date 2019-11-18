@@ -1,4 +1,3 @@
-import { AsyncStorage } from 'react-native';
 import { DailyWorkout } from '../models/daily-workout';
 import { getShortDate } from '../utils/date';
 import exerciseStorage from '../data-access/exercise-storage';
