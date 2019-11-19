@@ -8,7 +8,7 @@ export class DashboardHeader extends React.Component<{ date: string, navigation?
     render() {
         return <Header style={{ backgroundColor: '#f0f5f7' }}>
             <Left>
-                <TouchableOpacity onPress={() => { this.props.onOpenSideBar() }}>
+                <TouchableOpacity style={{ paddingVertical: 10, paddingHorizontal: 15 }} onPress={() => { this.props.onOpenSideBar() }}>
                     <Icon name='menu' />
                 </TouchableOpacity>
             </Left>
@@ -17,12 +17,12 @@ export class DashboardHeader extends React.Component<{ date: string, navigation?
                     onPress={() => {
                         this.props.onOpenCalendar();
                     }}
-                    style={{ flexDirection: 'row', alignItems: 'center' }}
+                    style={{ flexDirection: 'row', alignItems: 'center', paddingVertical: 10, paddingHorizontal: 15 }}
                 >
                     <Text>{new Date(this.props.date).toDateString()}</Text>
                     <AntDesign size={30} name='calendar' />
                 </TouchableOpacity>
             </Right>
-        </Header>
+        </Header >
     }
 }
