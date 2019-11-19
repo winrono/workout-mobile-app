@@ -6,7 +6,7 @@ import { Text } from 'react-native';
 
 export class DashboardHeader extends React.Component<{ date: string, navigation?: any, onOpenCalendar: () => void, onOpenSideBar: () => void }> {
     render() {
-        return <Header style={{ height: 40 }} transparent={true}>
+        return <Header style={{ backgroundColor: '#f0f5f7' }}>
             <Left>
                 <TouchableOpacity onPress={() => { this.props.onOpenSideBar() }}>
                     <Icon name='menu' />
