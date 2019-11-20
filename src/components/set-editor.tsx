@@ -24,7 +24,7 @@ export default class SetEditor extends React.Component<
                 <Label>{localizationProvider.getLocalizedString(prop.toUpperCase() + '_PROPERTY')}</Label>
                 <Input
                     getRef={c => this._inputs.push(c)}
-                    returnKeyType={prop === 'comment' ? 'done' : 'next'}
+                    returnKeyType={'next'}
                     keyboardType='numeric'
                     value={this.state.set[prop]}
                     selectTextOnFocus={true}
@@ -37,7 +37,7 @@ export default class SetEditor extends React.Component<
                             this.props.onSetChange(this.state.set);
                         });
                     }}
-                    onSubmitEditing={prop === 'comment' ? this.props.onEditDone.bind(this) : this.onInputSubmitEditing.bind(this, index)}
+                    onSubmitEditing={this.onInputSubmitEditing.bind(this, index)}
                 />
             </Item>)
         });
