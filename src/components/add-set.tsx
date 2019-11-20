@@ -25,11 +25,7 @@ class AddSet extends React.Component<
     constructor(props) {
         super(props);
         this.state = {
-            set: {
-                repsCount: this.props.initialSet.repsCount,
-                weight: this.props.initialSet.weight,
-                comment: this.props.initialSet.comment
-            },
+            set: this.props.initialSet,
             exerciseId: this.props.exerciseId
         };
     }

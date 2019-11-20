@@ -1,64 +1,53 @@
 import React from 'react';
-import { View } from 'react-native';
+import { View, TextInput } from 'react-native';
 import { Item, Input, Label } from 'native-base';
 import { Set } from '../models/set';
 import localizationProvider from '../localization/localization-provider';
-import { Weight, Reps, Comment } from '../localization/constants';
+import { CommentProperty } from '../localization/constants';
 
 export default class SetEditor extends React.Component<
     { set: Set; onEditDone: () => void; onSetChange: (set: Set) => void },
     { set: Set }
-> {
+    > {
     _weightInput: any;
     _repsInput: any;
+    _inputs: Input[] = [];
     constructor(props) {
         super(props);
         this.state = { set: props.set };
     }
     render() {
+        let items: JSX.Element[] = [];
+        let properties = this.getRenderableProperties();
+        properties.forEach((prop, index) => {
+            items.push(<Item floatingLabel>
+                <Label>{localizationProvider.getLocalizedString(prop.toUpperCase() + '_PROPERTY')}</Label>
+                <Input
+                    getRef={c => this._inputs.push(c)}
+                    returnKeyType={prop === 'comment' ? 'done' : 'next'}
+                    keyboardType='numeric'
+                    value={this.state.set[prop]}
+                    selectTextOnFocus={true}
+                    blurOnSubmit={false}
+                    autoFocus={index === 0 ? true : false}
+                    onChangeText={value => {
+                        let newState = { ...this.state.set };
+                        newState[prop] = value;
+                        this.setState({ set: newState }, () => {
+                            this.props.onSetChange(this.state.set);
+                        });
+                    }}
+                    onSubmitEditing={prop === 'comment' ? this.props.onEditDone.bind(this) : this.onInputSubmitEditing.bind(this, index)}
+                />
+            </Item>)
+        });
         return (
             <View>
+                {items}
                 <Item floatingLabel>
-                    <Label>{localizationProvider.getLocalizedString(Weight)}</Label>
+                    <Label>{localizationProvider.getLocalizedString(CommentProperty)}</Label>
                     <Input
-                        getRef={c => (this._weightInput = c)}
-                        returnKeyType={'next'}
-                        keyboardType="numeric"
-                        value={this.state.set.weight}
-                        selectTextOnFocus={true}
-                        blurOnSubmit={false}
-                        autoFocus={true}
-                        onChangeText={weight => {
-                            this.setState({ set: { ...this.state.set, weight: weight } }, () => {
-                                this.props.onSetChange(this.state.set);
-                            });
-                        }}
-                        onSubmitEditing={() => {
-                            this._repsInput._root.focus();
-                        }}
-                    />
-                </Item>
-                <Item floatingLabel>
-                    <Label>{localizationProvider.getLocalizedString(Reps)}</Label>
-                    <Input
-                        getRef={c => (this._repsInput = c)}
-                        returnKeyType={'done'}
-                        keyboardType="numeric"
-                        value={this.state.set.repsCount}
-                        selectTextOnFocus={true}
-                        onChangeText={repsCount => {
-                            this.setState({ set: { ...this.state.set, repsCount: repsCount } }, () => {
-                                this.props.onSetChange(this.state.set);
-                            });
-                        }}
-                        onSubmitEditing={() => {
-                            this.props.onEditDone();
-                        }}
-                    />
-                </Item>
-                <Item floatingLabel>
-                    <Label>{localizationProvider.getLocalizedString(Comment)}</Label>
-                    <Input
+                        getRef={c => this._inputs.push(c)}
                         returnKeyType={'done'}
                         value={this.state.set.comment}
                         selectTextOnFocus={true}
@@ -74,5 +63,19 @@ export default class SetEditor extends React.Component<
                 </Item>
             </View>
         );
+    }
+
+    onInputSubmitEditing(id) {
+        let nextInput = this._inputs[id + 1];
+        if (nextInput) {
+            nextInput._root.focus();
+        }
+    }
+
+    private getRenderableProperties(): string[] {
+        let props = Object.keys(this.state.set);
+        return props.filter((prop) => {
+            return prop !== 'comment' && prop !== 'id'
+        });
     }
 }
