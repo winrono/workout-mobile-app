@@ -1,6 +1,6 @@
-export class Set {
+import { BaseSet } from './base-set';
+
+export class Set extends BaseSet {
     repsCount: string;
     weight: string;
-    comment: string;
-    id?: string;
 }

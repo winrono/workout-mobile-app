@@ -26,7 +26,7 @@ class StatisticsView extends React.Component<{
     onDeleteExercise: (exercise: Exercise) => void;
     onAddChildExercise: (parentId: string) => void;
 }> {
-    state = { modalVisible: false, editedSet: null, addingSet: null };
+    state = { modalVisible: false, editedSet: null, addingSet: null, exerciseId: null };
     render() {
         return (
             <View style={{ flex: 1 }}>
@@ -52,7 +52,8 @@ class StatisticsView extends React.Component<{
         } else {
             return (
                 <AddSet
-                    initialModel={this.state.addingSet}
+                    initialSet={this.state.addingSet}
+                    exerciseId={this.state.exerciseId}
                     onAddCompleted={() => this.setState({ modalVisible: false, addingSet: null })}
                 ></AddSet>
             );
@@ -93,10 +94,11 @@ class StatisticsView extends React.Component<{
                                 <MenuOptions customStyles={menuOptionsStyles as any}>
                                     <MenuOption
                                         onSelect={() => {
-                                            let prevSetData = this.getLastSetData(exercise);
+                                            let lastSet = this.getLastSet(exercise);
                                             this.setState({
                                                 modalVisible: true,
-                                                addingSet: { ...prevSetData, exerciseId: exercise.id }
+                                                exerciseId: exercise.id,
+                                                addingSet: lastSet
                                             });
                                         }}
                                         text={localizationProvider.getLocalizedString(AddSetLocalizationId)}
@@ -122,20 +124,19 @@ class StatisticsView extends React.Component<{
         );
     }
 
-    private getLastSetData(exercise: Exercise): { repsCount: string; weight: string; comment: string } {
-        let setData = { repsCount: '', weight: '', comment: '' };
+    private getLastSet(exercise: Exercise): Set {
+        let set: Set = new Set();
         let lastSet = exercise.sets[exercise.sets.length - 1] as Set;
         if (lastSet) {
-            setData.repsCount = lastSet.repsCount;
-            setData.weight = lastSet.weight;
-            setData.comment = lastSet.comment;
+            set = { ...lastSet };
+            delete set.id;
         }
-        return setData;
+        return set;
     }
 
     renderSet(set: Set) {
         return (
-            <SetView key={set.id} set={set as Set} onDelete={() => {}} onEdit={this.editSet.bind(this, set)}></SetView>
+            <SetView key={set.id} set={set as Set} onDelete={() => { }} onEdit={this.editSet.bind(this, set)}></SetView>
         );
     }
 

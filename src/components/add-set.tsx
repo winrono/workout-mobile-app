@@ -11,13 +11,14 @@ import { Cancel, Create } from '../localization/constants';
 
 class AddSet extends React.Component<
     {
-        initialModel: { exerciseId: string; weight: string; repsCount: string; comment: string };
+        initialSet: Set;
+        exerciseId: string;
         navigation?: any;
         onAddCompleted: () => void;
         onAddSet: (set: Set, exerciseId: string) => Promise<void>;
     },
     { set: Set; exerciseId: string }
-> {
+    > {
     _repsInput: any;
     _weightInput: any;
 
@@ -25,11 +26,11 @@ class AddSet extends React.Component<
         super(props);
         this.state = {
             set: {
-                repsCount: this.props.initialModel.repsCount,
-                weight: this.props.initialModel.weight,
-                comment: this.props.initialModel.comment
+                repsCount: this.props.initialSet.repsCount,
+                weight: this.props.initialSet.weight,
+                comment: this.props.initialSet.comment
             },
-            exerciseId: this.props.initialModel.exerciseId
+            exerciseId: this.props.exerciseId
         };
     }
 
