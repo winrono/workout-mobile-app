@@ -20,6 +20,7 @@ import {
     DeleteExerciseConfirmation,
     Cancel
 } from '../localization/constants';
+import { ExerciseType } from '../models/exercise-type';
 
 class StatisticsView extends React.Component<{
     exercises: CompoundExercise[];
@@ -125,9 +126,17 @@ class StatisticsView extends React.Component<{
     }
 
     private getLastSet(exercise: Exercise): Set {
-        let set: Set = new Set();
-        let lastSet = exercise.sets[exercise.sets.length - 1] as Set;
+        let set: Set = { comment: '' };
+        if (exercise.type === ExerciseType.WeightReps) {
+            set.weight = '';
+            set.repsCount = '';
+        } else if (exercise.type === ExerciseType.TimeDistance) {
+            set.distance = '';
+            set.time = '';
+        }
+        let lastSet = exercise.sets[exercise.sets.length - 1];
         if (lastSet) {
+            1
             set = { ...lastSet };
             delete set.id;
         }

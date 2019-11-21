@@ -31,7 +31,7 @@ export class RemoteExerciseService implements ExerciseService {
     postSet(exercise: AddSet): Promise<AxiosResponse> {
         return axios.post('http://localhost:55191/exercise/exercises', {
             name: exercise.name,
-            repsCount: exercise.repsCount,
+            reps: exercise.reps,
             weight: exercise.weight,
             creationTime: exercise.creationTime
         }, {

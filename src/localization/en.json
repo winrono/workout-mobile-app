@@ -6,12 +6,21 @@
     "NO_WORKOUT_STATISTICS": "No workout statistics",
     "WEIGHT": "Weight(kg)",
     "REPS": "Reps",
+    "TIME": "Time",
+    "DISTANCE": "Distance(km)",
     "COMMENT": "Comment(optional)",
+    "MINUTES": "Minutes",
+    "SECONDS": "Seconds",
+    "WEIGHT_REPS": "Weight/Reps",
+    "TIME_DISTANCE": "Time/Distance",
     "CREATE": "Create",
     "SAVE": "Save",
     "CANCEL": "Cancel",
     "SELECT": "Select",
     "DELETE_EXERCISE_CONFIRMATION": "Are you sure you want to delete exercise?",
-    "REPS_LOWERCASE": "reps",
-    "KG_LOWERCASE": "kg"
+    "REPS_ABBR": "reps",
+    "KG_LOWERCASE": "kg",
+    "MIN_ABBR": "m",
+    "SEC_ABBR": "s",
+    "KM_ABBR": "km"
 }

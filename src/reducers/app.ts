@@ -15,19 +15,12 @@ import { ADD_TO_EXISTING_EXERCISE } from '../actions/add-to-existing-exercise';
 import { CompoundExercise } from '../models/compound-exercise';
 
 const initialState: {
-    set: Set;
     ready: boolean;
     workouts: DailyWorkout[];
     activeWorkout: DailyWorkout;
     previousWorkout: DailyWorkout,
     nextWorkout: DailyWorkout
 } = {
-    set: {
-        id: null,
-        weight: undefined,
-        repsCount: undefined,
-        comment: undefined
-    },
     ready: false,
     workouts: null,
     activeWorkout: null,
@@ -103,9 +96,8 @@ export function appReducer(state = initialState, action) {
             const compoundExercises = newState.activeWorkout.exercises;
             const exercises = getPureExercises(compoundExercises);
             let set = findSetById(exercises, action.payload.id);
-            set.repsCount = action.payload.repsCount;
-            set.weight = action.payload.weight;
-            set.comment = action.payload.comment;
+            delete action.payload.id;
+            set = Object.assign(set, action.payload);
             return newState;
         }
         case DELETE_SET: {

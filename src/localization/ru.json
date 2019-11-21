@@ -7,11 +7,20 @@
     "WEIGHT": "Вес(кг)",
     "REPS": "Количество повторений",
     "COMMENT": "Комментарий(опционально)",
+    "TIME": "Время",
+    "DISTANCE": "Расстояние(км)",
+    "MINUTES": "Минуты",
+    "SECONDS": "Секунды",
+    "WEIGHT_REPS": "Вес/Повторения",
+    "TIME_DISTANCE": "Время/Дистанция",
     "CREATE": "Создать",
     "SAVE": "Сохранить",
     "CANCEL": "Отменить",
     "SELECT": "Выбрать",
     "DELETE_EXERCISE_CONFIRMATION": "Вы точно хотите удалить упражнение?",
-    "REPS_LOWERCASE": "пвт",
-    "KG_LOWERCASE": "кг"
+    "REPS_ABBR": "пвт",
+    "KG_LOWERCASE": "кг",
+    "MIN_ABBR": "м",
+    "SEC_ABBR": "с",
+    "KM_ABBR": "км"
 }
