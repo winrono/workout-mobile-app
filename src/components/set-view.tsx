@@ -4,7 +4,7 @@ import { Text, View } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { Set } from '../models/set';
 import localizationProvider from '../localization/localization-provider';
-import { KgLowercase, RepsLowercase, KgAbbr, RepsAbbr, KmAbbr, MinAbbr, SecAbbr } from '../localization/constants';
+import { KgAbbr, RepsAbbr, KmAbbr, MinAbbr, SecAbbr } from '../localization/constants';
 
 export function SetView(props: SetViewProps) {
     let marker = props.set.comment != null && props.set.comment !== '' ? '*' : '';

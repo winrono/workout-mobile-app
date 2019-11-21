@@ -82,7 +82,7 @@ class StatisticsView extends React.Component<{
     private renderExercise(exercise: Exercise, compoundId: string) {
         return (
             <View key={exercise.id}>
-                <CardItem header bordered>
+                <CardItem style={{ backgroundColor: '#edf0ed' }} header bordered>
                     <Left>
                         <Text>{exercise.title}</Text>
                     </Left>
