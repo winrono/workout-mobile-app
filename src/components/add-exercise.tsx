@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Item, Label, Input } from 'native-base';
+import { Button, Item, Label, Input, Picker } from 'native-base';
 import { StyleSheet, Text } from 'react-native';
 import { connect } from 'react-redux';
 import ModalLayout from './modal-layout';
@@ -7,7 +7,8 @@ import { Exercise } from '../models/exercise';
 import { AddExercise as AddExerciseAction } from '../actions/add-exercise';
 import { addToExistingExercise as addToExistingExerciseAction } from '../actions/add-to-existing-exercise';
 import localizationProvider from '../localization/localization-provider';
-import { ExerciseName, Cancel, Create } from '../localization/constants';
+import { ExerciseName, Cancel, Create, WeightReps, TimeDistance } from '../localization/constants';
+import { ExerciseType } from '../models/exercise-type';
 
 class AddExercise extends React.Component<
     {
@@ -16,21 +17,21 @@ class AddExercise extends React.Component<
         onComplete: () => void;
         parentId: string;
     },
-    { name: string }
-> {
+    { name: string, exerciseType: ExerciseType }
+    > {
     _repsInput: any;
     _weightInput: any;
 
     constructor(props) {
         super(props);
-        this.state = { name: '' };
+        this.state = { name: '', exerciseType: ExerciseType.WeightReps };
     }
     render() {
         return <ModalLayout height={200} content={this.getContent()} footer={this.getFooter()} />;
     }
 
     submit() {
-        let exercise: Exercise = { title: this.state.name, sets: [] };
+        let exercise: Exercise = { title: this.state.name, sets: [], type: this.state.exerciseType };
         if (this.props.parentId != null) {
             this.props.onAddToExistingExercise(exercise, this.props.parentId);
         } else {
@@ -40,7 +41,7 @@ class AddExercise extends React.Component<
     }
 
     private getContent() {
-        return (
+        return ([
             <Item floatingLabel>
                 <Label>{localizationProvider.getLocalizedString(ExerciseName)}</Label>
                 <Input
@@ -52,8 +53,17 @@ class AddExercise extends React.Component<
                     }}
                     onSubmitEditing={this.submit.bind(this)}
                 />
-            </Item>
-        );
+            </Item>,
+            <Picker
+                style={{ marginLeft: 10 }}
+                selectedValue={this.state.exerciseType}
+                onValueChange={(value, itemIndex) =>
+                    this.setState({ exerciseType: value })
+                }>
+                <Picker.Item label={localizationProvider.getLocalizedString(WeightReps)} value={ExerciseType.WeightReps} />
+                <Picker.Item label={localizationProvider.getLocalizedString(TimeDistance)} value={ExerciseType.TimeDistance} />
+            </Picker>
+        ]);
     }
 
     private getFooter() {

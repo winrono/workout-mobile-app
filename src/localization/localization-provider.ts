@@ -8,8 +8,8 @@ export class LocalizationProvider {
         // in future async usage of setting is required
         i18n.fallbacks = true;
         i18n.translations = { en, ru };
-        i18n.locale = Localization.locale;
-        // i18n.locale = 'ru';
+        // i18n.locale = Localization.locale;
+        i18n.locale = 'ru';
     }
 
     getLocalizedString(id: string): string {
