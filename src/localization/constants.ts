@@ -25,3 +25,4 @@ export const KmAbbr: string = 'KM_ABBR';
 export const Language: string = 'LANGUAGE';
 export const English: string = 'ENGLISH';
 export const Russian: string = 'RUSSIAN';
+export const Settings: string = 'SETTINGS';

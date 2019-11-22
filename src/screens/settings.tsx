@@ -15,17 +15,20 @@ class Settings extends React.Component<any, { settings: any }> {
     render() {
         return (
             <View>
-                <Label>{localizationProvider.getLocalizedString(Language)}</Label>
-                <Picker
-                    style={{ marginLeft: 10 }}
-                    selectedValue={this.state.settings.language}
-                    onValueChange={value => {
-                        this.setState({ settings: { ...this.state.settings, language: value } });
-                    }}
-                >
-                    <Picker.Item label="English" value="en" />
-                    <Picker.Item label="Русский" value="ru" />
-                </Picker>
+                <View style={{ flexDirection: 'row', marginLeft: 10 }}>
+                    <Label style={{ textAlignVertical: 'center' }}>
+                        {localizationProvider.getLocalizedString(Language)}:
+                    </Label>
+                    <Picker
+                        selectedValue={this.state.settings.language}
+                        onValueChange={value => {
+                            this.setState({ settings: { ...this.state.settings, language: value } });
+                        }}
+                    >
+                        <Picker.Item label="English" value="en" />
+                        <Picker.Item label="Русский" value="ru" />
+                    </Picker>
+                </View>
                 <View style={styles.footer}>
                     <Button
                         bordered
