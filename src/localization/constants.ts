@@ -22,3 +22,6 @@ export const KgAbbr: string = 'KG_LOWERCASE';
 export const MinAbbr: string = 'MIN_ABBR';
 export const SecAbbr: string = 'SEC_ABBR';
 export const KmAbbr: string = 'KM_ABBR';
+export const Language: string = 'LANGUAGE';
+export const English: string = 'ENGLISH';
+export const Russian: string = 'RUSSIAN';

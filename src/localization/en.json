@@ -22,5 +22,8 @@
     "KG_LOWERCASE": "kg",
     "MIN_ABBR": "m",
     "SEC_ABBR": "s",
-    "KM_ABBR": "km"
+    "KM_ABBR": "km",
+    "LANGUAGE": "Language",
+    "RUSSIAN": "Russian",
+    "ENGLISH": "English"
 }

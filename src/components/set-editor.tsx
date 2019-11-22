@@ -16,7 +16,6 @@ export default class SetEditor extends React.Component<
         super(props);
         const minutes = Math.floor(props.set.time / 60).toString();
         const seconds = (props.set.time % 60).toString();
-        console.log(minutes);
         this.state = { set: props.set, minutes: minutes, seconds: seconds };
     }
     render() {

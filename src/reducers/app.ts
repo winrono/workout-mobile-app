@@ -13,19 +13,23 @@ import * as _ from 'lodash';
 import { DELETE_SET } from '../actions/delete-set';
 import { ADD_TO_EXISTING_EXERCISE } from '../actions/add-to-existing-exercise';
 import { CompoundExercise } from '../models/compound-exercise';
+import localizationProvider from '../localization/localization-provider';
+import { SAVE_SETTINGS } from '../actions/save-settings';
 
 const initialState: {
     ready: boolean;
     workouts: DailyWorkout[];
     activeWorkout: DailyWorkout;
-    previousWorkout: DailyWorkout,
-    nextWorkout: DailyWorkout
+    previousWorkout: DailyWorkout;
+    nextWorkout: DailyWorkout;
+    settings: { language: string };
 } = {
     ready: false,
     workouts: null,
     activeWorkout: null,
     previousWorkout: null,
-    nextWorkout: null
+    nextWorkout: null,
+    settings: { language: null }
 };
 
 export function appReducer(state = initialState, action) {
@@ -36,7 +40,8 @@ export function appReducer(state = initialState, action) {
                 ready: true,
                 previousWorkout: action.payload[0],
                 activeWorkout: action.payload[1],
-                nextWorkout: action.payload[2]
+                nextWorkout: action.payload[2],
+                settings: { language: localizationProvider.getLocale() }
             };
         case ADD_EXERCISE:
             if (!state.activeWorkout) {
@@ -48,7 +53,9 @@ export function appReducer(state = initialState, action) {
                     ...state.activeWorkout,
                     exercises: [
                         ...state.activeWorkout.exercises,
-                        new CompoundExercise(new Date().getTime().toString(), [{ ...action.payload.exercise, id: new Date().getTime().toString() + 2 }])
+                        new CompoundExercise(new Date().getTime().toString(), [
+                            { ...action.payload.exercise, id: new Date().getTime().toString() + 2 }
+                        ])
                     ]
                 }
             };
@@ -114,31 +121,36 @@ export function appReducer(state = initialState, action) {
                 activeWorkout: action.payload[1],
                 nextWorkout: action.payload[2]
             };
+        case SAVE_SETTINGS:
+            localizationProvider.setLocale(action.payload.language);
+            return {
+                ...state,
+                settings: { ...action.payload }
+            };
     }
     return state;
 }
 
 function findSetById(exercises: Exercise[], id: string): Set {
     let set: Set;
-    exercises.forEach((e) => {
-        e.sets.forEach((s) => {
+    exercises.forEach(e => {
+        e.sets.forEach(s => {
             if (s.id === id) {
                 set = s;
             }
-        })
+        });
     });
     return set;
 }
 
 function deleteSetById(exercises: Exercise[], id: string): void {
-    let set: Set;
-    exercises.forEach((e) => {
-        e.sets.forEach((s) => {
+    exercises.forEach(e => {
+        e.sets.forEach(s => {
             if (s.id === id) {
                 let indexToRemove = e.sets.indexOf(s);
                 e.sets.splice(indexToRemove, 1);
             }
-        })
+        });
     });
 }
 

@@ -1,12 +1,10 @@
 import React, { Component } from 'react';
-import { View, StyleSheet, Text, TouchableOpacity } from 'react-native';
 import { ActivityIndicator } from 'react-native';
 import { Container, Fab, Drawer } from 'native-base';
 import { DailyWorkout } from '../models/daily-workout';
 import { getShortDate } from '../utils/date';
 import { NoStatistics } from '../components/no-statistics';
 import StatisticsView from '../components/statistics-view';
-import { initialize } from '../actions/initialize';
 import { connect } from 'react-redux';
 import { setDate } from '../actions/set-date';
 import { AntDesign } from '@expo/vector-icons';
@@ -22,7 +20,6 @@ class Dashboard extends Component<
         navigation: any;
         activeWorkouts: DailyWorkout[];
         ready: boolean;
-        initialize: () => void;
         setDate: (date: string | Date) => Promise<void>;
     },
     {
@@ -34,8 +31,7 @@ class Dashboard extends Component<
         exerciseParentId: string;
         swiperKey: number;
     }
-    > {
-
+> {
     _drawer: Drawer;
 
     constructor(props) {
@@ -51,18 +47,24 @@ class Dashboard extends Component<
         };
     }
 
-    componentWillMount() {
-        this.props.initialize();
-    }
-
     render() {
         return (
-            <Drawer ref={(ref) => { this._drawer = ref; }} content={<SideBar />}>
+            <Drawer
+            
+                ref={ref => {
+                    this._drawer = ref;
+                }}
+                content={<SideBar drawer={this._drawer} />}
+            >
                 <Container style={{ backgroundColor: '#f0f5f7' }}>
                     <DashboardHeader
                         date={this.state.date}
-                        onOpenCalendar={() => { this.setState({ showCalendarModal: !this.state.showCalendarModal }); }}
-                        onOpenSideBar={() => { this._drawer._root.open() }}
+                        onOpenCalendar={() => {
+                            this.setState({ showCalendarModal: !this.state.showCalendarModal });
+                        }}
+                        onOpenSideBar={() => {
+                            this._drawer._root.open();
+                        }}
                     />
                     <TransparentModal visible={this.state.showCalendarModal}>
                         <CalendarModalBody
@@ -171,9 +173,6 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
     return {
-        initialize: () => {
-            dispatch(initialize());
-        },
         setDate: date => {
             return dispatch(setDate(date));
         }

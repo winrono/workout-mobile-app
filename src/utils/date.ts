@@ -11,3 +11,9 @@ export function getShortDate(date: Date | string) {
 export function getMonthDaysCount(date: Date): number {
     return new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
 }
+
+export function getShortDateWithOffset(date: string, offset: number): string {
+    let newDate: Date | string = new Date(date);
+    newDate.setDate(newDate.getDate() + offset);
+    return getShortDate(newDate);
+}
