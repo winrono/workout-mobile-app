@@ -1,9 +1,9 @@
 import { SetActiveWorkouts } from './set-active-workouts';
-import exerciseStorage from '../data-access/exercise-storage';
+import workoutStorage from '../data-access/workout-storage';
 
 export function setDate(date: string) {
     return async function(dispatch) {
-        let workouts = await exerciseStorage.getActiveWorkouts(date);
+        let workouts = await workoutStorage.getActiveWorkouts(date);
 
         dispatch(SetActiveWorkouts(workouts));
     };

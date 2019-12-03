@@ -46,7 +46,8 @@
         "redux": "^4.0.4",
         "redux-axios-middleware": "^4.0.1",
         "redux-thunk": "^2.3.0",
-        "reflect-metadata": "^0.1.13"
+        "reflect-metadata": "^0.1.13",
+        "uuid": "^3.3.3"
     },
     "devDependencies": {
         "@types/i18n-js": "^3.0.1",

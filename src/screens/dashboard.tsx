@@ -10,10 +10,11 @@ import { setDate } from '../actions/set-date';
 import { AntDesign } from '@expo/vector-icons';
 import Swiper from 'react-native-swiper';
 import TransparentModal from '../components/transparent-modal';
-import CalendarModalBody from '../components/calendar-modal-content';
-import AddExercise from '../components/add-exercise';
+import CalendarModalContent from '../components/calendar-modal-content';
+import CreateExercise from '../components/create-exercise';
 import { DashboardHeader } from '../components/dashboard-header';
 import SideBar from '../components/side-bar';
+import ExerciseManager from '../components/exercise-manager';
 
 class Dashboard extends Component<
     {
@@ -27,11 +28,12 @@ class Dashboard extends Component<
         activeFab: boolean;
         showCalendarModal: boolean;
         showExerciseModal: boolean;
+        showExerciseManager: boolean;
         suspendRendering: boolean;
         exerciseParentId: string;
         swiperKey: number;
     }
-> {
+    > {
     _drawer: Drawer;
 
     constructor(props) {
@@ -42,6 +44,7 @@ class Dashboard extends Component<
             showCalendarModal: false,
             suspendRendering: false,
             showExerciseModal: false,
+            showExerciseManager: false,
             exerciseParentId: null,
             swiperKey: 1
         };
@@ -50,7 +53,7 @@ class Dashboard extends Component<
     render() {
         return (
             <Drawer
-            
+
                 ref={ref => {
                     this._drawer = ref;
                 }}
@@ -67,27 +70,24 @@ class Dashboard extends Component<
                         }}
                     />
                     <TransparentModal visible={this.state.showCalendarModal}>
-                        <CalendarModalBody
+                        <CalendarModalContent
                             onCancel={() => {
                                 this.setState({ showCalendarModal: false });
                             }}
                             onDateSubmit={this.onDateSelected.bind(this)}
                             date={this.state.date}
-                        ></CalendarModalBody>
+                        ></CalendarModalContent>
                     </TransparentModal>
-                    <TransparentModal visible={this.state.showExerciseModal}>
-                        <AddExercise
-                            parentId={this.state.exerciseParentId}
-                            onComplete={() => this.setState({ showExerciseModal: false })}
-                        />
+                    <TransparentModal visible={this.state.showExerciseManager}>
+                        <ExerciseManager exerciseId={this.state.exerciseParentId} onClose={() => this.setState({ showExerciseManager: false })}></ExerciseManager>
                     </TransparentModal>
-                    {this.props.ready ? this.renderContent() : <ActivityIndicator size="large" />}
+                    {this.props.ready ? this.renderContent() : <ActivityIndicator size='large' />}
                     <Fab
-                        onPress={() => this.setState({ showExerciseModal: true, exerciseParentId: null })}
-                        direction="up"
-                        position="bottomRight"
+                        onPress={() => this.setState({ showExerciseManager: true, exerciseParentId: null })}
+                        direction='up'
+                        position='bottomRight'
                     >
-                        <AntDesign name="plus" />
+                        <AntDesign name='plus' />
                     </Fab>
                 </Container>
             </Drawer>
@@ -112,7 +112,7 @@ class Dashboard extends Component<
                         <StatisticsView
                             exercises={workout.exercises}
                             onAddChildExercise={(parentId: string) =>
-                                this.setState({ showExerciseModal: true, exerciseParentId: parentId })
+                                this.setState({ showExerciseManager: true, exerciseParentId: parentId })
                             }
                         />
                     );

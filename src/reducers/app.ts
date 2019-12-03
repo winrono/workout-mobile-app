@@ -15,6 +15,8 @@ import { ADD_TO_EXISTING_EXERCISE } from '../actions/add-to-existing-exercise';
 import { CompoundExercise } from '../models/compound-exercise';
 import localizationProvider from '../localization/localization-provider';
 import { SAVE_SETTINGS } from '../actions/save-settings';
+import uuidv4 from 'uuid/v4';
+import { CREATE_EXERCISE } from '../actions/create-exercise';
 
 const initialState: {
     ready: boolean;
@@ -23,13 +25,15 @@ const initialState: {
     previousWorkout: DailyWorkout;
     nextWorkout: DailyWorkout;
     settings: { language: string };
+    exercises: Exercise[]
 } = {
     ready: false,
     workouts: null,
     activeWorkout: null,
     previousWorkout: null,
     nextWorkout: null,
-    settings: { language: null }
+    settings: { language: null },
+    exercises: []
 };
 
 export function appReducer(state = initialState, action) {
@@ -38,24 +42,34 @@ export function appReducer(state = initialState, action) {
             return {
                 ...state,
                 ready: true,
-                previousWorkout: action.payload[0],
-                activeWorkout: action.payload[1],
-                nextWorkout: action.payload[2],
-                settings: { language: localizationProvider.getLocale() }
+                previousWorkout: action.payload.workouts[0],
+                activeWorkout: action.payload.workouts[1],
+                nextWorkout: action.payload.workouts[2],
+                settings: { language: localizationProvider.getLocale() },
+                exercises: action.payload.exercises
             };
+        case CREATE_EXERCISE:
+            return {
+                ...state,
+                exercises: [
+                    ...state.exercises,
+                    { ...action.payload.exercise, id: uuidv4() }
+                ]
+            }
         case ADD_EXERCISE:
             if (!state.activeWorkout) {
                 state.activeWorkout = new DailyWorkout(getShortDate(new Date()));
             }
+            let exercise = { ...action.payload.exercise, sets: [] };
+            exercise.knownExerciseId = exercise.id;
+            exercise.id = uuidv4();
             return {
                 ...state,
                 activeWorkout: {
                     ...state.activeWorkout,
                     exercises: [
                         ...state.activeWorkout.exercises,
-                        new CompoundExercise(new Date().getTime().toString(), [
-                            { ...action.payload.exercise, id: new Date().getTime().toString() + 2 }
-                        ])
+                        new CompoundExercise(uuidv4(), [exercise])
                     ]
                 }
             };
@@ -65,7 +79,7 @@ export function appReducer(state = initialState, action) {
             let newExercise = exercises.find((ex, index) => {
                 return ex.id === action.payload.exerciseId;
             });
-            newExercise.sets.push({ ...action.payload.set, id: new Date().getTime().toString() });
+            newExercise.sets.push({ ...action.payload.set, id: uuidv4() });
             return newState;
         }
         case ADD_TO_EXISTING_EXERCISE: {
@@ -78,7 +92,10 @@ export function appReducer(state = initialState, action) {
                 }
                 return found;
             });
-            exercise.exercises.push({ ...action.payload.exercise, id: new Date().getTime().toString() });
+            let newExercise = { ...action.payload.exercise, sets: [] };
+            newExercise.knownExerciseId = exercise.id;
+            newExercise.id = uuidv4();
+            exercise.exercises.push(newExercise);
             newState.activeWorkout.exercises.splice(id, 1, exercise);
             return newState;
         }

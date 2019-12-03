@@ -5,17 +5,18 @@ import { connect } from 'react-redux';
 import ModalLayout from './modal-layout';
 import { Exercise } from '../models/exercise';
 import { AddExercise as AddExerciseAction } from '../actions/add-exercise';
+import { createExercise } from '../actions/create-exercise';
 import { addToExistingExercise as addToExistingExerciseAction } from '../actions/add-to-existing-exercise';
 import localizationProvider from '../localization/localization-provider';
 import { ExerciseName, Cancel, Create, WeightReps, TimeDistance } from '../localization/constants';
 import { ExerciseType } from '../models/exercise-type';
 
-class AddExercise extends React.Component<
+class CreateExercise extends React.Component<
     {
-        onAddExercise: (exercise: Exercise) => void;
+        onCreateExercise: (exercise: Exercise) => void;
         onAddToExistingExercise: (exerise: Exercise, parentId: string) => void;
         onComplete: () => void;
-        parentId: string;
+        parentId?: string;
     },
     { name: string, exerciseType: ExerciseType }
     > {
@@ -31,11 +32,11 @@ class AddExercise extends React.Component<
     }
 
     submit() {
-        let exercise: Exercise = { title: this.state.name, sets: [], type: this.state.exerciseType };
+        let exercise: Exercise = { title: this.state.name, type: this.state.exerciseType };
         if (this.props.parentId != null) {
             this.props.onAddToExistingExercise(exercise, this.props.parentId);
         } else {
-            this.props.onAddExercise(exercise);
+            this.props.onCreateExercise(exercise);
         }
         this.props.onComplete();
     }
@@ -99,8 +100,8 @@ const styles = StyleSheet.create({
 
 function mapDispatchToProps(dispatch) {
     return {
-        onAddExercise: exercise => {
-            dispatch(AddExerciseAction(exercise));
+        onCreateExercise: exercise => {
+            dispatch(createExercise(exercise));
         },
         onAddToExistingExercise: (exercise, parentId) => {
             dispatch(addToExistingExerciseAction(exercise, parentId));
@@ -108,4 +109,4 @@ function mapDispatchToProps(dispatch) {
     };
 }
 
-export default connect(undefined, mapDispatchToProps)(AddExercise);
+export default connect(undefined, mapDispatchToProps)(CreateExercise);

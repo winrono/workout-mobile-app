@@ -26,5 +26,6 @@
     "LANGUAGE": "Язык",
     "RUSSIAN": "Русский",
     "ENGLISH": "Английский",
-    "SETTINGS": "Настройки"
+    "SETTINGS": "Настройки",
+    "ADD_SELECTED": "Добавить выбранные"
 }

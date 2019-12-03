@@ -2,7 +2,7 @@ import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { Container, Form, Button } from 'native-base';
 import { CalendarList } from 'react-native-calendars';
-import exerciseStorage from '../data-access/exercise-storage';
+import workoutStorage from '../data-access/workout-storage';
 import localizationProvider from '../localization/localization-provider';
 import { Cancel, Select } from '../localization/constants';
 
@@ -64,7 +64,7 @@ export default class CalendarModalContent extends React.Component<any, any> {
     }
 
     private getMarkerDates() {
-        let datesWithActivity = exerciseStorage.getDatesWithActivity();
+        let datesWithActivity = workoutStorage.getDatesWithActivity();
         let markers = {};
         datesWithActivity.forEach(date => {
             markers[date] = { dots: [workout] };
