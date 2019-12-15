@@ -26,4 +26,6 @@ export const Language: string = 'LANGUAGE';
 export const English: string = 'ENGLISH';
 export const Russian: string = 'RUSSIAN';
 export const Settings: string = 'SETTINGS';
+export const ExportData: string = 'EXPORT_DATA';
 export const AddSelected: string = 'ADD_SELECTED';
+export const Back: string = 'BACK';

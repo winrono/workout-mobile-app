@@ -27,5 +27,7 @@
     "RUSSIAN": "Russian",
     "ENGLISH": "English",
     "SETTINGS": "Settings",
-    "ADD_SELECTED": "Add selected"
+    "ADD_SELECTED": "Add selected",
+    "EXPORT_DATA": "Export data",
+    "BACK": "Back"
 }

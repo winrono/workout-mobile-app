@@ -4,7 +4,7 @@ import { ListItem, Left, Icon, Body, Right } from 'native-base';
 import { AntDesign } from '@expo/vector-icons';
 import { withNavigation } from 'react-navigation';
 import localizationProvider from '../localization/localization-provider';
-import { Settings } from '../localization/constants';
+import { Settings, ExportData } from '../localization/constants';
 
 class SideBar extends React.Component<{ drawer: any }, any> {
     render() {
@@ -19,10 +19,24 @@ class SideBar extends React.Component<{ drawer: any }, any> {
                     }}
                 >
                     <Left>
-                        <AntDesign size={30} name="setting" />
+                        <AntDesign size={30} name='setting' />
                     </Left>
                     <Body>
                         <Text>{localizationProvider.getLocalizedString(Settings)}</Text>
+                    </Body>
+                </ListItem>
+                <ListItem
+                    icon
+                    onPress={() => {
+                        this.props.drawer._root.close();
+                        this.props.navigation.navigate('ExportData');
+                    }}
+                >
+                    <Left>
+                        <AntDesign size={30} name='export' />
+                    </Left>
+                    <Body>
+                        <Text>{localizationProvider.getLocalizedString(ExportData)}</Text>
                     </Body>
                 </ListItem>
             </View>
