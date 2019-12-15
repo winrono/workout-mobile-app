@@ -29,6 +29,9 @@
     "description": "",
     "android": {
       "package": "com.home.winrono"
-    }
-  }
+    },
+    "entryPoint": "node_modules/expo/AppEntry.js"
+  },
+  "displayName": "Workout mobile application",
+  "name": "WorkoutMobileApp"
 }

@@ -4,7 +4,6 @@ import { Button } from 'native-base';
 import localizationProvider from '../localization/localization-provider';
 import { Back } from '../localization/constants';
 import * as FileSystem from 'expo-file-system';
-import rnfs from 'react-native-fs';
 
 export default class ExportData extends React.Component {
     render() {
@@ -28,7 +27,5 @@ export default class ExportData extends React.Component {
         </View>);
     }
     test() {
-        alert(rnfs.DocumentDirectoryPath)
-        rnfs.writeFile(rnfs.DocumentDirectoryPath + 'test.txt', 'teeeeeeeeest', 'utf8');
     }
 }
